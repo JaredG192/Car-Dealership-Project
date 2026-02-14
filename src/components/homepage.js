@@ -1,20 +1,38 @@
+// Homepage.js
+// Purpose:
+// - Main landing page for the Car Dealership system (student-facing + employee-facing)
+// - Highlights the "personalized consultation for college students" requirement
+// - Provides navigation entry points for inventory, consultation, login, and dashboard
+// - Renders manufacturers dynamically using a reusable ManufacturerCard component
+//
+// Note on GitHub Pages:
+// - We use process.env.PUBLIC_URL for all images so they load correctly when the app
+//   is hosted at https://username.github.io/repo-name/ (subpath hosting).
+
 import React from "react";
-import ManufacturerCard from "./ManufacturerCard"; // make sure this file exists
+import ManufacturerCard from "./ManufacturerCard";
 
 export default function Homepage() {
+  // PUBLIC_URL ensures correct asset paths in production (especially GitHub Pages).
+  // Example deployed base:
+  // https://JaredG192.github.io/Car-Dealership-Project
+  const base = process.env.PUBLIC_URL;
+
+  // Manufacturer data used to render brand cards dynamically.
+  // Later: replace this with backend inventory/manufacturer endpoints if desired.
   const manufacturers = [
     {
       name: "Nissan",
       description: "Browse Nissan models in our inventory.",
-      image: "/index/Nissan.png",
-      link: "/nissan", // later you can create this route/page
+      image: `${base}/index/Nissan.png`,
+      link: "/nissan", // Later: route to Nissan page or filtered inventory
       width: 200,
       height: 200,
     },
     {
       name: "Porsche",
       description: "Browse Porsche models in our inventory.",
-      image: "/index/Porsche.png",
+      image: `${base}/index/Porsche.png`,
       link: "/porsche",
       width: 230,
       height: 230,
@@ -22,7 +40,7 @@ export default function Homepage() {
     {
       name: "Toyota",
       description: "Browse Toyota models in our inventory.",
-      image: "/index/Toyota.png",
+      image: `${base}/index/Toyota.png`,
       link: "/toyota",
       width: 200,
       height: 200,
@@ -31,18 +49,19 @@ export default function Homepage() {
 
   return (
     <div style={styles.page}>
-      {/* Background */}
-      <div style={styles.background} />
+      {/* Background layer (darkened for readability) */}
+      <div style={{ ...styles.background, backgroundImage: `url(${base}/index/cars.jpeg)` }} />
 
-      {/* Content */}
+      {/* Foreground content */}
       <div style={styles.content}>
-        {/* HERO */}
+        {/* HERO: what this system is + primary calls-to-action */}
         <section style={styles.hero}>
           <h1 style={styles.title}>Car Dealership</h1>
           <p style={styles.subtitle}>
             Student-friendly used cars + personalized purchase consultation.
           </p>
 
+          {/* Primary actions for the student-facing side */}
           <div style={styles.heroButtons}>
             <a href="/inventory" style={{ ...styles.button, ...styles.primary }}>
               Browse Inventory
@@ -52,6 +71,7 @@ export default function Homepage() {
             </a>
           </div>
 
+          {/* Employee-facing entry point (role-based access happens after login) */}
           <div style={styles.notice}>
             <strong>For Employees:</strong>{" "}
             <a href="/login" style={styles.inlineLink}>
@@ -61,11 +81,12 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* PORTALS */}
+        {/* PORTALS: explicitly connects to your thesis requirements */}
         <section style={styles.section}>
           <h2 style={styles.sectionTitle}>Portals</h2>
 
           <div style={styles.grid2}>
+            {/* Student Portal card */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>Student Portal</h3>
               <ul style={styles.list}>
@@ -79,15 +100,13 @@ export default function Homepage() {
                 <a href="/inventory" style={{ ...styles.button, ...styles.primary }}>
                   View Cars
                 </a>
-                <a
-                  href="/consultation"
-                  style={{ ...styles.button, ...styles.secondary }}
-                >
+                <a href="/consultation" style={{ ...styles.button, ...styles.secondary }}>
                   Book Consultation
                 </a>
               </div>
             </div>
 
+            {/* Employee Portal card */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>Employee Portal</h3>
               <ul style={styles.list}>
@@ -113,15 +132,19 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* HOW IT WORKS */}
+        {/* HOW IT WORKS: makes the user flow obvious for presentations */}
         <section style={styles.section}>
           <h2 style={styles.sectionTitle}>How it works</h2>
+
           <div style={styles.grid3}>
             <div style={styles.stepCard}>
               <div style={styles.stepNum}>1</div>
               <h4 style={styles.stepTitle}>Browse</h4>
-              <p style={styles.stepText}>Explore used vehicles and compare options.</p>
+              <p style={styles.stepText}>
+                Explore used vehicles and compare options.
+              </p>
             </div>
+
             <div style={styles.stepCard}>
               <div style={styles.stepNum}>2</div>
               <h4 style={styles.stepTitle}>Match</h4>
@@ -129,6 +152,7 @@ export default function Homepage() {
                 Tell us your budget and needs to get personalized recommendations.
               </p>
             </div>
+
             <div style={styles.stepCard}>
               <div style={styles.stepNum}>3</div>
               <h4 style={styles.stepTitle}>Consult</h4>
@@ -139,9 +163,10 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* MANUFACTURERS */}
+        {/* MANUFACTURERS: shows "browse by brand" and demonstrates reusable components */}
         <section style={styles.section}>
           <h2 style={styles.sectionTitle}>Browse by manufacturer</h2>
+
           <div style={styles.manuWrap}>
             {manufacturers.map((m) => (
               <div key={m.name} style={styles.manuCard}>
@@ -158,7 +183,7 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* FOOTER: external links (kept from your original HTML concept) */}
         <footer style={styles.footer}>
           <small>
             Visit official sites for more info:{" "}
@@ -195,21 +220,26 @@ export default function Homepage() {
   );
 }
 
+// Inline styles for quick iteration.
+// Later: you can move these into a CSS file or CSS modules if your team prefers.
 const styles = {
   page: {
     position: "relative",
     minHeight: "100vh",
     overflowX: "hidden",
   },
+
+  // Background image layer (separate from content so we can darken it)
   background: {
     position: "absolute",
     inset: 0,
-    backgroundImage: "url('/index/cars.jpeg')",
     backgroundSize: "cover",
     backgroundPosition: "center",
     filter: "brightness(0.55)",
     transform: "scale(1.02)",
   },
+
+  // Main content container
   content: {
     position: "relative",
     zIndex: 1,
@@ -217,6 +247,7 @@ const styles = {
     maxWidth: "1100px",
   },
 
+  // Hero section
   hero: {
     padding: "22px 18px",
     borderRadius: "14px",
@@ -226,9 +257,19 @@ const styles = {
     backdropFilter: "blur(4px)",
   },
   title: { color: "white", margin: 0, fontSize: "44px", fontWeight: 800 },
-  subtitle: { color: "rgba(255,255,255,0.9)", marginTop: "10px", fontSize: "18px" },
+  subtitle: {
+    color: "rgba(255,255,255,0.9)",
+    marginTop: "10px",
+    fontSize: "18px",
+  },
 
-  heroButtons: { display: "flex", gap: "12px", marginTop: "16px", flexWrap: "wrap" },
+  // Buttons
+  heroButtons: {
+    display: "flex",
+    gap: "12px",
+    marginTop: "16px",
+    flexWrap: "wrap",
+  },
   button: {
     display: "inline-block",
     padding: "10px 14px",
@@ -237,11 +278,16 @@ const styles = {
     textDecoration: "none",
   },
   primary: { background: "white", color: "black" },
-  secondary: { background: "rgba(255,255,255,0.16)", color: "white", border: "1px solid rgba(255,255,255,0.25)" },
+  secondary: {
+    background: "rgba(255,255,255,0.16)",
+    color: "white",
+    border: "1px solid rgba(255,255,255,0.25)",
+  },
 
   notice: { marginTop: "14px", color: "rgba(255,255,255,0.9)" },
   inlineLink: { color: "white", textDecoration: "underline" },
 
+  // General sections
   section: {
     marginTop: "18px",
     padding: "18px",
@@ -252,9 +298,19 @@ const styles = {
   },
   sectionTitle: { color: "white", marginTop: 0, marginBottom: "12px" },
 
-  grid2: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" },
-  grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" },
+  // Layout grids
+  grid2: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "14px",
+  },
+  grid3: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "14px",
+  },
 
+  // Portal cards
   card: {
     borderRadius: "12px",
     padding: "14px",
@@ -266,6 +322,7 @@ const styles = {
   cardButtons: { display: "flex", gap: "10px", marginTop: "12px", flexWrap: "wrap" },
   smallText: { color: "rgba(255,255,255,0.8)", marginTop: "10px", fontSize: "12px" },
 
+  // Steps
   stepCard: {
     borderRadius: "12px",
     padding: "14px",
@@ -286,7 +343,12 @@ const styles = {
   stepTitle: { color: "white", margin: "0 0 6px 0" },
   stepText: { color: "rgba(255,255,255,0.9)", margin: 0 },
 
-  manuWrap: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" },
+  // Manufacturer cards wrapper
+  manuWrap: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "14px",
+  },
   manuCard: {
     borderRadius: "12px",
     padding: "10px",
@@ -294,5 +356,6 @@ const styles = {
     border: "1px solid rgba(255,255,255,0.12)",
   },
 
+  // Footer
   footer: { marginTop: "18px", color: "rgba(255,255,255,0.85)" },
 };
