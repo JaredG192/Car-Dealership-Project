@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Car-Dealership-Project/static/css/main.06716892.css",
-    "main.js": "/Car-Dealership-Project/static/js/main.e3a224e0.js",
+    "main.css": "/Car-Dealership-Project/static/css/main.d640a435.css",
+    "main.js": "/Car-Dealership-Project/static/js/main.fccfa20b.js",
     "static/js/453.60b7f4ef.chunk.js": "/Car-Dealership-Project/static/js/453.60b7f4ef.chunk.js",
     "index.html": "/Car-Dealership-Project/index.html",
-    "main.06716892.css.map": "/Car-Dealership-Project/static/css/main.06716892.css.map",
-    "main.e3a224e0.js.map": "/Car-Dealership-Project/static/js/main.e3a224e0.js.map",
+    "main.d640a435.css.map": "/Car-Dealership-Project/static/css/main.d640a435.css.map",
+    "main.fccfa20b.js.map": "/Car-Dealership-Project/static/js/main.fccfa20b.js.map",
     "453.60b7f4ef.chunk.js.map": "/Car-Dealership-Project/static/js/453.60b7f4ef.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.06716892.css",
-    "static/js/main.e3a224e0.js"
+    "static/css/main.d640a435.css",
+    "static/js/main.fccfa20b.js"
   ]
 }
