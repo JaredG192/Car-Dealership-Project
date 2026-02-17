@@ -55,7 +55,7 @@ export default function Homepage() {
           <HeroSlider
             slides={[
               {
-                image: `${base}/index/hero1.jpg`,
+                image: `${base}/index/cars.jpg`,
                 title: "Affordable Cars for College Students",
                 subtitle: "Browse reliable used vehicles + get personalized buying advice.",
                 ctas: [
@@ -64,14 +64,14 @@ export default function Homepage() {
                 ],
               },
               {
-                image: `${base}/index/hero2.jpg`,
+                image: `${base}/index/rightcar.jpg`,
                 title: "Find the Right Car Fast",
                 subtitle: "Filter by budget, mileage, and your needs.",
                 ctas: [{ label: "View Cars", href: "/inventory", variant: "primary" }],
               },
               {
-                image: `${base}/index/hero3.jpg`,
-                title: "Student-Friendly Guidance",
+                image: `${base}/index/guide.jpg`,
+                title: "Student Friendly Guidance",
                 subtitle: "We help you choose a car that fits your life and your budget.",
                 ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
               },
