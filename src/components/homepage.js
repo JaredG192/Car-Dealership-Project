@@ -81,76 +81,94 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* EMPLOYEE NOTICE (centered under hero) */}
-      <div style={styles.noticeWrap}>
-        <div style={styles.container}>
-          <div style={styles.notice}>
-            <strong>For Employees:</strong>{" "}
-            <Link to="/login" style={styles.inlineLink}>
-              Login
-            </Link>{" "}
-            to manage vehicles, consultations, and reports.
-          </div>
-        </div>
+      {/* CENTERED CONTENT (below hero) */}
+      <div style={styles.content}>
+        {/* DEALERSHIP INTRO */}
+        <section style={styles.sectionCard}>
+          <h2 style={styles.sectionTitle}>Welcome to CampusCars</h2>
+
+          <p style={styles.cardText}>
+            Your go-to spot for affordable, reliable used cars near San Bernardino.
+          </p>
+
+          <p style={styles.introText}>
+            We help students find budget-friendly vehicles with flexible financing, easy trade-ins,
+            and personalized guidance every step of the way. Our goal is to make car buying clear
+            and approachable, especially if it is your first time navigating the process.
+          </p>
+
+          <p style={styles.introText}>
+            Whether it is your first car or an upgrade, we make the experience simple, stress-free,
+            and built around your lifestyle. From understanding your budget to choosing a reliable model
+            that fits your daily commute, classes, work schedule, or weekend plans, we are here to help
+            you drive away with confidence.
+          </p>
+
+          <p style={styles.introText}>
+            Visit us today to explore our inventory and experience a modern, student-friendly car-buying experience.
+          </p>
+        </section>
       </div>
 
-      {/* CONTENT (centered sections below) */}
-      <div style={styles.content}>
-        {/* PORTALS */}
-        <section style={styles.sectionCard}>
-          <h2 style={styles.sectionTitle}>Portals</h2>
+      {/* FULL-WIDTH VEHICLE TYPES (edge-to-edge) */}
+      <section style={styles.fullWidthSection}>
+        <div style={styles.fullWidthInner}>
+          <h2 style={styles.sectionTitle}>Browse by Vehicle Type</h2>
 
-          <div style={styles.grid2}>
-            {/* Student */}
-            <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Student Portal</h3>
-
-              <ul style={styles.list}>
-                <li>Browse used vehicles</li>
-                <li>Filter by budget and mileage</li>
-                <li>Book consultations</li>
-                <li>Get recommendations</li>
-              </ul>
-
-              <div style={styles.cardButtons}>
-                <Link to="/inventory" style={{ ...styles.button, ...styles.primary }}>
-                  View Cars
-                </Link>
-
-                <Link to="/consultation" style={{ ...styles.button, ...styles.secondary }}>
-                  Book Consultation
-                </Link>
-              </div>
+          <div style={styles.grid2Full}>
+            <div style={styles.typeCard}>
+              <h3 style={styles.cardTitle}>Sedans</h3>
+              <p style={styles.cardText}>
+                Comfortable, fuel-efficient, and perfect for daily commuting.
+              </p>
+              <Link to="/inventory" style={styles.cardLink}>View Sedans →</Link>
             </div>
 
-            {/* Employee */}
-            <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Employee Portal</h3>
-
-              <ul style={styles.list}>
-                <li>Manage inventory</li>
-                <li>Track consultations</li>
-                <li>View reports</li>
-                <li>Admin controls</li>
-              </ul>
-
-              <div style={styles.cardButtons}>
-                <Link to="/login" style={{ ...styles.button, ...styles.primary }}>
-                  Employee Login
-                </Link>
-
-                <Link to="/dashboard" style={{ ...styles.button, ...styles.secondary }}>
-                  Dashboard
-                </Link>
-              </div>
-
-              <p style={styles.smallText}>
-                *Dashboard access will depend on your clearance level.
+            <div style={styles.typeCard}>
+              <h3 style={styles.cardTitle}>Coupes</h3>
+              <p style={styles.cardText}>
+                Sporty designs for drivers who want style and performance.
               </p>
+              <Link to="/inventory" style={styles.cardLink}>View Coupes →</Link>
+            </div>
+
+            <div style={styles.typeCard}>
+              <h3 style={styles.cardTitle}>SUVs</h3>
+              <p style={styles.cardText}>
+                Spacious and reliable for road trips, friends, and campus life.
+              </p>
+              <Link to="/inventory" style={styles.cardLink}>View SUVs →</Link>
+            </div>
+
+            <div style={styles.typeCard}>
+              <h3 style={styles.cardTitle}>Trucks</h3>
+              <p style={styles.cardText}>
+                Powerful vehicles for work, hauling, and heavy-duty needs.
+              </p>
+              <Link to="/inventory" style={styles.cardLink}>View Trucks →</Link>
+            </div>
+
+            <div style={styles.typeCard}>
+              <h3 style={styles.cardTitle}>Hatchbacks</h3>
+              <p style={styles.cardText}>
+                Compact, affordable, and easy to park on campus.
+              </p>
+              <Link to="/inventory" style={styles.cardLink}>View Hatchbacks →</Link>
+            </div>
+
+            <div style={styles.typeCard}>
+              <h3 style={styles.cardTitle}>Minivans</h3>
+              <p style={styles.cardText}>
+                Extra space for families, group trips, and moving days.
+              </p>
+              <Link to="/inventory" style={styles.cardLink}>View Minivans →</Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
+      {/* BACK TO CENTERED CONTENT */}
+      <div style={styles.content}>
         {/* HOW IT WORKS */}
         <section style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>How it Works</h2>
@@ -178,11 +196,8 @@ export default function Homepage() {
         <section style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>Browse by Manufacturer</h2>
 
-          {/* Dropdown */}
           <div style={styles.dropdownRow}>
-            <label style={styles.dropdownLabel} htmlFor="makeSelect">
-              Shop by:
-            </label>
+            <label style={styles.dropdownLabel} htmlFor="makeSelect">Shop by:</label>
 
             <select
               id="makeSelect"
@@ -192,14 +207,11 @@ export default function Homepage() {
             >
               <option value="">Select a brand</option>
               {manufacturers.map((m) => (
-                <option key={m.name} value={m.link}>
-                  {m.name}
-                </option>
+                <option key={m.name} value={m.link}>{m.name}</option>
               ))}
             </select>
           </div>
 
-          {/* Cards */}
           <div style={styles.manuWrap}>
             {manufacturers.map((m) => (
               <div key={m.name} style={styles.manuCard}>
@@ -239,11 +251,6 @@ const styles = {
     color: "#0f172a",
   },
 
-  container: {
-    width: "min(1100px, calc(100% - 32px))",
-    margin: "0 auto",
-  },
-
   /* Full-width hero banner */
   heroBanner: {
     width: "100%",
@@ -254,29 +261,10 @@ const styles = {
     width: "100%",
     maxWidth: "100%",
     overflow: "hidden",
-    borderRadius: 0, // full-width look
+    borderRadius: 0,
   },
 
-  noticeWrap: {
-    padding: "14px 0 0 0",
-  },
-
-  notice: {
-    padding: "12px 14px",
-    borderRadius: 14,
-    background: "rgba(2, 132, 199, 0.08)",
-    border: "1px solid rgba(2, 132, 199, 0.20)",
-    color: "rgba(15, 23, 42, 0.9)",
-    fontWeight: 600,
-  },
-
-  inlineLink: {
-    color: "#0ea5e9",
-    fontWeight: 900,
-    textDecoration: "underline",
-    textUnderlineOffset: 3,
-  },
-
+  /* Centered content wrapper */
   content: {
     width: "min(1100px, calc(100% - 32px))",
     margin: "0 auto",
@@ -300,21 +288,55 @@ const styles = {
     fontWeight: 900,
   },
 
-  grid2: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-    gap: 14,
+  introText: {
+    color: "rgba(15, 23, 42, 0.80)",
+    fontWeight: 500,
+    lineHeight: 1.6,
+    fontSize: 16,
+    marginTop: 10,
+    marginBottom: 0,
   },
 
-  grid3: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-    gap: 14,
+  /* FULL-WIDTH SECTION */
+  fullWidthSection: {
+    width: "100vw",
+    marginLeft: "calc(-50vw + 50%)",
+    background: "#ffffff",
+    padding: "36px 0",
+    borderTop: "1px solid rgba(0,0,0,0.06)",
+    borderBottom: "1px solid rgba(0,0,0,0.06)",
   },
 
-  card: {
+  fullWidthInner: {
+    width: "100%",
+    maxWidth: "1400px",
+    margin: "0 auto",
+    padding: "0 24px",
+  },
+
+  grid2Full: {
+  display: "grid",
+  gridTemplateColumns: "repeat(6, 1fr)", // 6 per row on desktop
+  gap: 24,
+
+  /* Responsive fallback */
+  "@media (max-width: 1200px)": {
+    gridTemplateColumns: "repeat(3, 1fr)",
+  },
+
+  "@media (max-width: 700px)": {
+    gridTemplateColumns: "repeat(2, 1fr)",
+  },
+
+  "@media (max-width: 480px)": {
+    gridTemplateColumns: "1fr",
+  },
+},
+
+
+  typeCard: {
     borderRadius: 16,
-    padding: 16,
+    padding: 18,
     background: "rgba(15, 23, 42, 0.03)",
     border: "1px solid rgba(0,0,0,0.08)",
   },
@@ -326,44 +348,23 @@ const styles = {
     fontSize: 18,
   },
 
-  list: {
-    margin: "10px 0 0 18px",
-    color: "rgba(15, 23, 42, 0.80)",
+  cardText: {
+    color: "rgba(15, 23, 42, 0.75)",
     fontWeight: 600,
+    margin: "8px 0 12px 0",
+    lineHeight: 1.5,
   },
 
-  cardButtons: {
-    display: "flex",
-    gap: 10,
-    marginTop: 12,
-    flexWrap: "wrap",
-  },
-
-  button: {
-    display: "inline-block",
-    padding: "12px 16px",
-    borderRadius: 999,
+  cardLink: {
+    color: "#0ea5e9",
     fontWeight: 900,
     textDecoration: "none",
-    border: "1px solid rgba(0,0,0,0.12)",
   },
 
-  primary: {
-    background: "rgba(0,0,0,0.88)",
-    color: "white",
-    borderColor: "rgba(0,0,0,0.88)",
-  },
-
-  secondary: {
-    background: "white",
-    color: "rgba(0,0,0,0.86)",
-  },
-
-  smallText: {
-    marginTop: 10,
-    color: "rgba(15, 23, 42, 0.65)",
-    fontSize: 12,
-    fontWeight: 600,
+  grid3: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+    gap: 14,
   },
 
   stepCard: {
