@@ -23,8 +23,10 @@ import React from "react";
   - description (string): Short description of the brand inventory
   - image (string): Path/URL to the brand logo
   - link (string): URL to navigate when clicked
-  - width (number): Image width (default: 200)
-  - height (number): Image height (default: 200)
+
+  Note:
+  - Image is responsive (no fixed width/height)
+  - Scales correctly on mobile devices
 
   This component is reusable and dynamically rendered
   on the homepage using mapped data.
@@ -34,29 +36,51 @@ export default function ManufacturerCard({
   description,
   image,
   link,
-  width = 200,
-  height = 200,
 }) {
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div
+      style={{
+        marginBottom: 20,
+        textAlign: "center",
+      }}
+    >
       {/* Manufacturer name */}
-      <h3 style={{ color: "white" }}>{name}</h3>
+      <h3 style={{ color: "white", marginBottom: 6 }}>{name}</h3>
 
       {/* Short description of available models */}
-      <p style={{ color: "white" }}>{description}</p>
+      <p
+        style={{
+          color: "rgba(255,255,255,0.9)",
+          fontSize: "14px",
+          marginBottom: 10,
+        }}
+      >
+        {description}
+      </p>
 
       {/* Clickable image linking to manufacturer page */}
-      <a href={link}>
+      <a href={link} style={{ display: "inline-block" }}>
         <img
           src={image}
           alt={name} // Accessibility: describes image content
-          width={width}
-          height={height}
+          style={{
+            width: "100%",
+            maxWidth: "180px",
+            height: "auto",
+            objectFit: "contain",
+            margin: "0 auto",
+            display: "block",
+          }}
         />
       </a>
 
       {/* Divider line between cards */}
-      <hr />
+      <hr
+        style={{
+          marginTop: 14,
+          borderColor: "rgba(255,255,255,0.2)",
+        }}
+      />
     </div>
   );
 }

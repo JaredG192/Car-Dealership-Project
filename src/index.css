@@ -1,3 +1,31 @@
+* { box-sizing: border-box; }
+
+/* iOS Safari scroll stability */
+html, body {
+  height: auto;
+  overscroll-behavior-y: none;
+}
+
+body {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  overflow: visible;
+}
+
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/* Existing styles (KEEP THESE) */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

@@ -9,7 +9,7 @@
 // - We use process.env.PUBLIC_URL for all images so they load correctly when the app
 //   is hosted at https://username.github.io/repo-name/ (subpath hosting).
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ManufacturerCard from "./ManufacturerCard";
 
 export default function Homepage() {
@@ -17,6 +17,26 @@ export default function Homepage() {
   // Example deployed base:
   // https://JaredG192.github.io/Car-Dealership-Project
   const base = process.env.PUBLIC_URL;
+
+  // Detect mobile screens so background can be "contain" on phones and "cover" on desktop
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const onChange = (e) => setIsMobile(e.matches);
+
+    setIsMobile(mq.matches); // initial
+
+    // Modern browsers
+    if (mq.addEventListener) {
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    }
+
+    // Fallback for older Safari
+    mq.addListener(onChange);
+    return () => mq.removeListener(onChange);
+  }, []);
 
   // Manufacturer data used to render brand cards dynamically.
   // Later: replace this with backend inventory/manufacturer endpoints if desired.
@@ -26,36 +46,39 @@ export default function Homepage() {
       description: "Browse Nissan models in our inventory.",
       image: `${base}/index/Nissan.png`,
       link: "/nissan", // Later: route to Nissan page or filtered inventory
-      width: 200,
-      height: 200,
     },
     {
       name: "Porsche",
       description: "Browse Porsche models in our inventory.",
       image: `${base}/index/Porsche.png`,
       link: "/porsche",
-      width: 230,
-      height: 230,
     },
     {
       name: "Toyota",
       description: "Browse Toyota models in our inventory.",
       image: `${base}/index/Toyota.png`,
       link: "/toyota",
-      width: 200,
-      height: 200,
     },
   ];
 
   return (
     <div style={styles.page}>
       {/* Background layer (darkened for readability) */}
-      <div style={{ ...styles.background, backgroundImage: `url(${base}/index/cars.jpeg)` }} />
+      <div
+        style={{
+          ...styles.background,
+          backgroundImage: `url(${base}/index/cars.jpeg)`,
+          backgroundSize: isMobile ? "contain" : "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundColor: "black",
+        }}
+      />
 
       {/* Foreground content */}
       <div style={styles.content}>
         {/* HERO: what this system is + primary calls-to-action */}
-        <section style={styles.hero}>
+        <section style={{ ...styles.hero, ...(isMobile ? {} : styles.glass) }}>
           <h1 style={styles.title}>Car Dealership</h1>
           <p style={styles.subtitle}>
             Student-friendly used cars + personalized purchase consultation.
@@ -82,7 +105,7 @@ export default function Homepage() {
         </section>
 
         {/* PORTALS: explicitly connects to your thesis requirements */}
-        <section style={styles.section}>
+        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
           <h2 style={styles.sectionTitle}>Portals</h2>
 
           <div style={styles.grid2}>
@@ -133,7 +156,7 @@ export default function Homepage() {
         </section>
 
         {/* HOW IT WORKS: makes the user flow obvious for presentations */}
-        <section style={styles.section}>
+       <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
           <h2 style={styles.sectionTitle}>How it works</h2>
 
           <div style={styles.grid3}>
@@ -164,7 +187,7 @@ export default function Homepage() {
         </section>
 
         {/* MANUFACTURERS: shows "browse by brand" and demonstrates reusable components */}
-        <section style={styles.section}>
+        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
           <h2 style={styles.sectionTitle}>Browse by manufacturer</h2>
 
           <div style={styles.manuWrap}>
@@ -175,8 +198,6 @@ export default function Homepage() {
                   description={m.description}
                   image={m.image}
                   link={m.link}
-                  width={m.width}
-                  height={m.height}
                 />
               </div>
             ))}
@@ -225,42 +246,53 @@ export default function Homepage() {
 const styles = {
   page: {
     position: "relative",
-    minHeight: "100vh",
+    minHeight: "100dvh",
     overflowX: "hidden",
   },
 
   // Background image layer (separate from content so we can darken it)
   background: {
-    position: "absolute",
-    inset: 0,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    filter: "brightness(0.55)",
-    transform: "scale(1.02)",
-  },
+  position: "fixed",          // <-- fixed is more stable on iOS than absolute here
+  inset: 0,
+  filter: "brightness(0.55)",
+  pointerEvents: "none",      // <-- IMPORTANT: background can't “steal” touches
+  transform: "none",          // <-- IMPORTANT: remove transforms (iOS scroll bug)
+},
+
 
   // Main content container
   content: {
     position: "relative",
     zIndex: 1,
-    padding: "28px",
+    padding: "clamp(14px, 4vw, 28px)",
+    paddingBottom: "90px",
     maxWidth: "1100px",
+    width: "min(1100px, 100%)",
+    margin: "0 auto",
   },
 
   // Hero section
   hero: {
-    padding: "22px 18px",
+    padding: "clamp(18px, 5vw, 28px)",
     borderRadius: "14px",
     background: "rgba(0,0,0,0.45)",
     border: "1px solid rgba(255,255,255,0.12)",
     marginBottom: "22px",
-    backdropFilter: "blur(4px)",
+    backdropFilter: "none",
+
   },
-  title: { color: "white", margin: 0, fontSize: "44px", fontWeight: 800 },
+  title: {
+    color: "white",
+    margin: 0,
+    fontSize: "clamp(28px, 6vw, 44px)",
+    fontWeight: 800,
+    lineHeight: 1.1,
+  },
   subtitle: {
     color: "rgba(255,255,255,0.9)",
     marginTop: "10px",
-    fontSize: "18px",
+    fontSize: "clamp(14px, 2.6vw, 18px)",
+    lineHeight: 1.4,
   },
 
   // Buttons
@@ -272,7 +304,7 @@ const styles = {
   },
   button: {
     display: "inline-block",
-    padding: "10px 14px",
+    padding: "12px 18px",
     borderRadius: "10px",
     fontWeight: 700,
     textDecoration: "none",
@@ -294,14 +326,14 @@ const styles = {
     borderRadius: "14px",
     background: "rgba(0,0,0,0.45)",
     border: "1px solid rgba(255,255,255,0.12)",
-    backdropFilter: "blur(4px)",
+    backdropFilter: "none",
   },
   sectionTitle: { color: "white", marginTop: 0, marginBottom: "12px" },
 
   // Layout grids
   grid2: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
     gap: "14px",
   },
   grid3: {
@@ -346,7 +378,7 @@ const styles = {
   // Manufacturer cards wrapper
   manuWrap: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
     gap: "14px",
   },
   manuCard: {
@@ -355,6 +387,12 @@ const styles = {
     background: "rgba(255,255,255,0.06)",
     border: "1px solid rgba(255,255,255,0.12)",
   },
+
+  glass: {
+    backdropFilter: "blur(4px)",
+    WebkitBackdropFilter: "blur(4px)", // Safari support
+  },
+
 
   // Footer
   footer: { marginTop: "18px", color: "rgba(255,255,255,0.85)" },
