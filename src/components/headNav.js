@@ -21,21 +21,6 @@ export default function HeaderNav({ makes = [] }) {
   return (
     <header style={styles.header}>
       {/* Top bar (hidden on mobile via CSS) */}
-      <div className="topBar" style={styles.topBar}>
-        <div style={styles.topLeft}>
-          <span style={styles.topItem}>📞 (909) 543-1450</span>
-          <span style={styles.dot}>•</span>
-          <button type="button" style={styles.langBtn}>
-            🌐 Select Language ▾
-          </button>
-        </div>
-
-        <div style={styles.topRight}>
-          <span style={styles.topItem}>
-            📍 1731 South Cactus Ave, Rialto, CA 92316
-          </span>
-        </div>
-      </div>
 
       {/* Main nav */}
       <div style={styles.navRow}>
