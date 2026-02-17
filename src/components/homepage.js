@@ -68,7 +68,7 @@ export default function Homepage() {
         style={{
           ...styles.background,
           backgroundImage: `url(${base}/index/cars.jpeg)`,
-          backgroundSize: isMobile ? "contain" : "cover",
+          backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
           backgroundColor: "black",
