@@ -24,6 +24,19 @@
   color: white;
 }
 
+@media (max-width: 860px) {
+  .navLinksDesktop {
+    display: none !important;
+  }
+  .mobileBtn {
+    display: inline-block !important;
+  }
+  .mobilePanel {
+    display: block !important;
+  }
+}
+
+
 .App-link {
   color: #61dafb;
 }

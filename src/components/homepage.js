@@ -1,33 +1,23 @@
 // Homepage.js
-// Purpose:
-// - Main landing page for the Car Dealership system (student-facing + employee-facing)
-// - Highlights the "personalized consultation for college students" requirement
-// - Provides navigation entry points for inventory, consultation, login, and dashboard
-// - Renders manufacturers dynamically using a reusable ManufacturerCard component
-//
-// Note on GitHub Pages:
-// - We use process.env.PUBLIC_URL for all images so they load correctly when the app
-//   is hosted at https://username.github.io/repo-name/ (subpath hosting).
 
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import ManufacturerCard from "./ManufacturerCard";
+import HeroSlider from "./heroSlider"; // change to "./HeroSlider" if file is HeroSlider.js
 
 export default function Homepage() {
-  // PUBLIC_URL ensures correct asset paths in production (especially GitHub Pages).
-  // Example deployed base:
-  // https://JaredG192.github.io/Car-Dealership-Project
   const base = process.env.PUBLIC_URL;
 
-  // Detect mobile screens so background can be "contain" on phones and "cover" on desktop
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedMake, setSelectedMake] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const onChange = (e) => setIsMobile(e.matches);
 
-    setIsMobile(mq.matches); // initial
+    setIsMobile(mq.matches);
 
-    // Modern browsers
     if (mq.addEventListener) {
       mq.addEventListener("change", onChange);
       return () => mq.removeEventListener("change", onChange);
@@ -38,114 +28,132 @@ export default function Homepage() {
     return () => mq.removeListener(onChange);
   }, []);
 
-  // Manufacturer data used to render brand cards dynamically.
-  // Later: replace this with backend inventory/manufacturer endpoints if desired.
+  // Manufacturer list (student-friendly brands)
   const manufacturers = [
-    {
-      name: "Nissan",
-      description: "Browse Nissan models in our inventory.",
-      image: `${base}/index/Nissan.png`,
-      link: "/nissan", // Later: route to Nissan page or filtered inventory
-    },
-    {
-      name: "Porsche",
-      description: "Browse Porsche models in our inventory.",
-      image: `${base}/index/Porsche.png`,
-      link: "/porsche",
-    },
-    {
-      name: "Toyota",
-      description: "Browse Toyota models in our inventory.",
-      image: `${base}/index/Toyota.png`,
-      link: "/toyota",
-    },
+    { name: "Nissan", description: "Browse Nissan models in our inventory.", image: `${base}/index/Nissan.png`, link: "/nissan" },
+    { name: "Toyota", description: "Browse Toyota models in our inventory.", image: `${base}/index/Toyota.png`, link: "/toyota" },
+    { name: "Honda", description: "Browse Honda models in our inventory.", image: `${base}/index/Honda.png`, link: "/honda" },
+    { name: "Subaru", description: "Browse Subaru models in our inventory.", image: `${base}/index/Subaru.png`, link: "/subaru" },
+    { name: "Mazda", description: "Browse Mazda models in our inventory.", image: `${base}/index/Mazda.png`, link: "/mazda" },
+    { name: "Kia", description: "Browse Kia models in our inventory.", image: `${base}/index/Kia.png`, link: "/kia" },
+    { name: "Ford", description: "Browse Ford models in our inventory.", image: `${base}/index/Ford.png`, link: "/ford" },
+    { name: "Chevrolet", description: "Browse Chevrolet models in our inventory.", image: `${base}/index/Chevrolet.png`, link: "/chevrolet" },
   ];
+
+  // Dropdown navigation (React Router safe)
+  const handleMakeChange = (e) => {
+    const value = e.target.value;
+    setSelectedMake(value);
+    if (value) navigate(value);
+  };
 
   return (
     <div style={styles.page}>
-      {/* Background layer (darkened for readability) */}
+      {/* Background */}
       <div
         style={{
           ...styles.background,
           backgroundImage: `url(${base}/index/cars.jpeg)`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          backgroundColor: "black",
         }}
       />
 
-      {/* Foreground content */}
+      {/* Content */}
       <div style={styles.content}>
-        {/* HERO: what this system is + primary calls-to-action */}
+        {/* HERO */}
         <section style={{ ...styles.hero, ...(isMobile ? {} : styles.glass) }}>
-          <h1 style={styles.title}>Car Dealership</h1>
+          <h1 style={styles.title}>CampusCars</h1>
+
           <p style={styles.subtitle}>
-            Student-friendly used cars + personalized purchase consultation.
+            Affordable, student-friendly used cars + personalized purchase consultation.
           </p>
 
-          {/* Primary actions for the student-facing side */}
-          <div style={styles.heroButtons}>
-            <a href="/inventory" style={{ ...styles.button, ...styles.primary }}>
-              Browse Inventory
-            </a>
-            <a href="/consultation" style={{ ...styles.button, ...styles.secondary }}>
-              Get Consultation
-            </a>
+          {/* CarFam-style hero banner slider */}
+          <div style={styles.heroSliderWrap}>
+            <HeroSlider
+              slides={[
+                {
+                  image: `${base}/index/hero1.jpg`,
+                  title: "Affordable Cars for College Students",
+                  subtitle:
+                    "Browse reliable used vehicles + get personalized buying advice.",
+                  ctas: [
+                    { label: "Browse Inventory", href: "/inventory", variant: "primary" },
+                    { label: "Get Consultation", href: "/consultation", variant: "secondary" },
+                  ],
+                },
+                {
+                  image: `${base}/index/hero2.jpg`,
+                  title: "Find the Right Car Fast",
+                  subtitle: "Filter by budget, mileage, and your needs.",
+                  ctas: [{ label: "View Cars", href: "/inventory", variant: "primary" }],
+                },
+                {
+                  image: `${base}/index/hero3.jpg`,
+                  title: "Student-Friendly Guidance",
+                  subtitle: "We help you choose a car that fits your life and your budget.",
+                  ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
+                },
+              ]}
+              height="clamp(300px, 55vw, 520px)"
+            />
           </div>
 
-          {/* Employee-facing entry point (role-based access happens after login) */}
+          {/* Employee notice */}
           <div style={styles.notice}>
             <strong>For Employees:</strong>{" "}
-            <a href="/login" style={styles.inlineLink}>
+            <Link to="/login" style={styles.inlineLink}>
               Login
-            </a>{" "}
+            </Link>{" "}
             to manage vehicles, consultations, and reports.
           </div>
         </section>
 
-        {/* PORTALS: explicitly connects to your thesis requirements */}
+        {/* PORTALS */}
         <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
           <h2 style={styles.sectionTitle}>Portals</h2>
 
           <div style={styles.grid2}>
-            {/* Student Portal card */}
+            {/* Student */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>Student Portal</h3>
+
               <ul style={styles.list}>
                 <li>Browse used vehicles</li>
-                <li>Filter by budget, mileage, and needs</li>
-                <li>Book a consultation or test drive</li>
-                <li>Get recommendations based on your preferences</li>
+                <li>Filter by budget and mileage</li>
+                <li>Book consultations</li>
+                <li>Get recommendations</li>
               </ul>
 
               <div style={styles.cardButtons}>
-                <a href="/inventory" style={{ ...styles.button, ...styles.primary }}>
+                <Link to="/inventory" style={{ ...styles.button, ...styles.primary }}>
                   View Cars
-                </a>
-                <a href="/consultation" style={{ ...styles.button, ...styles.secondary }}>
+                </Link>
+
+                <Link to="/consultation" style={{ ...styles.button, ...styles.secondary }}>
                   Book Consultation
-                </a>
+                </Link>
               </div>
             </div>
 
-            {/* Employee Portal card */}
+            {/* Employee */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>Employee Portal</h3>
+
               <ul style={styles.list}>
-                <li>Role-based access (Sales / Manager / Admin)</li>
-                <li>Manage inventory and vehicle details</li>
-                <li>Track consultations and customer requests</li>
-                <li>View reports and analytics</li>
+                <li>Manage inventory</li>
+                <li>Track consultations</li>
+                <li>View reports</li>
+                <li>Admin controls</li>
               </ul>
 
               <div style={styles.cardButtons}>
-                <a href="/login" style={{ ...styles.button, ...styles.primary }}>
+                <Link to="/login" style={{ ...styles.button, ...styles.primary }}>
                   Employee Login
-                </a>
-                <a href="/dashboard" style={{ ...styles.button, ...styles.secondary }}>
+                </Link>
+
+                <Link to="/dashboard" style={{ ...styles.button, ...styles.secondary }}>
                   Dashboard
-                </a>
+                </Link>
               </div>
 
               <p style={styles.smallText}>
@@ -155,84 +163,78 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* HOW IT WORKS: makes the user flow obvious for presentations */}
-       <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
-          <h2 style={styles.sectionTitle}>How it works</h2>
+        {/* HOW IT WORKS */}
+        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
+          <h2 style={styles.sectionTitle}>How it Works</h2>
 
           <div style={styles.grid3}>
-            <div style={styles.stepCard}>
-              <div style={styles.stepNum}>1</div>
-              <h4 style={styles.stepTitle}>Browse</h4>
-              <p style={styles.stepText}>
-                Explore used vehicles and compare options.
-              </p>
-            </div>
+            {["Browse", "Match", "Consult"].map((step, i) => (
+              <div key={i} style={styles.stepCard}>
+                <div style={styles.stepNum}>{i + 1}</div>
 
-            <div style={styles.stepCard}>
-              <div style={styles.stepNum}>2</div>
-              <h4 style={styles.stepTitle}>Match</h4>
-              <p style={styles.stepText}>
-                Tell us your budget and needs to get personalized recommendations.
-              </p>
-            </div>
+                <h4 style={styles.stepTitle}>{step}</h4>
 
-            <div style={styles.stepCard}>
-              <div style={styles.stepNum}>3</div>
-              <h4 style={styles.stepTitle}>Consult</h4>
-              <p style={styles.stepText}>
-                Book a consultation/test drive with a dealership consultant.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* MANUFACTURERS: shows "browse by brand" and demonstrates reusable components */}
-        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
-          <h2 style={styles.sectionTitle}>Browse by manufacturer</h2>
-
-          <div style={styles.manuWrap}>
-            {manufacturers.map((m) => (
-              <div key={m.name} style={styles.manuCard}>
-                <ManufacturerCard
-                  name={m.name}
-                  description={m.description}
-                  image={m.image}
-                  link={m.link}
-                />
+                <p style={styles.stepText}>
+                  {step === "Browse" && "Explore vehicles and compare options."}
+                  {step === "Match" &&
+                    "Tell us your budget and needs for student-friendly recommendations."}
+                  {step === "Consult" &&
+                    "Book a consultation/test drive with a dealership consultant."}
+                </p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* FOOTER: external links (kept from your original HTML concept) */}
+        {/* MANUFACTURERS */}
+        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
+          <h2 style={styles.sectionTitle}>Browse by Manufacturer</h2>
+
+          {/* Dropdown */}
+          <div style={styles.dropdownRow}>
+            <label style={styles.dropdownLabel} htmlFor="makeSelect">
+              Shop by:
+            </label>
+
+            <select
+              id="makeSelect"
+              value={selectedMake}
+              onChange={handleMakeChange}
+              style={styles.select}
+            >
+              <option value="">Select a brand</option>
+              {manufacturers.map((m) => (
+                <option key={m.name} value={m.link}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Cards */}
+          <div style={styles.manuWrap}>
+            {manufacturers.map((m) => (
+              <div key={m.name} style={styles.manuCard}>
+                <ManufacturerCard {...m} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FOOTER */}
         <footer style={styles.footer}>
           <small>
-            Visit official sites for more info:{" "}
-            <a
-              href="https://www.nissanusa.com/"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.inlineLink}
-            >
+            Official sites:{" "}
+            <a href="https://www.nissanusa.com/" target="_blank" rel="noreferrer" style={styles.inlineLink}>
               Nissan
             </a>
             ,{" "}
-            <a
-              href="https://www.porsche.com/"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.inlineLink}
-            >
-              Porsche
+            <a href="https://www.toyota.com/" target="_blank" rel="noreferrer" style={styles.inlineLink}>
+              Toyota
             </a>
             ,{" "}
-            <a
-              href="https://www.toyota.com/"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.inlineLink}
-            >
-              Toyota
+            <a href="https://automobiles.honda.com/" target="_blank" rel="noreferrer" style={styles.inlineLink}>
+              Honda
             </a>
           </small>
         </footer>
@@ -241,8 +243,8 @@ export default function Homepage() {
   );
 }
 
-// Inline styles for quick iteration.
-// Later: you can move these into a CSS file or CSS modules if your team prefers.
+/* ================== STYLES ================== */
+
 const styles = {
   page: {
     position: "relative",
@@ -250,137 +252,142 @@ const styles = {
     overflowX: "hidden",
   },
 
-  // Background image layer (separate from content so we can darken it)
   background: {
-  position: "fixed",          // <-- fixed is more stable on iOS than absolute here
-  inset: 0,
-  filter: "brightness(0.55)",
-  pointerEvents: "none",      // <-- IMPORTANT: background can't “steal” touches
-  transform: "none",          // <-- IMPORTANT: remove transforms (iOS scroll bug)
-},
+    position: "fixed",
+    inset: 0,
+    filter: "brightness(0.60)",
+    pointerEvents: "none",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  },
 
-
-  // Main content container
   content: {
     position: "relative",
     zIndex: 1,
     padding: "clamp(14px, 4vw, 28px)",
-    paddingBottom: "90px",
     maxWidth: "1100px",
-    width: "min(1100px, 100%)",
     margin: "0 auto",
   },
 
-  // Hero section
   hero: {
-    padding: "clamp(18px, 5vw, 28px)",
+    padding: "22px",
     borderRadius: "14px",
     background: "rgba(0,0,0,0.45)",
     border: "1px solid rgba(255,255,255,0.12)",
     marginBottom: "22px",
-    backdropFilter: "none",
-
   },
+
   title: {
     color: "white",
     margin: 0,
     fontSize: "clamp(28px, 6vw, 44px)",
-    fontWeight: 800,
-    lineHeight: 1.1,
+    fontWeight: 900,
+    textShadow: "0 4px 20px rgba(0,0,0,0.6)",
   },
+
   subtitle: {
     color: "rgba(255,255,255,0.9)",
     marginTop: "10px",
-    fontSize: "clamp(14px, 2.6vw, 18px)",
     lineHeight: 1.4,
   },
 
-  // Buttons
-  heroButtons: {
-    display: "flex",
-    gap: "12px",
-    marginTop: "16px",
-    flexWrap: "wrap",
+  heroSliderWrap: {
+    marginTop: "14px",
+    borderRadius: "12px",
+    overflow: "hidden",
   },
+
   button: {
     display: "inline-block",
     padding: "12px 18px",
     borderRadius: "10px",
-    fontWeight: 700,
+    fontWeight: 800,
     textDecoration: "none",
   },
+
   primary: { background: "white", color: "black" },
+
   secondary: {
     background: "rgba(255,255,255,0.16)",
     color: "white",
     border: "1px solid rgba(255,255,255,0.25)",
   },
 
-  notice: { marginTop: "14px", color: "rgba(255,255,255,0.9)" },
+  notice: { marginTop: "14px", color: "rgba(255,255,255,0.92)" },
+
   inlineLink: { color: "white", textDecoration: "underline" },
 
-  // General sections
   section: {
     marginTop: "18px",
     padding: "18px",
     borderRadius: "14px",
     background: "rgba(0,0,0,0.45)",
     border: "1px solid rgba(255,255,255,0.12)",
-    backdropFilter: "none",
   },
+
   sectionTitle: { color: "white", marginTop: 0, marginBottom: "12px" },
 
-  // Layout grids
   grid2: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: "14px",
-  },
-  grid3: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
     gap: "14px",
   },
 
-  // Portal cards
+  grid3: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+    gap: "14px",
+  },
+
   card: {
     borderRadius: "12px",
     padding: "14px",
     background: "rgba(255,255,255,0.08)",
     border: "1px solid rgba(255,255,255,0.12)",
   },
+
   cardTitle: { color: "white", marginTop: 0 },
+
   list: { color: "rgba(255,255,255,0.92)", margin: "10px 0 0 18px" },
-  cardButtons: { display: "flex", gap: "10px", marginTop: "12px", flexWrap: "wrap" },
+
+  cardButtons: {
+    display: "flex",
+    gap: "10px",
+    marginTop: "12px",
+    flexWrap: "wrap",
+  },
+
   smallText: { color: "rgba(255,255,255,0.8)", marginTop: "10px", fontSize: "12px" },
 
-  // Steps
   stepCard: {
     borderRadius: "12px",
     padding: "14px",
     background: "rgba(255,255,255,0.08)",
     border: "1px solid rgba(255,255,255,0.12)",
   },
+
   stepNum: {
     width: "32px",
     height: "32px",
-    borderRadius: "10px",
-    display: "grid",
-    placeItems: "center",
     background: "white",
     color: "black",
     fontWeight: 900,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: "10px",
     marginBottom: "10px",
   },
+
   stepTitle: { color: "white", margin: "0 0 6px 0" },
+
   stepText: { color: "rgba(255,255,255,0.9)", margin: 0 },
 
-  // Manufacturer cards wrapper
   manuWrap: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
     gap: "14px",
   },
+
   manuCard: {
     borderRadius: "12px",
     padding: "10px",
@@ -388,12 +395,36 @@ const styles = {
     border: "1px solid rgba(255,255,255,0.12)",
   },
 
-  glass: {
-    backdropFilter: "blur(4px)",
-    WebkitBackdropFilter: "blur(4px)", // Safari support
+  dropdownRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "12px",
+    flexWrap: "wrap",
   },
 
+  dropdownLabel: {
+    color: "white",
+    fontWeight: 800,
+  },
 
-  // Footer
-  footer: { marginTop: "18px", color: "rgba(255,255,255,0.85)" },
+  select: {
+    padding: "10px 12px",
+    borderRadius: "10px",
+    border: "1px solid rgba(255,255,255,0.25)",
+    background: "rgba(0,0,0,0.35)",
+    color: "white",
+    fontWeight: 800,
+    outline: "none",
+  },
+
+  glass: {
+    backdropFilter: "blur(4px)",
+    WebkitBackdropFilter: "blur(4px)",
+  },
+
+  footer: {
+    marginTop: "18px",
+    color: "rgba(255,255,255,0.85)",
+  },
 };

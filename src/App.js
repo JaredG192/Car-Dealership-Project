@@ -1,39 +1,62 @@
-/*
-  App.js
-
-  Purpose:
-  - Root component of the React application
-  - Acts as the main controller for rendering pages
-  - Connects the entry point (index.js) to the homepage
-  - Later: will manage routing between multiple pages
-
-  Project:
-  Car Dealership Management System
-
-  Author: Jared Gonzalez
-  Role: Frontend Developer
-*/
-
 import React from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
+
 import Homepage from "./components/homepage";
+import HeaderNav from "./components/headNav";
 
-/*
-  App Component
+const makes = [
+  { name: "Nissan", link: "/nissan" },
+  { name: "Toyota", link: "/toyota" },
+  { name: "Honda", link: "/honda" },
+  { name: "Subaru", link: "/subaru" },
+  { name: "Mazda", link: "/mazda" },
+  { name: "Kia", link: "/kia" },
+  { name: "Ford", link: "/ford" },
+  { name: "Chevrolet", link: "/chevrolet" },
+];
 
-  This is the main component rendered by ReactDOM in index.js.
-  Currently, it displays the Homepage component.
-
-  In future versions, this file can be extended to:
-  - Add React Router
-  - Handle authentication
-  - Control user roles and navigation
-*/
-function App() {
+function ComingSoon({ title }) {
   return (
-    // Render the homepage as the main entry view
-    <Homepage />
+    <div style={{ padding: 32, textAlign: "center" }}>
+      <h2>{title}</h2>
+      <p>🚧 This page is coming soon.</p>
+      <p>
+        <a href="#/" style={{ color: "#0ea5e9", fontWeight: 700 }}>
+          ← Back to Homepage
+        </a>
+      </p>
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <HashRouter>
+      <HeaderNav makes={makes} />
 
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+
+        <Route path="/inventory" element={<ComingSoon title="Inventory" />} />
+        <Route path="/consultation" element={<ComingSoon title="Consultation" />} />
+        <Route path="/login" element={<ComingSoon title="Employee Login" />} />
+        <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
+        <Route path="/finance" element={<ComingSoon title="Finance" />} />
+        <Route path="/about" element={<ComingSoon title="About Us" />} />
+        <Route path="/customers" element={<ComingSoon title="Our Customers" />} />
+
+        {/* manufacturer routes placeholder */}
+        <Route path="/nissan" element={<ComingSoon title="Nissan" />} />
+        <Route path="/toyota" element={<ComingSoon title="Toyota" />} />
+        <Route path="/honda" element={<ComingSoon title="Honda" />} />
+        <Route path="/subaru" element={<ComingSoon title="Subaru" />} />
+        <Route path="/mazda" element={<ComingSoon title="Mazda" />} />
+        <Route path="/kia" element={<ComingSoon title="Kia" />} />
+        <Route path="/ford" element={<ComingSoon title="Ford" />} />
+        <Route path="/chevrolet" element={<ComingSoon title="Chevrolet" />} />
+
+        <Route path="*" element={<ComingSoon title="Page Not Found" />} />
+      </Routes>
+    </HashRouter>
+  );
+}
