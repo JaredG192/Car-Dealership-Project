@@ -1,0 +1,17 @@
+@media (max-width: 768px) {
+  .topBar {
+    display: none !important;
+  }
+
+  .navLinksDesktop {
+    display: none !important;
+  }
+
+  .mobileBtn {
+    display: inline-flex !important;
+  }
+
+  .mobilePanel {
+    display: block !important;
+  }
+}

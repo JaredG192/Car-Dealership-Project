@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import "./headNav.css";
 
 export default function HeaderNav({ makes = [] }) {
   const navigate = useNavigate();
@@ -19,8 +20,8 @@ export default function HeaderNav({ makes = [] }) {
 
   return (
     <header style={styles.header}>
-      {/* Top bar */}
-      <div style={styles.topBar}>
+      {/* Top bar (hidden on mobile via CSS) */}
+      <div className="topBar" style={styles.topBar}>
         <div style={styles.topLeft}>
           <span style={styles.topItem}>📞 (909) 543-1450</span>
           <span style={styles.dot}>•</span>
@@ -30,11 +31,13 @@ export default function HeaderNav({ makes = [] }) {
         </div>
 
         <div style={styles.topRight}>
-          <span style={styles.topItem}>📍 1731 South Cactus Ave, Rialto, CA 92316</span>
+          <span style={styles.topItem}>
+            📍 1731 South Cactus Ave, Rialto, CA 92316
+          </span>
         </div>
       </div>
 
-      {/* Main nav row */}
+      {/* Main nav */}
       <div style={styles.navRow}>
         {/* Logo */}
         <Link to="/" style={styles.logoWrap} onClick={() => setOpen(false)}>
@@ -44,37 +47,37 @@ export default function HeaderNav({ makes = [] }) {
 
         {/* Desktop nav */}
         <nav className="navLinksDesktop" style={styles.navLinks}>
-          <Link to="/inventory" style={{ ...styles.navLink, ...(isActive("/inventory") ? styles.active : {}) }}>
+          <NavLink to="/inventory" active={isActive("/inventory")}>
             Inventory
-          </Link>
+          </NavLink>
 
-          <Link to="/finance" style={{ ...styles.navLink, ...(isActive("/finance") ? styles.active : {}) }}>
+          <NavLink to="/finance" active={isActive("/finance")}>
             Finance
-          </Link>
+          </NavLink>
 
-          <Link
-            to="/consultation"
-            style={{ ...styles.navLink, ...(isActive("/consultation") ? styles.active : {}) }}
-          >
+          <NavLink to="/consultation" active={isActive("/consultation")}>
             Consultation
-          </Link>
+          </NavLink>
 
-          <Link to="/about" style={{ ...styles.navLink, ...(isActive("/about") ? styles.active : {}) }}>
+          <NavLink to="/about" active={isActive("/about")}>
             About Us
-          </Link>
+          </NavLink>
 
-          <Link
-            to="/customers"
-            style={{ ...styles.navLink, ...(isActive("/customers") ? styles.active : {}) }}
-          >
+          <NavLink to="/customers" active={isActive("/customers")}>
             Our Customers
-          </Link>
+          </NavLink>
 
-          {/* Shop by Make dropdown */}
+          {/* Make dropdown */}
           <div style={styles.makeWrap}>
             <span style={styles.navLink}>Shop by Make</span>
-            <select defaultValue="" onChange={onMakeSelect} style={styles.makeSelect}>
+
+            <select
+              defaultValue=""
+              onChange={onMakeSelect}
+              style={styles.makeSelect}
+            >
               <option value="">Select</option>
+
               {makeOptions.map((m) => (
                 <option key={m.name} value={m.link}>
                   {m.name}
@@ -88,7 +91,7 @@ export default function HeaderNav({ makes = [] }) {
           </Link>
         </nav>
 
-        {/* Mobile menu button */}
+        {/* Mobile hamburger */}
         <button
           className="mobileBtn"
           type="button"
@@ -100,29 +103,39 @@ export default function HeaderNav({ makes = [] }) {
         </button>
       </div>
 
-      {/* Mobile panel */}
+      {/* Mobile dropdown */}
       {open && (
         <div className="mobilePanel" style={styles.mobilePanel}>
-          <Link to="/inventory" style={styles.mobileLink} onClick={() => setOpen(false)}>
+          <MobileLink to="/inventory" setOpen={setOpen}>
             Inventory
-          </Link>
-          <Link to="/finance" style={styles.mobileLink} onClick={() => setOpen(false)}>
+          </MobileLink>
+
+          <MobileLink to="/finance" setOpen={setOpen}>
             Finance
-          </Link>
-          <Link to="/consultation" style={styles.mobileLink} onClick={() => setOpen(false)}>
+          </MobileLink>
+
+          <MobileLink to="/consultation" setOpen={setOpen}>
             Consultation
-          </Link>
-          <Link to="/about" style={styles.mobileLink} onClick={() => setOpen(false)}>
+          </MobileLink>
+
+          <MobileLink to="/about" setOpen={setOpen}>
             About Us
-          </Link>
-          <Link to="/customers" style={styles.mobileLink} onClick={() => setOpen(false)}>
+          </MobileLink>
+
+          <MobileLink to="/customers" setOpen={setOpen}>
             Our Customers
-          </Link>
+          </MobileLink>
 
           <div style={styles.mobileMakeRow}>
             <span style={styles.mobileLabel}>Shop by Make:</span>
-            <select defaultValue="" onChange={onMakeSelect} style={styles.mobileSelect}>
+
+            <select
+              defaultValue=""
+              onChange={onMakeSelect}
+              style={styles.mobileSelect}
+            >
               <option value="">Select</option>
+
               {makeOptions.map((m) => (
                 <option key={m.name} value={m.link}>
                   {m.name}
@@ -131,7 +144,11 @@ export default function HeaderNav({ makes = [] }) {
             </select>
           </div>
 
-          <Link to="/login" style={styles.mobileCta} onClick={() => setOpen(false)}>
+          <Link
+            to="/login"
+            style={styles.mobileCta}
+            onClick={() => setOpen(false)}
+          >
             Employee Login
           </Link>
         </div>
@@ -140,6 +157,36 @@ export default function HeaderNav({ makes = [] }) {
   );
 }
 
+/* Helper components */
+
+function NavLink({ to, active, children }) {
+  return (
+    <Link
+      to={to}
+      style={{
+        ...styles.navLink,
+        ...(active ? styles.active : {}),
+      }}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function MobileLink({ to, setOpen, children }) {
+  return (
+    <Link
+      to={to}
+      style={styles.mobileLink}
+      onClick={() => setOpen(false)}
+    >
+      {children}
+    </Link>
+  );
+}
+
+/* Styles */
+
 const styles = {
   header: {
     position: "sticky",
@@ -147,29 +194,26 @@ const styles = {
     zIndex: 50,
     background: "rgba(255,255,255,0.92)",
     backdropFilter: "blur(8px)",
-    WebkitBackdropFilter: "blur(8px)",
     borderBottom: "1px solid rgba(0,0,0,0.08)",
   },
 
   topBar: {
     display: "flex",
     justifyContent: "space-between",
-    gap: 12,
     padding: "8px 16px",
     fontSize: 12,
-    color: "rgba(0,0,0,0.72)",
     background: "rgba(0,0,0,0.03)",
   },
-  topLeft: { display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" },
-  topRight: { display: "flex", alignItems: "center" },
+
+  topLeft: { display: "flex", gap: 10 },
+  topRight: {},
   topItem: { whiteSpace: "nowrap" },
   dot: { opacity: 0.5 },
+
   langBtn: {
     border: "none",
     background: "transparent",
     cursor: "pointer",
-    color: "rgba(0,0,0,0.72)",
-    padding: 0,
     fontSize: 12,
   },
 
@@ -177,95 +221,101 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 14,
     padding: "12px 16px",
   },
 
-  logoWrap: { textDecoration: "none", display: "flex", alignItems: "baseline", gap: 2 },
-  logoA: { fontWeight: 900, fontSize: 28, color: "#0ea5e9", letterSpacing: -0.5 },
-  logoB: { fontWeight: 900, fontSize: 28, color: "#f43f5e", letterSpacing: -0.5 },
+  logoWrap: {
+    textDecoration: "none",
+    display: "flex",
+    gap: 2,
+  },
 
-  navLinks: { display: "flex", alignItems: "center", gap: 16 },
+  logoA: { fontWeight: 900, fontSize: 28, color: "#0ea5e9" },
+  logoB: { fontWeight: 900, fontSize: 28, color: "#f43f5e" },
+
+  navLinks: {
+    display: "flex",
+    gap: 16,
+    alignItems: "center",
+  },
 
   navLink: {
     textDecoration: "none",
-    color: "rgba(0,0,0,0.78)",
+    color: "rgba(0,0,0,0.8)",
     fontWeight: 800,
     fontSize: 14,
   },
 
   active: {
     textDecoration: "underline",
-    textUnderlineOffset: 6,
   },
 
-  makeWrap: { display: "flex", alignItems: "center", gap: 8 },
+  makeWrap: { display: "flex", gap: 8 },
+
   makeSelect: {
     borderRadius: 999,
-    padding: "8px 10px",
+    padding: "6px 10px",
     border: "1px solid rgba(0,0,0,0.15)",
-    background: "white",
-    fontWeight: 800,
-    fontSize: 13,
-    cursor: "pointer",
   },
 
   navCta: {
     textDecoration: "none",
-    padding: "10px 14px",
+    padding: "8px 14px",
     borderRadius: 999,
-    background: "rgba(0,0,0,0.86)",
+    background: "#000",
     color: "white",
     fontWeight: 900,
     fontSize: 13,
-    whiteSpace: "nowrap",
   },
 
   mobileBtn: {
     display: "none",
     border: "1px solid rgba(0,0,0,0.15)",
     background: "white",
-    borderRadius: 10,
-    padding: "8px 10px",
+    borderRadius: 8,
+    padding: "6px 10px",
+    fontSize: 18,
     cursor: "pointer",
-    fontSize: 16,
-    fontWeight: 900,
   },
 
   mobilePanel: {
     display: "none",
-    padding: "12px 16px 16px 16px",
-    borderTop: "1px solid rgba(0,0,0,0.08)",
-    background: "rgba(255,255,255,0.98)",
+    padding: "12px 16px",
+    background: "white",
   },
 
   mobileLink: {
     display: "block",
     padding: "10px 0",
-    textDecoration: "none",
-    color: "rgba(0,0,0,0.78)",
     fontWeight: 900,
+    textDecoration: "none",
+    color: "#000",
   },
 
-  mobileMakeRow: { display: "flex", gap: 10, alignItems: "center", padding: "10px 0" },
-  mobileLabel: { fontWeight: 900, color: "rgba(0,0,0,0.72)" },
+  mobileMakeRow: {
+    display: "flex",
+    gap: 8,
+    padding: "10px 0",
+    alignItems: "center",
+  },
+
+  mobileLabel: { fontWeight: 900 },
+
   mobileSelect: {
     flex: 1,
-    borderRadius: 12,
-    padding: "10px 12px",
-    border: "1px solid rgba(0,0,0,0.15)",
-    background: "white",
-    fontWeight: 800,
+    padding: "8px",
+    borderRadius: 8,
   },
 
   mobileCta: {
-    display: "inline-block",
-    marginTop: 8,
-    textDecoration: "none",
-    padding: "12px 14px",
-    borderRadius: 12,
-    background: "rgba(0,0,0,0.86)",
+    display: "block",
+    marginTop: 10,
+    textAlign: "center",
+    padding: "10px",
+    background: "#000",
     color: "white",
+    borderRadius: 10,
+    textDecoration: "none",
     fontWeight: 900,
   },
 };
