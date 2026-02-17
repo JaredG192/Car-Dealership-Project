@@ -49,56 +49,41 @@ export default function Homepage() {
 
   return (
     <div style={styles.page}>
-      {/* Background */}
-      <div
-        style={{
-          ...styles.background,
-          backgroundImage: `url(${base}/index/cars.jpeg)`,
-        }}
-      />
+      {/* FULL-WIDTH HERO SLIDER (top of page) */}
+      <section style={styles.heroBanner}>
+        <div style={styles.heroSliderFullWidth}>
+          <HeroSlider
+            slides={[
+              {
+                image: `${base}/index/hero1.jpg`,
+                title: "Affordable Cars for College Students",
+                subtitle: "Browse reliable used vehicles + get personalized buying advice.",
+                ctas: [
+                  { label: "Browse Inventory", href: "/inventory", variant: "primary" },
+                  { label: "Get Consultation", href: "/consultation", variant: "secondary" },
+                ],
+              },
+              {
+                image: `${base}/index/hero2.jpg`,
+                title: "Find the Right Car Fast",
+                subtitle: "Filter by budget, mileage, and your needs.",
+                ctas: [{ label: "View Cars", href: "/inventory", variant: "primary" }],
+              },
+              {
+                image: `${base}/index/hero3.jpg`,
+                title: "Student-Friendly Guidance",
+                subtitle: "We help you choose a car that fits your life and your budget.",
+                ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
+              },
+            ]}
+            height={isMobile ? "420px" : "620px"}
+          />
+        </div>
+      </section>
 
-      {/* Content */}
-      <div style={styles.content}>
-        {/* HERO */}
-        <section style={{ ...styles.hero, ...(isMobile ? {} : styles.glass) }}>
-          <h1 style={styles.title}>CampusCars</h1>
-
-          <p style={styles.subtitle}>
-            Affordable, student-friendly used cars + personalized purchase consultation.
-          </p>
-
-          {/* CarFam-style hero banner slider */}
-          <div style={styles.heroSliderWrap}>
-            <HeroSlider
-              slides={[
-                {
-                  image: `${base}/index/hero1.jpg`,
-                  title: "Affordable Cars for College Students",
-                  subtitle:
-                    "Browse reliable used vehicles + get personalized buying advice.",
-                  ctas: [
-                    { label: "Browse Inventory", href: "/inventory", variant: "primary" },
-                    { label: "Get Consultation", href: "/consultation", variant: "secondary" },
-                  ],
-                },
-                {
-                  image: `${base}/index/hero2.jpg`,
-                  title: "Find the Right Car Fast",
-                  subtitle: "Filter by budget, mileage, and your needs.",
-                  ctas: [{ label: "View Cars", href: "/inventory", variant: "primary" }],
-                },
-                {
-                  image: `${base}/index/hero3.jpg`,
-                  title: "Student-Friendly Guidance",
-                  subtitle: "We help you choose a car that fits your life and your budget.",
-                  ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
-                },
-              ]}
-              height="clamp(300px, 55vw, 520px)"
-            />
-          </div>
-
-          {/* Employee notice */}
+      {/* EMPLOYEE NOTICE (centered under hero) */}
+      <div style={styles.noticeWrap}>
+        <div style={styles.container}>
           <div style={styles.notice}>
             <strong>For Employees:</strong>{" "}
             <Link to="/login" style={styles.inlineLink}>
@@ -106,10 +91,13 @@ export default function Homepage() {
             </Link>{" "}
             to manage vehicles, consultations, and reports.
           </div>
-        </section>
+        </div>
+      </div>
 
+      {/* CONTENT (centered sections below) */}
+      <div style={styles.content}>
         {/* PORTALS */}
-        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
+        <section style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>Portals</h2>
 
           <div style={styles.grid2}>
@@ -164,7 +152,7 @@ export default function Homepage() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
+        <section style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>How it Works</h2>
 
           <div style={styles.grid3}>
@@ -187,7 +175,7 @@ export default function Homepage() {
         </section>
 
         {/* MANUFACTURERS */}
-        <section style={{ ...styles.section, ...(isMobile ? {} : styles.glass) }}>
+        <section style={styles.sectionCard}>
           <h2 style={styles.sectionTitle}>Browse by Manufacturer</h2>
 
           {/* Dropdown */}
@@ -225,15 +213,15 @@ export default function Homepage() {
         <footer style={styles.footer}>
           <small>
             Official sites:{" "}
-            <a href="https://www.nissanusa.com/" target="_blank" rel="noreferrer" style={styles.inlineLink}>
+            <a href="https://www.nissanusa.com/" target="_blank" rel="noreferrer" style={styles.footerLink}>
               Nissan
             </a>
             ,{" "}
-            <a href="https://www.toyota.com/" target="_blank" rel="noreferrer" style={styles.inlineLink}>
+            <a href="https://www.toyota.com/" target="_blank" rel="noreferrer" style={styles.footerLink}>
               Toyota
             </a>
             ,{" "}
-            <a href="https://automobiles.honda.com/" target="_blank" rel="noreferrer" style={styles.inlineLink}>
+            <a href="https://automobiles.honda.com/" target="_blank" rel="noreferrer" style={styles.footerLink}>
               Honda
             </a>
           </small>
@@ -247,184 +235,205 @@ export default function Homepage() {
 
 const styles = {
   page: {
-    position: "relative",
-    minHeight: "100dvh",
-    overflowX: "hidden",
+    background: "#ffffff",
+    color: "#0f172a",
   },
 
-  background: {
-    position: "fixed",
-    inset: 0,
-    filter: "brightness(0.60)",
-    pointerEvents: "none",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-
-  content: {
-    position: "relative",
-    zIndex: 1,
-    padding: "clamp(14px, 4vw, 28px)",
-    maxWidth: "1100px",
+  container: {
+    width: "min(1100px, calc(100% - 32px))",
     margin: "0 auto",
   },
 
-  hero: {
-    padding: "22px",
-    borderRadius: "14px",
-    background: "rgba(0,0,0,0.45)",
-    border: "1px solid rgba(255,255,255,0.12)",
-    marginBottom: "22px",
+  /* Full-width hero banner */
+  heroBanner: {
+    width: "100%",
+    marginTop: 0,
   },
 
-  title: {
-    color: "white",
-    margin: 0,
-    fontSize: "clamp(28px, 6vw, 44px)",
-    fontWeight: 900,
-    textShadow: "0 4px 20px rgba(0,0,0,0.6)",
-  },
-
-  subtitle: {
-    color: "rgba(255,255,255,0.9)",
-    marginTop: "10px",
-    lineHeight: 1.4,
-  },
-
-  heroSliderWrap: {
-    marginTop: "14px",
-    borderRadius: "12px",
+  heroSliderFullWidth: {
+    width: "100%",
+    maxWidth: "100%",
     overflow: "hidden",
+    borderRadius: 0, // full-width look
   },
 
-  button: {
-    display: "inline-block",
-    padding: "12px 18px",
-    borderRadius: "10px",
-    fontWeight: 800,
-    textDecoration: "none",
+  noticeWrap: {
+    padding: "14px 0 0 0",
   },
 
-  primary: { background: "white", color: "black" },
-
-  secondary: {
-    background: "rgba(255,255,255,0.16)",
-    color: "white",
-    border: "1px solid rgba(255,255,255,0.25)",
+  notice: {
+    padding: "12px 14px",
+    borderRadius: 14,
+    background: "rgba(2, 132, 199, 0.08)",
+    border: "1px solid rgba(2, 132, 199, 0.20)",
+    color: "rgba(15, 23, 42, 0.9)",
+    fontWeight: 600,
   },
 
-  notice: { marginTop: "14px", color: "rgba(255,255,255,0.92)" },
-
-  inlineLink: { color: "white", textDecoration: "underline" },
-
-  section: {
-    marginTop: "18px",
-    padding: "18px",
-    borderRadius: "14px",
-    background: "rgba(0,0,0,0.45)",
-    border: "1px solid rgba(255,255,255,0.12)",
+  inlineLink: {
+    color: "#0ea5e9",
+    fontWeight: 900,
+    textDecoration: "underline",
+    textUnderlineOffset: 3,
   },
 
-  sectionTitle: { color: "white", marginTop: 0, marginBottom: "12px" },
+  content: {
+    width: "min(1100px, calc(100% - 32px))",
+    margin: "0 auto",
+    padding: "18px 0 40px 0",
+    display: "flex",
+    flexDirection: "column",
+    gap: 18,
+  },
+
+  sectionCard: {
+    borderRadius: 18,
+    border: "1px solid rgba(0,0,0,0.10)",
+    background: "#ffffff",
+    boxShadow: "0 10px 26px rgba(0,0,0,0.06)",
+    padding: 18,
+  },
+
+  sectionTitle: {
+    margin: "0 0 12px 0",
+    fontSize: 22,
+    fontWeight: 900,
+  },
 
   grid2: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-    gap: "14px",
+    gap: 14,
   },
 
   grid3: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-    gap: "14px",
+    gap: 14,
   },
 
   card: {
-    borderRadius: "12px",
-    padding: "14px",
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.12)",
+    borderRadius: 16,
+    padding: 16,
+    background: "rgba(15, 23, 42, 0.03)",
+    border: "1px solid rgba(0,0,0,0.08)",
   },
 
-  cardTitle: { color: "white", marginTop: 0 },
+  cardTitle: {
+    marginTop: 0,
+    marginBottom: 8,
+    fontWeight: 900,
+    fontSize: 18,
+  },
 
-  list: { color: "rgba(255,255,255,0.92)", margin: "10px 0 0 18px" },
+  list: {
+    margin: "10px 0 0 18px",
+    color: "rgba(15, 23, 42, 0.80)",
+    fontWeight: 600,
+  },
 
   cardButtons: {
     display: "flex",
-    gap: "10px",
-    marginTop: "12px",
+    gap: 10,
+    marginTop: 12,
     flexWrap: "wrap",
   },
 
-  smallText: { color: "rgba(255,255,255,0.8)", marginTop: "10px", fontSize: "12px" },
+  button: {
+    display: "inline-block",
+    padding: "12px 16px",
+    borderRadius: 999,
+    fontWeight: 900,
+    textDecoration: "none",
+    border: "1px solid rgba(0,0,0,0.12)",
+  },
+
+  primary: {
+    background: "rgba(0,0,0,0.88)",
+    color: "white",
+    borderColor: "rgba(0,0,0,0.88)",
+  },
+
+  secondary: {
+    background: "white",
+    color: "rgba(0,0,0,0.86)",
+  },
+
+  smallText: {
+    marginTop: 10,
+    color: "rgba(15, 23, 42, 0.65)",
+    fontSize: 12,
+    fontWeight: 600,
+  },
 
   stepCard: {
-    borderRadius: "12px",
-    padding: "14px",
-    background: "rgba(255,255,255,0.08)",
-    border: "1px solid rgba(255,255,255,0.12)",
+    borderRadius: 16,
+    padding: 16,
+    background: "rgba(15, 23, 42, 0.03)",
+    border: "1px solid rgba(0,0,0,0.08)",
   },
 
   stepNum: {
-    width: "32px",
-    height: "32px",
-    background: "white",
-    color: "black",
+    width: 34,
+    height: 34,
+    background: "rgba(0,0,0,0.88)",
+    color: "white",
     fontWeight: 900,
     display: "grid",
     placeItems: "center",
-    borderRadius: "10px",
-    marginBottom: "10px",
+    borderRadius: 12,
+    marginBottom: 10,
   },
 
-  stepTitle: { color: "white", margin: "0 0 6px 0" },
-
-  stepText: { color: "rgba(255,255,255,0.9)", margin: 0 },
+  stepTitle: { margin: "0 0 6px 0", fontWeight: 900 },
+  stepText: { margin: 0, color: "rgba(15, 23, 42, 0.80)", fontWeight: 600 },
 
   manuWrap: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
-    gap: "14px",
+    gap: 14,
   },
 
   manuCard: {
-    borderRadius: "12px",
-    padding: "10px",
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.12)",
+    borderRadius: 16,
+    padding: 10,
+    background: "rgba(15, 23, 42, 0.02)",
+    border: "1px solid rgba(0,0,0,0.08)",
   },
 
   dropdownRow: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
-    marginBottom: "12px",
+    gap: 10,
+    marginBottom: 12,
     flexWrap: "wrap",
   },
 
   dropdownLabel: {
-    color: "white",
-    fontWeight: 800,
+    fontWeight: 900,
+    color: "rgba(15, 23, 42, 0.85)",
   },
 
   select: {
     padding: "10px 12px",
-    borderRadius: "10px",
-    border: "1px solid rgba(255,255,255,0.25)",
-    background: "rgba(0,0,0,0.35)",
-    color: "white",
-    fontWeight: 800,
+    borderRadius: 12,
+    border: "1px solid rgba(0,0,0,0.16)",
+    background: "white",
+    color: "rgba(0,0,0,0.85)",
+    fontWeight: 900,
     outline: "none",
   },
 
-  glass: {
-    backdropFilter: "blur(4px)",
-    WebkitBackdropFilter: "blur(4px)",
+  footer: {
+    paddingTop: 4,
+    color: "rgba(15, 23, 42, 0.60)",
+    fontWeight: 600,
   },
 
-  footer: {
-    marginTop: "18px",
-    color: "rgba(255,255,255,0.85)",
+  footerLink: {
+    color: "#0ea5e9",
+    textDecoration: "underline",
+    textUnderlineOffset: 3,
+    fontWeight: 800,
   },
 };

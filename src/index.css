@@ -1,48 +1,152 @@
-* { box-sizing: border-box; }
+/* ===============================
+   Global Reset + Box Model
+================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-/* iOS Safari scroll stability */
-html, body {
+/* ===============================
+   iOS / Mobile Stability
+================================ */
+html,
+body {
   height: auto;
-  overscroll-behavior-y: none;
   width: 100%;
   max-width: 100%;
+  margin: 0;
+
+  overscroll-behavior-y: none;
   overflow-x: hidden;
+
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
-
+/* ===============================
+   Base Body Styles
+================================ */
 body {
   position: relative;
+
+  background: #ffffff;
+  color: #0f172a;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+
+  line-height: 1.5;
+
   overflow-x: hidden;
   overflow-y: auto;
+
   -webkit-overflow-scrolling: touch;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ===============================
+   React Root Protection
+================================ */
 #root {
   width: 100%;
   max-width: 100%;
+  min-height: 100vh;
+
   overflow-x: hidden;
 }
 
-
-
-img, video {
+/* ===============================
+   Media Safety
+================================ */
+img,
+video,
+svg {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-
-/* Existing styles (KEEP THESE) */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ===============================
+   Link Defaults
+================================ */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
+a:hover {
+  opacity: 0.85;
+}
+
+/* ===============================
+   Layout Helpers
+================================ */
+.container {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.section {
+  padding: 48px 0;
+}
+
+/* ===============================
+   Buttons (Global Look)
+================================ */
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* ===============================
+   Form Controls
+================================ */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: 100%;
+}
+
+/* ===============================
+   Prevent Overflow Bugs
+================================ */
+pre,
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* ===============================
+   Code Font (Keep CRA Default)
+================================ */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
+}
+
+/* ===============================
+   Mobile Polish
+================================ */
+@media (max-width: 768px) {
+  .section {
+    padding: 32px 0;
+  }
+
+  .container {
+    width: calc(100% - 24px);
+  }
 }
