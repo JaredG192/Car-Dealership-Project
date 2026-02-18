@@ -236,37 +236,81 @@ export default function Homepage() {
 
 
         {/* FOOTER */}
-        <footer style={styles.footer}>
-          <small>
-            Official sites:{" "}
-            <a
-              href="https://www.nissanusa.com/"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.footerLink}
-            >
-              Nissan
-            </a>
-            ,{" "}
-            <a
-              href="https://www.toyota.com/"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.footerLink}
-            >
-              Toyota
-            </a>
-            ,{" "}
-            <a
-              href="https://automobiles.honda.com/"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.footerLink}
-            >
-              Honda
-            </a>
-          </small>
-        </footer>
+        <footer style={styles.siteFooter}>
+  <div style={styles.footerInner}>
+    {/* BRAND INDEX */}
+    <div style={styles.footerCol}>
+      <div style={styles.footerHeading}>BRAND INDEX</div>
+      <ul style={styles.footerList}>
+        {["Nissan", "Toyota", "Honda", "Subaru", "Mazda", "Kia", "Ford", "Chevrolet"].map((make) => (
+          <li key={make} style={styles.footerItem}>
+            <span style={styles.footerText}>{make}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* LOCATE US */}
+    <div style={styles.footerCol}>
+      <div style={styles.footerHeading}>LOCATE US</div>
+
+      <div style={styles.footerTextBlock}>
+        5500 University Pkwy
+        <br />
+        San Bernardino, CA 92407
+      </div>
+
+      <div style={styles.footerTextBlock}>
+        Sales:{" "}
+        <span style={styles.footerAccent}>(909) 555-0123</span>
+      </div>
+
+     <div style={styles.footerTextBlock}>
+  <strong>Hours:</strong>
+</div>
+
+<div style={styles.footerTextBlock}>
+  Monday – Thursday: 9:00 AM – 6:00 PM
+</div>
+
+<div style={styles.footerTextBlock}>
+  Friday: 9:00 AM – 5:00 PM
+</div>
+
+<div style={styles.footerTextBlock}>
+  Saturday: 10:00 AM – 3:00 PM
+</div>
+
+<div style={styles.footerTextBlock}>
+  Sunday: Closed
+</div>
+
+    </div>
+
+    {/* CONTACT US (replaces FOLLOW US) */}
+    <div style={styles.footerCol}>
+      <div style={styles.footerHeading}>CONTACT US</div>
+
+      <div style={styles.footerTextBlock}>
+        Email: <span style={styles.footerAccent}>campuscars@csusb.edu</span>
+      </div>
+
+      <div style={styles.footerTextBlock}>
+        Phone: <span style={styles.footerAccent}>(909) 555-0123</span>
+      </div>
+
+    </div>
+  </div>
+
+  {/* Bottom bar */}
+  <div style={styles.footerBottom}>
+    <div style={styles.footerBottomInner}>
+      <span>© {new Date().getFullYear()} CampusCars. All Rights Reserved.</span>
+      <span style={styles.footerBottomRight}>Powered by CampusCars</span>
+    </div>
+  </div>
+</footer>
+
       </div>
     </div>
   );
@@ -345,13 +389,15 @@ const styles = {
 
   /* FULL-WIDTH SECTION */
   fullWidthSection: {
-    width: "100vw",
-    marginLeft: "calc(-50vw + 50%)",
-    background: "#ffffff",
-    padding: "36px 0",
-    borderTop: "1px solid rgba(0,0,0,0.06)",
-    borderBottom: "1px solid rgba(0,0,0,0.06)",
-  },
+  width: "100vw",
+  marginLeft: "calc(-50vw + 50%)",
+  background: "#ffffff",
+  padding: "36px 0",
+  borderTop: "1px solid rgba(0,0,0,0.06)",
+  borderBottom: "1px solid rgba(0,0,0,0.06)",
+},
+
+
 
   fullWidthInner: {
     width: "100%",
@@ -497,13 +543,6 @@ const styles = {
     fontWeight: 600,
   },
 
-  footerLink: {
-    color: "#0ea5e9",
-    textDecoration: "underline",
-    textUnderlineOffset: 3,
-    fontWeight: 800,
-  },
-
   /* VISIT US (Location + Hours) */
 visitTitle: {
   margin: "0 0 6px 0",
@@ -643,5 +682,96 @@ mapFrame: {
   height: "100%",
   border: 0,
 },
+
+siteFooter: {
+  width: "100vw",
+  marginLeft: "calc(-50vw + 50%)",
+  background: "#0b1220", // dark footer like the real site
+  color: "rgba(255,255,255,0.78)",
+  marginTop: 30,
+},
+
+footerInner: {
+  maxWidth: 1200,
+  margin: "0 auto",
+  padding: "34px 24px",
+  display: "grid",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gap: 36,
+},
+
+footerCol: {
+  minWidth: 0,
+},
+
+footerHeading: {
+  color: "#0ea5e9", // same blue as your links / “car” color
+  fontWeight: 900,
+  letterSpacing: "0.6px",
+  fontSize: 13,
+  marginBottom: 12,
+},
+
+footerList: {
+  listStyle: "none",
+  padding: 0,
+  margin: 0,
+  display: "grid",
+  gap: 8,
+},
+
+footerItem: {
+  margin: 0,
+  padding: 0,
+},
+
+footerText: {
+  color: "rgba(255,255,255,0.78)",
+  fontWeight: 600,
+  fontSize: 14,
+},
+
+footerTextBlock: {
+  color: "rgba(255,255,255,0.78)",
+  fontWeight: 600,
+  fontSize: 14,
+  lineHeight: 1.6,
+  marginBottom: 10,
+},
+
+footerAccent: {
+  color: "#0ea5e9",
+  fontWeight: 800,
+},
+
+footerLink: {
+  color: "#0ea5e9",
+  fontWeight: 800,
+  textDecoration: "none",
+},
+
+footerBottom: {
+  borderTop: "1px solid rgba(255,255,255,0.10)",
+  background: "rgba(0,0,0,0.25)",
+},
+
+footerBottomInner: {
+  maxWidth: 1200,
+  margin: "0 auto",
+  padding: "14px 24px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 12,
+  flexWrap: "wrap",
+  fontSize: 13,
+  fontWeight: 700,
+  color: "rgba(255,255,255,0.70)",
+},
+
+footerBottomRight: {
+  color: "rgba(255,255,255,0.70)",
+},
+
 
 };
