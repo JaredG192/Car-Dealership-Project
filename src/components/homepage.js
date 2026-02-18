@@ -99,7 +99,23 @@ export default function Homepage() {
         <div style={styles.fullWidthInner}>
           <h2 style={styles.sectionTitleSmall}>Browse by Vehicle Type</h2>
 
-          <div style={styles.grid2Full}>
+          <div
+  style={
+    isMobile
+      ? {
+          display: "grid",
+          gridAutoFlow: "column",
+          gridAutoColumns: "78%",
+          gap: 14,
+          overflowX: "auto",
+          paddingBottom: 10,
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+        }
+      : styles.grid2Full
+  }
+>
+
             {[
               { title: "Sedans", img: `${base}/index/sedan.png`, to: "/inventory?type=sedan" },
               { title: "Coupes", img: `${base}/index/coupe.png`, to: "/inventory?type=coupe" },
@@ -220,7 +236,8 @@ export default function Homepage() {
 
     {/* RIGHT: Map */}
     <div style={styles.visitRight}>
-      <div style={styles.mapWrap}>
+      <div style={{ ...styles.mapWrap, minHeight: isMobile ? 280 : 380 }}>
+
         <iframe
           title="CSUSB Map"
           style={styles.mapFrame}
@@ -408,17 +425,20 @@ const styles = {
 
   /* Vehicle types grid (kept 6 across on desktop) */
   grid2Full: {
-    display: "grid",
-    gridTemplateColumns: "repeat(6, 1fr)",
-    gap: 24,
-  },
+  display: "grid",
+  gridTemplateColumns: "repeat(6, 1fr)",
+  gap: 24,
+},
+
 
   typeCard: {
-    borderRadius: 16,
-    padding: 18,
-    background: "rgba(15, 23, 42, 0.03)",
-    border: "1px solid rgba(0,0,0,0.08)",
-  },
+  borderRadius: 16,
+  padding: 18,
+  background: "rgba(15, 23, 42, 0.03)",
+  border: "1px solid rgba(0,0,0,0.08)",
+  scrollSnapAlign: "start",   
+},
+
 
   cardTitle: {
     marginTop: 0,
@@ -440,14 +460,16 @@ const styles = {
     textDecoration: "none",
   },
 
-  typeImage: {
-    width: "100%",
-    height: 95,
-    objectFit: "cover",
-    borderRadius: 12,
-    margin: "8px 0 12px 0",
-    border: "1px solid rgba(0,0,0,0.08)",
-  },
+typeImage: {
+  width: "100%",
+  height: 95,
+  objectFit: "contain",     
+  padding: 10,              
+  borderRadius: 12,
+  margin: "8px 0 12px 0",
+  border: "1px solid rgba(0,0,0,0.08)",
+  background: "#fff",       
+},
 
   /* ACTION GRID (Get Started) */
   actionGrid: {
@@ -561,19 +583,24 @@ visitSub: {
 },
 
 visitGrid: {
-  display: "grid",
-  gridTemplateColumns: "1fr 1.4fr",
+  display: "flex",
   gap: 18,
   alignItems: "stretch",
+  flexWrap: "wrap",
 },
 
 visitLeft: {
+  flex: "1 1 340px",
+  minWidth: 280,
   display: "flex",
 },
 
 visitRight: {
+  flex: "1 1 420px",
+  minWidth: 280,
   display: "flex",
 },
+
 
 visitCard: {
   width: "100%",
@@ -611,7 +638,10 @@ visitValue: {
   fontWeight: 700,
   color: "rgba(15, 23, 42, 0.85)",
   lineHeight: 1.4,
+  overflowWrap: "anywhere",
+  wordBreak: "break-word",
 },
+
 
 hoursHeader: {
   marginTop: 8,
@@ -675,6 +705,7 @@ mapWrap: {
   overflow: "hidden",
   border: "1px solid rgba(0,0,0,0.10)",
   minHeight: 380,
+
 },
 
 mapFrame: {
@@ -775,3 +806,4 @@ footerBottomRight: {
 
 
 };
+
