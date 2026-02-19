@@ -1,5 +1,6 @@
 import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
+import Inventory from "./components/Inventory";
 
 import Homepage from "./components/homepage";
 import HeaderNav from "./components/headNav";
@@ -38,14 +39,13 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
 
-        <Route path="/inventory" element={<ComingSoon title="Inventory" />} />
+        <Route path="/inventory" element={<Inventory />} />
         <Route path="/consultation" element={<ComingSoon title="Consultation" />} />
         <Route path="/login" element={<ComingSoon title="Employee Login" />} />
         <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
-        <Route path="/finance" element={<ComingSoon title="Finance" />} />
         <Route path="/about" element={<ComingSoon title="About Us" />} />
-        <Route path="/customers" element={<ComingSoon title="Our Customers" />} />
-
+      
+      
         {/* manufacturer routes placeholder */}
         <Route path="/nissan" element={<ComingSoon title="Nissan" />} />
         <Route path="/toyota" element={<ComingSoon title="Toyota" />} />

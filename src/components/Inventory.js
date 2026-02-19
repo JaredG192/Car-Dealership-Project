@@ -1,0 +1,300 @@
+import React, { useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+
+export default function Inventory() {
+  const location = useLocation();
+
+  // Fake inventory data (you can add more cars later)
+  const cars = useMemo(
+  () => [
+    // Toyota (4)
+    { id: 1, make: "Toyota", model: "Camry", year: 2021, price: 18500, mileage: 45000, type: "sedan", image: "/inventory/camry.jpg" },
+    { id: 2, make: "Toyota", model: "Corolla", year: 2020, price: 16200, mileage: 52000, type: "sedan", image: "/inventory/corolla.jpg" },
+    { id: 3, make: "Toyota", model: "GR86", year: 2022, price: 28900, mileage: 18000, type: "coupe", image: "/inventory/gr86.jpg" },
+    { id: 4, make: "Toyota", model: "RAV4", year: 2019, price: 21900, mileage: 64000, type: "suv", image: "/inventory/rav4.jpg" },
+
+    // Honda (4)
+    { id: 5, make: "Honda", model: "Civic", year: 2020, price: 16900, mileage: 52000, type: "sedan", image: "/inventory/civic.jpg" },
+    { id: 6, make: "Honda", model: "Accord", year: 2019, price: 19800, mileage: 61000, type: "sedan", image: "/inventory/accord.jpg" },
+    { id: 7, make: "Honda", model: "CR-V", year: 2021, price: 24900, mileage: 36000, type: "suv", image: "/inventory/crv.jpg" },
+    { id: 8, make: "Honda", model: "HR-V", year: 2018, price: 17900, mileage: 72000, type: "suv", image: "/inventory/hrv.jpg" },
+
+    // Nissan (3)
+    { id: 9, make: "Nissan", model: "Altima", year: 2021, price: 18900, mileage: 47000, type: "sedan", image: "/inventory/altima.jpg" },
+    { id: 10, make: "Nissan", model: "Sentra", year: 2020, price: 15900, mileage: 54000, type: "sedan", image: "/inventory/sentra.jpg" },
+    { id: 11, make: "Nissan", model: "Rogue", year: 2019, price: 20900, mileage: 66000, type: "suv", image: "/inventory/rogue.jpg" },
+
+    // Subaru (3)
+    { id: 12, make: "Subaru", model: "Outback", year: 2019, price: 21900, mileage: 61000, type: "suv", image: "/inventory/outback.jpg" },
+    { id: 13, make: "Subaru", model: "Forester", year: 2020, price: 22900, mileage: 52000, type: "suv", image: "/inventory/forester.jpg" },
+    { id: 14, make: "Subaru", model: "Impreza", year: 2018, price: 14900, mileage: 78000, type: "hatchback", image: "/inventory/impreza.jpg" },
+
+    // Mazda (3)
+    { id: 15, make: "Mazda", model: "CX-5", year: 2022, price: 25900, mileage: 21000, type: "suv", image: "/inventory/cx5.jpg" },
+    { id: 16, make: "Mazda", model: "Mazda3", year: 2021, price: 19900, mileage: 33000, type: "hatchback", image: "/inventory/mazda3.jpg" },
+    { id: 17, make: "Mazda", model: "MX-5 Miata", year: 2020, price: 27900, mileage: 26000, type: "coupe", image: "/inventory/miata.jpg" },
+
+    // Kia (3)
+    { id: 18, make: "Kia", model: "Soul", year: 2021, price: 17900, mileage: 39000, type: "hatchback", image: "/inventory/soul.jpg" },
+    { id: 19, make: "Kia", model: "Sportage", year: 2019, price: 19900, mileage: 62000, type: "suv", image: "/inventory/sportage.jpg" },
+    { id: 20, make: "Kia", model: "Telluride", year: 2020, price: 31900, mileage: 49000, type: "suv", image: "/inventory/telluride.jpg" },
+
+    // Ford (3)
+    { id: 21, make: "Ford", model: "F-150", year: 2018, price: 24900, mileage: 74000, type: "truck", image: "/inventory/f150.jpg" },
+    { id: 22, make: "Ford", model: "Mustang", year: 2019, price: 28900, mileage: 52000, type: "coupe", image: "/inventory/mustang.jpg" },
+    { id: 23, make: "Ford", model: "Escape", year: 2020, price: 20900, mileage: 58000, type: "suv", image: "/inventory/escape.jpg" },
+
+    // Chevrolet (2)
+    { id: 24, make: "Chevrolet", model: "Malibu", year: 2020, price: 17400, mileage: 61000, type: "sedan", image: "/inventory/malibu.jpg" },
+    { id: 25, make: "Chevrolet", model: "Silverado 1500", year: 2019, price: 27900, mileage: 69000, type: "truck", image: "/inventory/silverado.jpg" },
+  ],
+  []
+);
+
+
+  // Read filters from URL (ex: /inventory?type=suv)
+  const params = new URLSearchParams(location.search);
+  const urlType = params.get("type") || "";
+
+  const [makeFilter, setMakeFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState(urlType);
+  const [sortBy, setSortBy] = useState("recommended");
+
+  const makes = useMemo(() => {
+    const set = new Set(cars.map((c) => c.make));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [cars]);
+
+  const filtered = useMemo(() => {
+    let list = cars;
+
+    if (makeFilter) list = list.filter((c) => c.make === makeFilter);
+    if (typeFilter) list = list.filter((c) => c.type === typeFilter);
+
+    const sorted = [...list];
+    if (sortBy === "priceLow") sorted.sort((a, b) => a.price - b.price);
+    if (sortBy === "priceHigh") sorted.sort((a, b) => b.price - a.price);
+    if (sortBy === "yearNew") sorted.sort((a, b) => b.year - a.year);
+    if (sortBy === "milesLow") sorted.sort((a, b) => a.mileage - b.mileage);
+
+    return sorted;
+  }, [cars, makeFilter, typeFilter, sortBy]);
+
+  return (
+    <div style={styles.page}>
+      <div style={styles.container}>
+        <h1 style={styles.title}>Inventory</h1>
+        <p style={styles.sub}>
+          Browse our current selection. Use filters to narrow down your options.
+        </p>
+
+        {/* Filters */}
+        <div style={styles.filters}>
+          <div style={styles.field}>
+            <label style={styles.label}>Make</label>
+            <select
+              value={makeFilter}
+              onChange={(e) => setMakeFilter(e.target.value)}
+              style={styles.select}
+            >
+              <option value="">All</option>
+              {makes.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div style={styles.field}>
+            <label style={styles.label}>Type</label>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              style={styles.select}
+            >
+              <option value="">All</option>
+              <option value="sedan">Sedan</option>
+              <option value="coupe">Coupe</option>
+              <option value="suv">SUV</option>
+              <option value="truck">Truck</option>
+              <option value="hatchback">Hatchback</option>
+              <option value="minivan">Minivan</option>
+            </select>
+          </div>
+
+          <div style={styles.field}>
+            <label style={styles.label}>Sort</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              style={styles.select}
+            >
+              <option value="recommended">Recommended</option>
+              <option value="priceLow">Price: Low → High</option>
+              <option value="priceHigh">Price: High → Low</option>
+              <option value="yearNew">Year: Newest</option>
+              <option value="milesLow">Mileage: Lowest</option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            style={styles.resetBtn}
+            onClick={() => {
+              setMakeFilter("");
+              setTypeFilter("");
+              setSortBy("recommended");
+            }}
+          >
+            Reset
+          </button>
+        </div>
+
+        {/* Results */}
+        <div style={styles.countRow}>
+          <span style={styles.count}>{filtered.length} vehicle(s)</span>
+        </div>
+
+        <div style={styles.grid}>
+          {filtered.map((car) => (
+            <div key={car.id} style={styles.card}>
+              <div style={styles.imgWrap}>
+                {/* If you don’t have images yet, this will still render a placeholder */}
+                <img
+                  src={car.image}
+                  alt={`${car.year} ${car.make} ${car.model}`}
+                  style={styles.img}
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://via.placeholder.com/800x500?text=Car+Photo";
+                  }}
+                />
+              </div>
+
+              <div style={styles.cardBody}>
+                <div style={styles.carTitle}>
+                  {car.year} {car.make} {car.model}
+                </div>
+
+                <div style={styles.metaRow}>
+                  <span style={styles.badge}>{car.type.toUpperCase()}</span>
+                  <span style={styles.miles}>
+                    {car.mileage.toLocaleString()} miles
+                  </span>
+                </div>
+
+                <div style={styles.price}>${car.price.toLocaleString()}</div>
+
+                <Link to={`/inventory/${car.id}`} style={styles.detailsBtn}>
+                  View Details
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div style={styles.empty}>
+            No vehicles match your filters. Try Reset.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  page: { background: "#ffffff", color: "#0f172a" },
+  container: {
+    width: "min(1100px, calc(100% - 32px))",
+    margin: "0 auto",
+    padding: "28px 0 60px",
+  },
+  title: { margin: 0, fontSize: 34, fontWeight: 900, letterSpacing: "-0.3px" },
+  sub: {
+    marginTop: 10,
+    marginBottom: 18,
+    color: "rgba(15, 23, 42, 0.75)",
+    fontWeight: 600,
+    lineHeight: 1.6,
+  },
+  filters: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: 12,
+    alignItems: "end",
+    border: "1px solid rgba(0,0,0,0.08)",
+    borderRadius: 16,
+    padding: 14,
+    background: "rgba(15, 23, 42, 0.02)",
+  },
+  field: { display: "flex", flexDirection: "column", gap: 6 },
+  label: { fontSize: 12, fontWeight: 900, opacity: 0.7, letterSpacing: "0.06em", textTransform: "uppercase" },
+  select: {
+    padding: "10px 12px",
+    borderRadius: 12,
+    border: "1px solid rgba(0,0,0,0.16)",
+    background: "#fff",
+    fontWeight: 800,
+    outline: "none",
+  },
+  resetBtn: {
+    padding: "10px 12px",
+    borderRadius: 12,
+    border: "1px solid rgba(0,0,0,0.16)",
+    background: "#fff",
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  countRow: { marginTop: 14, marginBottom: 10 },
+  count: { fontWeight: 800, color: "rgba(15, 23, 42, 0.75)" },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: 16,
+  },
+  card: {
+    borderRadius: 18,
+    overflow: "hidden",
+    border: "1px solid rgba(0,0,0,0.10)",
+    boxShadow: "0 12px 26px rgba(0,0,0,0.08)",
+    background: "#fff",
+  },
+  imgWrap: { width: "100%", height: 160, overflow: "hidden", background: "#e5e7eb" },
+  img: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  cardBody: { padding: 14 },
+  carTitle: { fontWeight: 900, fontSize: 16, marginBottom: 8 },
+  metaRow: { display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" },
+  badge: {
+    display: "inline-block",
+    padding: "4px 10px",
+    borderRadius: 999,
+    border: "1px solid rgba(0,0,0,0.12)",
+    background: "rgba(15,23,42,0.04)",
+    fontWeight: 900,
+    fontSize: 12,
+  },
+  miles: { fontWeight: 800, fontSize: 12, opacity: 0.7 },
+  price: { marginTop: 10, fontWeight: 900, fontSize: 20 },
+  detailsBtn: {
+    marginTop: 12,
+    display: "inline-block",
+    width: "100%",
+    textAlign: "center",
+    padding: "10px 12px",
+    borderRadius: 12,
+    background: "#0ea5e9",
+    color: "#fff",
+    textDecoration: "none",
+    fontWeight: 900,
+  },
+  empty: {
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 14,
+    border: "1px solid rgba(0,0,0,0.10)",
+    background: "rgba(244,63,94,0.06)",
+    fontWeight: 800,
+  },
+};
