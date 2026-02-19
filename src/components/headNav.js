@@ -20,8 +20,6 @@ export default function HeaderNav({ makes = [] }) {
 
   return (
     <header style={styles.header}>
-      {/* Top bar (hidden on mobile via CSS) */}
-
       {/* Main nav */}
       <div style={styles.navRow}>
         {/* Logo */}
@@ -48,13 +46,8 @@ export default function HeaderNav({ makes = [] }) {
           <div style={styles.makeWrap}>
             <span style={styles.navLink}>Shop by Make</span>
 
-            <select
-              defaultValue=""
-              onChange={onMakeSelect}
-              style={styles.makeSelect}
-            >
+            <select defaultValue="" onChange={onMakeSelect} style={styles.makeSelect}>
               <option value="">Select</option>
-
               {makeOptions.map((m) => (
                 <option key={m.name} value={m.link}>
                   {m.name}
@@ -87,10 +80,6 @@ export default function HeaderNav({ makes = [] }) {
             Inventory
           </MobileLink>
 
-          <MobileLink to="/finance" setOpen={setOpen}>
-            Finance
-          </MobileLink>
-
           <MobileLink to="/consultation" setOpen={setOpen}>
             Consultation
           </MobileLink>
@@ -99,20 +88,11 @@ export default function HeaderNav({ makes = [] }) {
             About Us
           </MobileLink>
 
-          <MobileLink to="/customers" setOpen={setOpen}>
-            Our Customers
-          </MobileLink>
-
           <div style={styles.mobileMakeRow}>
             <span style={styles.mobileLabel}>Shop by Make:</span>
 
-            <select
-              defaultValue=""
-              onChange={onMakeSelect}
-              style={styles.mobileSelect}
-            >
+            <select defaultValue="" onChange={onMakeSelect} style={styles.mobileSelect}>
               <option value="">Select</option>
-
               {makeOptions.map((m) => (
                 <option key={m.name} value={m.link}>
                   {m.name}
@@ -121,11 +101,7 @@ export default function HeaderNav({ makes = [] }) {
             </select>
           </div>
 
-          <Link
-            to="/login"
-            style={styles.mobileCta}
-            onClick={() => setOpen(false)}
-          >
+          <Link to="/login" style={styles.mobileCta} onClick={() => setOpen(false)}>
             Employee Login
           </Link>
         </div>
@@ -152,11 +128,7 @@ function NavLink({ to, active, children }) {
 
 function MobileLink({ to, setOpen, children }) {
   return (
-    <Link
-      to={to}
-      style={styles.mobileLink}
-      onClick={() => setOpen(false)}
-    >
+    <Link to={to} style={styles.mobileLink} onClick={() => setOpen(false)}>
       {children}
     </Link>
   );
@@ -172,26 +144,6 @@ const styles = {
     background: "rgba(255,255,255,0.92)",
     backdropFilter: "blur(8px)",
     borderBottom: "1px solid rgba(0,0,0,0.08)",
-  },
-
-  topBar: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "8px 16px",
-    fontSize: 12,
-    background: "rgba(0,0,0,0.03)",
-  },
-
-  topLeft: { display: "flex", gap: 10 },
-  topRight: {},
-  topItem: { whiteSpace: "nowrap" },
-  dot: { opacity: 0.5 },
-
-  langBtn: {
-    border: "none",
-    background: "transparent",
-    cursor: "pointer",
-    fontSize: 12,
   },
 
   navRow: {
