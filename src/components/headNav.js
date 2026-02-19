@@ -36,20 +36,12 @@ export default function HeaderNav({ makes = [] }) {
             Inventory
           </NavLink>
 
-          <NavLink to="/finance" active={isActive("/finance")}>
-            Finance
-          </NavLink>
-
           <NavLink to="/consultation" active={isActive("/consultation")}>
             Consultation
           </NavLink>
 
           <NavLink to="/about" active={isActive("/about")}>
             About Us
-          </NavLink>
-
-          <NavLink to="/customers" active={isActive("/customers")}>
-            Our Customers
           </NavLink>
 
           {/* Make dropdown */}

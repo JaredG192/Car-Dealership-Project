@@ -13,7 +13,8 @@ const makes = [
   { name: "Kia", link: "/kia" },
   { name: "Ford", link: "/ford" },
   { name: "Chevrolet", link: "/chevrolet" },
-];
+].sort((a, b) => a.name.localeCompare(b.name));
+
 
 function ComingSoon({ title }) {
   return (
