@@ -288,11 +288,23 @@ export default function Homepage() {
 
         {/* FOOTER */}
         <footer style={styles.siteFooter}>
-          <div style={styles.footerInner}>
+          <div
+            style={{
+              ...styles.footerInner,
+              ...(isMobile ? styles.footerInnerMobile : {}),
+            }}
+          >
+
             {/* BRAND INDEX */}
             <div style={styles.footerCol}>
               <div style={styles.footerHeading}>BRAND INDEX</div>
-              <ul style={styles.footerList}>
+              <ul
+                style={{
+                  ...styles.footerList,
+                  ...(isMobile ? styles.footerListMobile : {}),
+                }}
+              >
+
                 {brandIndex.map((make) => (
                   <li key={make} style={styles.footerItem}>
                     <span style={styles.footerText}>{make}</span>
@@ -341,7 +353,13 @@ export default function Homepage() {
 
           {/* Bottom bar */}
           <div style={styles.footerBottom}>
-            <div style={styles.footerBottomInner}>
+            <div
+              style={{
+                ...styles.footerBottomInner,
+                ...(isMobile ? styles.footerBottomInnerMobile : {}),
+               }}
+            >
+
               <span>© {new Date().getFullYear()} CampusCars. All Rights Reserved.</span>
               <span style={styles.footerBottomRight}>Powered by CampusCars</span>
             </div>
@@ -705,9 +723,11 @@ const styles = {
   },
 
   footerAccent: {
-    color: "#0ea5e9",
-    fontWeight: 800,
-  },
+  color: "#ffffff",
+  fontWeight: 800,
+  whiteSpace: "nowrap",
+},
+
 
   footerBottom: {
     borderTop: "1px solid rgba(255,255,255,0.10)",
@@ -731,4 +751,21 @@ const styles = {
   footerBottomRight: {
     color: "rgba(255,255,255,0.70)",
   },
+
+  footerInnerMobile: {
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  gap: 22,
+},
+
+footerListMobile: {
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  gap: 10,
+},
+
+footerBottomInnerMobile: {
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: 6,
+},
+
 };
