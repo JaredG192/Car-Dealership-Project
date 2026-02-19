@@ -3,53 +3,56 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function Inventory() {
   const location = useLocation();
+  const base = process.env.PUBLIC_URL;
+
 
   // Fake inventory data (you can add more cars later)
-  const cars = useMemo(
+ const cars = useMemo(
   () => [
     // Toyota (4)
-    { id: 1, make: "Toyota", model: "Camry", year: 2021, price: 18500, mileage: 45000, type: "sedan", image: "/inventory/camry.jpg" },
-    { id: 2, make: "Toyota", model: "Corolla", year: 2020, price: 16200, mileage: 52000, type: "sedan", image: "/inventory/corolla.jpg" },
-    { id: 3, make: "Toyota", model: "GR86", year: 2022, price: 28900, mileage: 18000, type: "coupe", image: "/inventory/gr86.jpg" },
-    { id: 4, make: "Toyota", model: "RAV4", year: 2019, price: 21900, mileage: 64000, type: "suv", image: "/inventory/rav4.jpg" },
+    { id: 1, make: "Toyota", model: "Camry", year: 2021, price: 18500, mileage: 45000, type: "sedan", image: `${base}/inventory/camry.jpeg` },
+    { id: 2, make: "Toyota", model: "Corolla", year: 2020, price: 16200, mileage: 52000, type: "sedan", image: `${base}/inventory/corolla.jpg` },
+    { id: 3, make: "Toyota", model: "GR86", year: 2022, price: 28900, mileage: 18000, type: "coupe", image: `${base}/inventory/gr86.jpg` },
+    { id: 4, make: "Toyota", model: "RAV4", year: 2019, price: 21900, mileage: 64000, type: "suv", image: `${base}/inventory/rav4.jpg` },
 
     // Honda (4)
-    { id: 5, make: "Honda", model: "Civic", year: 2020, price: 16900, mileage: 52000, type: "sedan", image: "/inventory/civic.jpg" },
-    { id: 6, make: "Honda", model: "Accord", year: 2019, price: 19800, mileage: 61000, type: "sedan", image: "/inventory/accord.jpg" },
-    { id: 7, make: "Honda", model: "CR-V", year: 2021, price: 24900, mileage: 36000, type: "suv", image: "/inventory/crv.jpg" },
-    { id: 8, make: "Honda", model: "HR-V", year: 2018, price: 17900, mileage: 72000, type: "suv", image: "/inventory/hrv.jpg" },
+    { id: 5, make: "Honda", model: "Civic", year: 2020, price: 16900, mileage: 52000, type: "sedan", image: `${base}/inventory/civic.jpg` },
+    { id: 6, make: "Honda", model: "Accord", year: 2019, price: 19800, mileage: 61000, type: "sedan", image: `${base}/inventory/accord.jpg` },
+    { id: 7, make: "Honda", model: "CR-V", year: 2021, price: 24900, mileage: 36000, type: "suv", image: `${base}/inventory/crv.jpg` },
+    { id: 8, make: "Honda", model: "HR-V", year: 2018, price: 17900, mileage: 72000, type: "suv", image: `${base}/inventory/hrv.jpg` },
 
     // Nissan (3)
-    { id: 9, make: "Nissan", model: "Altima", year: 2021, price: 18900, mileage: 47000, type: "sedan", image: "/inventory/altima.jpg" },
-    { id: 10, make: "Nissan", model: "Sentra", year: 2020, price: 15900, mileage: 54000, type: "sedan", image: "/inventory/sentra.jpg" },
-    { id: 11, make: "Nissan", model: "Rogue", year: 2019, price: 20900, mileage: 66000, type: "suv", image: "/inventory/rogue.jpg" },
+    { id: 9, make: "Nissan", model: "Altima", year: 2021, price: 18900, mileage: 47000, type: "sedan", image: `${base}/inventory/altima.jpg` },
+    { id: 10, make: "Nissan", model: "Sentra", year: 2020, price: 15900, mileage: 54000, type: "sedan", image: `${base}/inventory/sentra.jpg` },
+    { id: 11, make: "Nissan", model: "Rogue", year: 2019, price: 20900, mileage: 66000, type: "suv", image: `${base}/inventory/rouge.jpg` },
 
     // Subaru (3)
-    { id: 12, make: "Subaru", model: "Outback", year: 2019, price: 21900, mileage: 61000, type: "suv", image: "/inventory/outback.jpg" },
-    { id: 13, make: "Subaru", model: "Forester", year: 2020, price: 22900, mileage: 52000, type: "suv", image: "/inventory/forester.jpg" },
-    { id: 14, make: "Subaru", model: "Impreza", year: 2018, price: 14900, mileage: 78000, type: "hatchback", image: "/inventory/impreza.jpg" },
+    { id: 12, make: "Subaru", model: "Outback", year: 2019, price: 21900, mileage: 61000, type: "suv", image: `${base}/inventory/outback.jpg` },
+    { id: 13, make: "Subaru", model: "Forester", year: 2020, price: 22900, mileage: 52000, type: "suv", image: `${base}/inventory/forester.jpg` },
+    { id: 14, make: "Subaru", model: "Impreza", year: 2018, price: 14900, mileage: 78000, type: "hatchback", image: `${base}/inventory/impreza.jpg` },
 
     // Mazda (3)
-    { id: 15, make: "Mazda", model: "CX-5", year: 2022, price: 25900, mileage: 21000, type: "suv", image: "/inventory/cx5.jpg" },
-    { id: 16, make: "Mazda", model: "Mazda3", year: 2021, price: 19900, mileage: 33000, type: "hatchback", image: "/inventory/mazda3.jpg" },
-    { id: 17, make: "Mazda", model: "MX-5 Miata", year: 2020, price: 27900, mileage: 26000, type: "coupe", image: "/inventory/miata.jpg" },
+    { id: 15, make: "Mazda", model: "CX-5", year: 2022, price: 25900, mileage: 21000, type: "suv", image: `${base}/inventory/cx5.jpg` },
+    { id: 16, make: "Mazda", model: "Mazda3", year: 2021, price: 19900, mileage: 33000, type: "hatchback", image: `${base}/inventory/mazda3.jpg` },
+    { id: 17, make: "Mazda", model: "MX-5 Miata", year: 2020, price: 27900, mileage: 26000, type: "coupe", image: `${base}/inventory/miata.jpg` },
 
     // Kia (3)
-    { id: 18, make: "Kia", model: "Soul", year: 2021, price: 17900, mileage: 39000, type: "hatchback", image: "/inventory/soul.jpg" },
-    { id: 19, make: "Kia", model: "Sportage", year: 2019, price: 19900, mileage: 62000, type: "suv", image: "/inventory/sportage.jpg" },
-    { id: 20, make: "Kia", model: "Telluride", year: 2020, price: 31900, mileage: 49000, type: "suv", image: "/inventory/telluride.jpg" },
+    { id: 18, make: "Kia", model: "Soul", year: 2021, price: 17900, mileage: 39000, type: "hatchback", image: `${base}/inventory/soul.jpg` },
+    { id: 19, make: "Kia", model: "Sportage", year: 2019, price: 19900, mileage: 62000, type: "suv", image: `${base}/inventory/sportage.jpg` },
+    { id: 20, make: "Kia", model: "Telluride", year: 2020, price: 31900, mileage: 49000, type: "suv", image: `${base}/inventory/telluride.jpg` },
 
     // Ford (3)
-    { id: 21, make: "Ford", model: "F-150", year: 2018, price: 24900, mileage: 74000, type: "truck", image: "/inventory/f150.jpg" },
-    { id: 22, make: "Ford", model: "Mustang", year: 2019, price: 28900, mileage: 52000, type: "coupe", image: "/inventory/mustang.jpg" },
-    { id: 23, make: "Ford", model: "Escape", year: 2020, price: 20900, mileage: 58000, type: "suv", image: "/inventory/escape.jpg" },
+    { id: 21, make: "Ford", model: "F-150", year: 2018, price: 24900, mileage: 74000, type: "truck", image: `${base}/inventory/f150.jpg` },
+    { id: 22, make: "Ford", model: "Mustang", year: 2019, price: 28900, mileage: 52000, type: "coupe", image: `${base}/inventory/mustang.jpg` },
+    { id: 23, make: "Ford", model: "Escape", year: 2020, price: 20900, mileage: 58000, type: "suv", image: `${base}/inventory/escape.jpg` },
 
     // Chevrolet (2)
-    { id: 24, make: "Chevrolet", model: "Malibu", year: 2020, price: 17400, mileage: 61000, type: "sedan", image: "/inventory/malibu.jpg" },
-    { id: 25, make: "Chevrolet", model: "Silverado 1500", year: 2019, price: 27900, mileage: 69000, type: "truck", image: "/inventory/silverado.jpg" },
+    { id: 24, make: "Chevrolet", model: "Malibu", year: 2020, price: 17400, mileage: 61000, type: "sedan", image: `${base}/inventory/malibu.jpg` },
+    { id: 25, make: "Chevrolet", model: "Silverado 1500", year: 2019, price: 27900, mileage: 69000, type: "truck", image: `${base}/inventory/silverado.jpg` },
   ],
-  []
+  [base]
 );
+
 
 
   // Read filters from URL (ex: /inventory?type=suv)
