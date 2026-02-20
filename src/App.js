@@ -1,7 +1,7 @@
 import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import Inventory from "./components/Inventory";
-
+import InventoryLayout from "./components/InventoryLayout";
 import Homepage from "./components/homepage";
 import HeaderNav from "./components/headNav";
 
@@ -37,27 +37,30 @@ export default function App() {
       <HeaderNav makes={makes} />
 
       <Routes>
-        <Route path="/" element={<Homepage />} />
+  {/* Pages WITHOUT footer */}
+  <Route path="/" element={<Homepage />} />
+  <Route path="/consultation" element={<ComingSoon title="Consultation" />} />
+  <Route path="/login" element={<ComingSoon title="Employee Login" />} />
+  <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
+  <Route path="/about" element={<ComingSoon title="About Us" />} />
 
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/consultation" element={<ComingSoon title="Consultation" />} />
-        <Route path="/login" element={<ComingSoon title="Employee Login" />} />
-        <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
-        <Route path="/about" element={<ComingSoon title="About Us" />} />
-      
-      
-        {/* manufacturer routes placeholder */}
-        <Route path="/nissan" element={<ComingSoon title="Nissan" />} />
-        <Route path="/toyota" element={<ComingSoon title="Toyota" />} />
-        <Route path="/honda" element={<ComingSoon title="Honda" />} />
-        <Route path="/subaru" element={<ComingSoon title="Subaru" />} />
-        <Route path="/mazda" element={<ComingSoon title="Mazda" />} />
-        <Route path="/kia" element={<ComingSoon title="Kia" />} />
-        <Route path="/ford" element={<ComingSoon title="Ford" />} />
-        <Route path="/chevrolet" element={<ComingSoon title="Chevrolet" />} />
+  {/* Pages WITH footer (Inventory + future pages) */}
+  <Route element={<InventoryLayout />}>
+    <Route path="/inventory" element={<Inventory />} />
 
-        <Route path="*" element={<ComingSoon title="Page Not Found" />} />
-      </Routes>
+    {/* add future pages that should have footer */}
+    <Route path="/nissan" element={<ComingSoon title="Nissan" />} />
+    <Route path="/toyota" element={<ComingSoon title="Toyota" />} />
+    <Route path="/honda" element={<ComingSoon title="Honda" />} />
+    <Route path="/subaru" element={<ComingSoon title="Subaru" />} />
+    <Route path="/mazda" element={<ComingSoon title="Mazda" />} />
+    <Route path="/kia" element={<ComingSoon title="Kia" />} />
+    <Route path="/ford" element={<ComingSoon title="Ford" />} />
+    <Route path="/chevrolet" element={<ComingSoon title="Chevrolet" />} />
+  </Route>
+
+  <Route path="*" element={<ComingSoon title="Page Not Found" />} />
+</Routes>
     </HashRouter>
   );
 }
