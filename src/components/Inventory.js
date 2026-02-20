@@ -1,73 +1,321 @@
 import React, { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
+/**
+ * Inventory
+ * Displays vehicle cards with basic filtering + sorting.
+ *
+ * Notes for the team:
+ * - Data is currently mocked (cars array). Later you can replace it with API data.
+ * - Supports URL filter: /inventory?type=suv
+ * - Works well on mobile because the grid uses auto-fit/minmax.
+ */
 export default function Inventory() {
   const location = useLocation();
   const base = process.env.PUBLIC_URL;
 
+  // Local placeholder so it works offline & on GitHub Pages (optional).
+  // Put a file at: public/inventory/placeholder.jpg (or change this path)
+  const PLACEHOLDER_IMG = `${base}/inventory/placeholder.jpg`;
 
-  // Fake inventory data (you can add more cars later)
- const cars = useMemo(
-  () => [
-    // Toyota (4)
-    { id: 1, make: "Toyota", model: "Camry", year: 2021, price: 18500, mileage: 45000, type: "sedan", image: `${base}/inventory/camry.jpeg` },
-    { id: 2, make: "Toyota", model: "Corolla", year: 2020, price: 16200, mileage: 52000, type: "sedan", image: `${base}/inventory/corolla.jpg` },
-    { id: 3, make: "Toyota", model: "GR86", year: 2022, price: 28900, mileage: 18000, type: "coupe", image: `${base}/inventory/gr86.jpg` },
-    { id: 4, make: "Toyota", model: "RAV4", year: 2019, price: 21900, mileage: 64000, type: "suv", image: `${base}/inventory/rav4.jpg` },
+  /**
+   * Mock inventory data
+   * Later: replace with data from backend / database.
+   */
+  const cars = useMemo(
+    () => [
+      // Toyota (4)
+      {
+        id: 1,
+        make: "Toyota",
+        model: "Camry",
+        year: 2021,
+        price: 18500,
+        mileage: 45000,
+        type: "sedan",
+        image: `${base}/inventory/camry.jpeg`,
+      },
+      {
+        id: 2,
+        make: "Toyota",
+        model: "Corolla",
+        year: 2020,
+        price: 16200,
+        mileage: 52000,
+        type: "sedan",
+        image: `${base}/inventory/corolla.jpg`,
+      },
+      {
+        id: 3,
+        make: "Toyota",
+        model: "GR86",
+        year: 2022,
+        price: 28900,
+        mileage: 18000,
+        type: "coupe",
+        image: `${base}/inventory/gr86.jpg`,
+      },
+      {
+        id: 4,
+        make: "Toyota",
+        model: "RAV4",
+        year: 2019,
+        price: 21900,
+        mileage: 64000,
+        type: "suv",
+        image: `${base}/inventory/rav4.jpg`,
+      },
 
-    // Honda (4)
-    { id: 5, make: "Honda", model: "Civic", year: 2020, price: 16900, mileage: 52000, type: "sedan", image: `${base}/inventory/civic.jpg` },
-    { id: 6, make: "Honda", model: "Accord", year: 2019, price: 19800, mileage: 61000, type: "sedan", image: `${base}/inventory/accord.jpg` },
-    { id: 7, make: "Honda", model: "CR-V", year: 2021, price: 24900, mileage: 36000, type: "suv", image: `${base}/inventory/crv.jpg` },
-    { id: 8, make: "Honda", model: "HR-V", year: 2018, price: 17900, mileage: 72000, type: "suv", image: `${base}/inventory/hrv.jpg` },
+      // Honda (4)
+      {
+        id: 5,
+        make: "Honda",
+        model: "Civic",
+        year: 2020,
+        price: 16900,
+        mileage: 52000,
+        type: "sedan",
+        image: `${base}/inventory/civic.jpg`,
+      },
+      {
+        id: 6,
+        make: "Honda",
+        model: "Accord",
+        year: 2019,
+        price: 19800,
+        mileage: 61000,
+        type: "sedan",
+        image: `${base}/inventory/accord.jpg`,
+      },
+      {
+        id: 7,
+        make: "Honda",
+        model: "CR-V",
+        year: 2021,
+        price: 24900,
+        mileage: 36000,
+        type: "suv",
+        image: `${base}/inventory/crv.jpg`,
+      },
+      {
+        id: 8,
+        make: "Honda",
+        model: "HR-V",
+        year: 2018,
+        price: 17900,
+        mileage: 72000,
+        type: "suv",
+        image: `${base}/inventory/hrv.jpg`,
+      },
 
-    // Nissan (3)
-    { id: 9, make: "Nissan", model: "Altima", year: 2021, price: 18900, mileage: 47000, type: "sedan", image: `${base}/inventory/altima.jpg` },
-    { id: 10, make: "Nissan", model: "Sentra", year: 2020, price: 15900, mileage: 54000, type: "sedan", image: `${base}/inventory/sentra.jpg` },
-    { id: 11, make: "Nissan", model: "Rogue", year: 2019, price: 20900, mileage: 66000, type: "suv", image: `${base}/inventory/rouge.jpg` },
+      // Nissan (3)
+      {
+        id: 9,
+        make: "Nissan",
+        model: "Altima",
+        year: 2021,
+        price: 18900,
+        mileage: 47000,
+        type: "sedan",
+        image: `${base}/inventory/altima.jpg`,
+      },
+      {
+        id: 10,
+        make: "Nissan",
+        model: "Sentra",
+        year: 2020,
+        price: 15900,
+        mileage: 54000,
+        type: "sedan",
+        image: `${base}/inventory/sentra.jpg`,
+      },
+      {
+        id: 11,
+        make: "Nissan",
+        model: "Rogue",
+        year: 2019,
+        price: 20900,
+        mileage: 66000,
+        type: "suv",
+        // NOTE: If your actual file is named "rouge.jpg", keep it.
+        // Otherwise, this is commonly "rogue.jpg".
+        image: `${base}/inventory/rouge.jpg`,
+      },
 
-    // Subaru (3)
-    { id: 12, make: "Subaru", model: "Outback", year: 2019, price: 21900, mileage: 61000, type: "suv", image: `${base}/inventory/outback.jpg` },
-    { id: 13, make: "Subaru", model: "Forester", year: 2020, price: 22900, mileage: 52000, type: "suv", image: `${base}/inventory/forester.jpg` },
-    { id: 14, make: "Subaru", model: "Impreza", year: 2018, price: 14900, mileage: 78000, type: "hatchback", image: `${base}/inventory/impreza.jpg` },
+      // Subaru (3)
+      {
+        id: 12,
+        make: "Subaru",
+        model: "Outback",
+        year: 2019,
+        price: 21900,
+        mileage: 61000,
+        type: "suv",
+        image: `${base}/inventory/outback.jpg`,
+      },
+      {
+        id: 13,
+        make: "Subaru",
+        model: "Forester",
+        year: 2020,
+        price: 22900,
+        mileage: 52000,
+        type: "suv",
+        image: `${base}/inventory/forester.jpg`,
+      },
+      {
+        id: 14,
+        make: "Subaru",
+        model: "Impreza",
+        year: 2018,
+        price: 14900,
+        mileage: 78000,
+        type: "hatchback",
+        image: `${base}/inventory/impreza.jpg`,
+      },
 
-    // Mazda (3)
-    { id: 15, make: "Mazda", model: "CX-5", year: 2022, price: 25900, mileage: 21000, type: "suv", image: `${base}/inventory/cx5.jpg` },
-    { id: 16, make: "Mazda", model: "Mazda3", year: 2021, price: 19900, mileage: 33000, type: "hatchback", image: `${base}/inventory/mazda3.jpg` },
-    { id: 17, make: "Mazda", model: "MX-5 Miata", year: 2020, price: 27900, mileage: 26000, type: "coupe", image: `${base}/inventory/miata.jpg` },
+      // Mazda (3)
+      {
+        id: 15,
+        make: "Mazda",
+        model: "CX-5",
+        year: 2022,
+        price: 25900,
+        mileage: 21000,
+        type: "suv",
+        image: `${base}/inventory/cx5.jpg`,
+      },
+      {
+        id: 16,
+        make: "Mazda",
+        model: "Mazda3",
+        year: 2021,
+        price: 19900,
+        mileage: 33000,
+        type: "hatchback",
+        image: `${base}/inventory/mazda3.jpg`,
+      },
+      {
+        id: 17,
+        make: "Mazda",
+        model: "MX-5 Miata",
+        year: 2020,
+        price: 27900,
+        mileage: 26000,
+        type: "coupe",
+        image: `${base}/inventory/miata.jpg`,
+      },
 
-    // Kia (3)
-    { id: 18, make: "Kia", model: "Soul", year: 2021, price: 17900, mileage: 39000, type: "hatchback", image: `${base}/inventory/soul.jpg` },
-    { id: 19, make: "Kia", model: "Sportage", year: 2019, price: 19900, mileage: 62000, type: "suv", image: `${base}/inventory/sportage.jpg` },
-    { id: 20, make: "Kia", model: "Telluride", year: 2020, price: 31900, mileage: 49000, type: "suv", image: `${base}/inventory/telluride.jpg` },
+      // Kia (3)
+      {
+        id: 18,
+        make: "Kia",
+        model: "Soul",
+        year: 2021,
+        price: 17900,
+        mileage: 39000,
+        type: "hatchback",
+        image: `${base}/inventory/soul.jpg`,
+      },
+      {
+        id: 19,
+        make: "Kia",
+        model: "Sportage",
+        year: 2019,
+        price: 19900,
+        mileage: 62000,
+        type: "suv",
+        image: `${base}/inventory/sportage.jpg`,
+      },
+      {
+        id: 20,
+        make: "Kia",
+        model: "Telluride",
+        year: 2020,
+        price: 31900,
+        mileage: 49000,
+        type: "suv",
+        image: `${base}/inventory/telluride.jpg`,
+      },
 
-    // Ford (3)
-    { id: 21, make: "Ford", model: "F-150", year: 2018, price: 24900, mileage: 74000, type: "truck", image: `${base}/inventory/f150.jpg` },
-    { id: 22, make: "Ford", model: "Mustang", year: 2019, price: 28900, mileage: 52000, type: "coupe", image: `${base}/inventory/mustang.jpg` },
-    { id: 23, make: "Ford", model: "Escape", year: 2020, price: 20900, mileage: 58000, type: "suv", image: `${base}/inventory/escape.jpg` },
+      // Ford (3)
+      {
+        id: 21,
+        make: "Ford",
+        model: "F-150",
+        year: 2018,
+        price: 24900,
+        mileage: 74000,
+        type: "truck",
+        image: `${base}/inventory/f150.jpg`,
+      },
+      {
+        id: 22,
+        make: "Ford",
+        model: "Mustang",
+        year: 2019,
+        price: 28900,
+        mileage: 52000,
+        type: "coupe",
+        image: `${base}/inventory/mustang.jpg`,
+      },
+      {
+        id: 23,
+        make: "Ford",
+        model: "Escape",
+        year: 2020,
+        price: 20900,
+        mileage: 58000,
+        type: "suv",
+        image: `${base}/inventory/escape.jpg`,
+      },
 
-    // Chevrolet (2)
-    { id: 24, make: "Chevrolet", model: "Malibu", year: 2020, price: 17400, mileage: 61000, type: "sedan", image: `${base}/inventory/malibu.jpg` },
-    { id: 25, make: "Chevrolet", model: "Silverado 1500", year: 2019, price: 27900, mileage: 69000, type: "truck", image: `${base}/inventory/silverado.jpg` },
-  ],
-  [base]
-);
+      // Chevrolet (2)
+      {
+        id: 24,
+        make: "Chevrolet",
+        model: "Malibu",
+        year: 2020,
+        price: 17400,
+        mileage: 61000,
+        type: "sedan",
+        image: `${base}/inventory/malibu.jpg`,
+      },
+      {
+        id: 25,
+        make: "Chevrolet",
+        model: "Silverado 1500",
+        year: 2019,
+        price: 27900,
+        mileage: 69000,
+        type: "truck",
+        image: `${base}/inventory/silverado.jpg`,
+      },
+    ],
+    [base]
+  );
 
+  /**
+   * Read initial "type" filter from URL:
+   * Example: /inventory?type=suv
+   */
+  const urlType = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("type") || "";
+  }, [location.search]);
 
-
-  // Read filters from URL (ex: /inventory?type=suv)
-  const params = new URLSearchParams(location.search);
-  const urlType = params.get("type") || "";
-
+  // Filters / Sort state
   const [makeFilter, setMakeFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState(urlType);
   const [sortBy, setSortBy] = useState("recommended");
 
+  // Unique makes for dropdown
   const makes = useMemo(() => {
     const set = new Set(cars.map((c) => c.make));
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [cars]);
 
+  // Apply filtering + sorting
   const filtered = useMemo(() => {
     let list = cars;
 
@@ -75,13 +323,33 @@ export default function Inventory() {
     if (typeFilter) list = list.filter((c) => c.type === typeFilter);
 
     const sorted = [...list];
-    if (sortBy === "priceLow") sorted.sort((a, b) => a.price - b.price);
-    if (sortBy === "priceHigh") sorted.sort((a, b) => b.price - a.price);
-    if (sortBy === "yearNew") sorted.sort((a, b) => b.year - a.year);
-    if (sortBy === "milesLow") sorted.sort((a, b) => a.mileage - b.mileage);
+
+    switch (sortBy) {
+      case "priceLow":
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case "priceHigh":
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case "yearNew":
+        sorted.sort((a, b) => b.year - a.year);
+        break;
+      case "milesLow":
+        sorted.sort((a, b) => a.mileage - b.mileage);
+        break;
+      default:
+        // "recommended" - keep original order
+        break;
+    }
 
     return sorted;
   }, [cars, makeFilter, typeFilter, sortBy]);
+
+  const handleReset = () => {
+    setMakeFilter("");
+    setTypeFilter("");
+    setSortBy("recommended");
+  };
 
   return (
     <div style={styles.page}>
@@ -141,36 +409,29 @@ export default function Inventory() {
             </select>
           </div>
 
-          <button
-            type="button"
-            style={styles.resetBtn}
-            onClick={() => {
-              setMakeFilter("");
-              setTypeFilter("");
-              setSortBy("recommended");
-            }}
-          >
+          <button type="button" style={styles.resetBtn} onClick={handleReset}>
             Reset
           </button>
         </div>
 
-        {/* Results */}
+        {/* Results count */}
         <div style={styles.countRow}>
           <span style={styles.count}>{filtered.length} vehicle(s)</span>
         </div>
 
+        {/* Vehicle cards */}
         <div style={styles.grid}>
           {filtered.map((car) => (
             <div key={car.id} style={styles.card}>
               <div style={styles.imgWrap}>
-                {/* If you don’t have images yet, this will still render a placeholder */}
                 <img
                   src={car.image}
                   alt={`${car.year} ${car.make} ${car.model}`}
                   style={styles.img}
                   onError={(e) => {
-                    e.currentTarget.src =
-                      "https://via.placeholder.com/800x500?text=Car+Photo";
+                    // Prevent infinite onError loop
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = PLACEHOLDER_IMG;
                   }}
                 />
               </div>
@@ -197,6 +458,7 @@ export default function Inventory() {
           ))}
         </div>
 
+        {/* Empty state */}
         {filtered.length === 0 && (
           <div style={styles.empty}>
             No vehicles match your filters. Try Reset.
@@ -233,7 +495,13 @@ const styles = {
     background: "rgba(15, 23, 42, 0.02)",
   },
   field: { display: "flex", flexDirection: "column", gap: 6 },
-  label: { fontSize: 12, fontWeight: 900, opacity: 0.7, letterSpacing: "0.06em", textTransform: "uppercase" },
+  label: {
+    fontSize: 12,
+    fontWeight: 900,
+    opacity: 0.7,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+  },
   select: {
     padding: "10px 12px",
     borderRadius: 12,
@@ -264,11 +532,26 @@ const styles = {
     boxShadow: "0 12px 26px rgba(0,0,0,0.08)",
     background: "#fff",
   },
-  imgWrap: { width: "100%", height: 160, overflow: "hidden", background: "#e5e7eb" },
-  img: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  imgWrap: {
+    width: "100%",
+    height: 160,
+    overflow: "hidden",
+    background: "#e5e7eb",
+  },
+  img: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+  },
   cardBody: { padding: 14 },
   carTitle: { fontWeight: 900, fontSize: 16, marginBottom: 8 },
-  metaRow: { display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" },
+  metaRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 10,
+    alignItems: "center",
+  },
   badge: {
     display: "inline-block",
     padding: "4px 10px",

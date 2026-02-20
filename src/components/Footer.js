@@ -1,42 +1,81 @@
 import "./footer.css";
+
+const BRAND_INDEX = [
+  "Chevrolet",
+  "Ford",
+  "Honda",
+  "Kia",
+  "Mazda",
+  "Nissan",
+  "Subaru",
+  "Toyota",
+];
+
 export default function Footer() {
   return (
-    <footer style={styles.footer}>
+    <footer style={styles.footer} aria-label="Site footer">
       <div style={styles.inner}>
+        {/* Main footer grid (stacks on mobile via footer.css) */}
         <div className="footer-grid" style={styles.grid}>
-          <div>
+          {/* Brand Index */}
+          <section aria-label="Brand index">
             <div style={styles.title}>BRAND INDEX</div>
             <ul style={styles.list}>
-              {["Chevrolet", "Ford", "Honda", "Kia", "Mazda", "Nissan", "Subaru", "Toyota"].map((b) => (
-                <li key={b} style={styles.li}>{b}</li>
+              {BRAND_INDEX.map((brand) => (
+                <li key={brand} style={styles.li}>
+                  {brand}
+                </li>
               ))}
             </ul>
-          </div>
+          </section>
 
-          <div>
+          {/* Location */}
+          <section aria-label="Location">
             <div style={styles.title}>LOCATE US</div>
-            <div style={styles.text}>5500 University Pkwy</div>
-            <div style={styles.text}>San Bernardino, CA 92407</div>
-            <div style={styles.text}>Sales: <b>(909) 555-0123</b></div>
-          </div>
+            <address style={styles.address}>
+              <div style={styles.text}>5500 University Pkwy</div>
+              <div style={styles.text}>San Bernardino, CA 92407</div>
+              <div style={styles.text}>
+                Sales:{" "}
+                <a style={styles.link} href="tel:+19095550123">
+                  (909) 555-0123
+                </a>
+              </div>
+            </address>
+          </section>
 
-          <div>
+          {/* Hours */}
+          <section aria-label="Business hours">
             <div style={styles.title}>HOURS</div>
             <div style={styles.text}>Mon–Thu: 9:00 AM – 6:00 PM</div>
             <div style={styles.text}>Fri: 9:00 AM – 5:00 PM</div>
             <div style={styles.text}>Sat: 10:00 AM – 3:00 PM</div>
             <div style={styles.text}>Sun: Closed</div>
-          </div>
+          </section>
 
-          <div>
+          {/* Contact */}
+          <section aria-label="Contact information">
             <div style={styles.title}>CONTACT US</div>
-            <div style={styles.text}>Email: <b>campuscars@csusb.edu</b></div>
-            <div style={styles.text}>Phone: <b>(909) 555-0123</b></div>
-          </div>
+            <div style={styles.text}>
+              Email:{" "}
+              <a style={styles.link} href="mailto:campuscars@csusb.edu">
+                campuscars@csusb.edu
+              </a>
+            </div>
+            <div style={styles.text}>
+              Phone:{" "}
+              <a style={styles.link} href="tel:+19095550123">
+                (909) 555-0123
+              </a>
+            </div>
+          </section>
         </div>
 
+        {/* Footer bottom bar */}
         <div style={styles.bottom}>
-          <div style={styles.muted}>© {new Date().getFullYear()} CampusCars. All Rights Reserved.</div>
+          <div style={styles.muted}>
+            © {new Date().getFullYear()} CampusCars. All Rights Reserved.
+          </div>
           <div style={styles.muted}>Powered by CampusCars</div>
         </div>
       </div>
@@ -70,8 +109,22 @@ const styles = {
     textTransform: "uppercase",
   },
   text: { fontSize: 14, lineHeight: 1.7, opacity: 0.95 },
+
+  // Lists
   list: { listStyle: "none", padding: 0, margin: 0 },
   li: { fontSize: 14, lineHeight: 1.9, opacity: 0.95 },
+
+  // Make address not italic (default browser styling)
+  address: { fontStyle: "normal", margin: 0 },
+
+  // Simple link style (works with dark footer)
+  link: {
+    color: "#e8eef6",
+    fontWeight: 700,
+    textDecoration: "none",
+    borderBottom: "1px solid rgba(255,255,255,0.25)",
+    paddingBottom: 1,
+  },
 
   bottom: {
     marginTop: 22,

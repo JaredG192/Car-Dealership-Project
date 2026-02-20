@@ -1,35 +1,84 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
+/**
+ * HeroSlider
+ *
+ * Reusable hero image slider for the homepage (or any page).
+ *
+ * Props:
+ * - slides: Array of { image, title, subtitle?, ctas?: [{ label, href, variant?: "primary"|"secondary" }] }
+ * - intervalMs: auto-advance interval (disabled if slides <= 1)
+ * - height: css height value (string)
+ */
 export default function HeroSlider({
   slides = [],
   intervalMs = 4500,
   height = "clamp(320px, 55vw, 560px)",
 }) {
   const safeSlides = useMemo(() => slides.filter(Boolean), [slides]);
-  const [index, setIndex] = useState(0);
-  const count = safeSlides.length;
 
+  const [index, setIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const count = safeSlides.length;
+  const timerRef = useRef(null);
+
+  // If slides change and the current index is out of range, reset to 0.
+  useEffect(() => {
+    if (index > count - 1) setIndex(0);
+  }, [count, index]);
+
+  // Auto-advance slides (pause when user hovers/touches)
   useEffect(() => {
     if (count <= 1) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % count), intervalMs);
-    return () => clearInterval(id);
-  }, [count, intervalMs]);
+    if (isPaused) return;
+
+    timerRef.current = setInterval(() => {
+      setIndex((i) => (i + 1) % count);
+    }, intervalMs);
+
+    return () => clearInterval(timerRef.current);
+  }, [count, intervalMs, isPaused]);
+
+  // Keyboard navigation (left/right arrows)
+  useEffect(() => {
+    if (count <= 1) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
 
   if (count === 0) return null;
 
   const prev = () => setIndex((i) => (i - 1 + count) % count);
   const next = () => setIndex((i) => (i + 1) % count);
 
-  const current = safeSlides[index];
+  const current = safeSlides[index] || {};
+  const title = current.title || "";
+  const subtitle = current.subtitle || "";
+  const image = current.image || "";
 
   return (
-    <section style={{ ...styles.wrap, height }}>
+    <section
+      style={{ ...styles.wrap, height }}
+      aria-label="Hero slider"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+    >
       {/* Background image */}
       <div
         style={{
           ...styles.bg,
-          backgroundImage: `url(${current.image})`,
+          backgroundImage: image ? `url(${image})` : "none",
         }}
       />
 
@@ -38,8 +87,8 @@ export default function HeroSlider({
 
       {/* Text overlay */}
       <div style={styles.content}>
-        <h1 style={styles.title}>{current.title}</h1>
-        {current.subtitle && <p style={styles.subtitle}>{current.subtitle}</p>}
+        <h1 style={styles.title}>{title}</h1>
+        {subtitle ? <p style={styles.subtitle}>{subtitle}</p> : null}
 
         {current.ctas?.length ? (
           <div style={styles.ctaRow}>
@@ -59,7 +108,7 @@ export default function HeroSlider({
         ) : null}
       </div>
 
-      {/* Arrows */}
+      {/* Arrows (only show if more than 1 slide) */}
       {count > 1 && (
         <>
           <button
@@ -83,13 +132,13 @@ export default function HeroSlider({
 
       {/* Dots */}
       {count > 1 && (
-        <div style={styles.dots}>
+        <div style={styles.dots} aria-label="Slide navigation">
           {safeSlides.map((_, i) => (
             <button
               key={i}
               type="button"
               onClick={() => setIndex(i)}
-              aria-label={`Slide ${i + 1}`}
+              aria-label={`Go to slide ${i + 1}`}
               style={{
                 ...styles.dot,
                 opacity: i === index ? 1 : 0.45,

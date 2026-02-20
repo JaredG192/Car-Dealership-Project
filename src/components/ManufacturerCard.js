@@ -12,56 +12,83 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+/**
+ * Props:
+ * - name (string)        → Manufacturer name
+ * - description (string) → Short brand description
+ * - image (string)       → Logo/image URL
+ * - link (string)        → Route path
+ * - showDivider (bool)   → Optional divider under card
+ */
 export default function ManufacturerCard({
-  name,
-  description,
-  image,
-  link,
+  name = "",
+  description = "",
+  image = "",
+  link = "/",
+  showDivider = true,
 }) {
   return (
-    <div
-      style={{
-        marginBottom: 20,
-        textAlign: "center",
-      }}
-    >
+    <div style={styles.card}>
       {/* Manufacturer name */}
-      <h3 style={{ color: "white", marginBottom: 6 }}>{name}</h3>
+      <h3 style={styles.title}>{name}</h3>
 
-      {/* Short description */}
-      <p
-        style={{
-          color: "rgba(255,255,255,0.9)",
-          fontSize: "14px",
-          marginBottom: 10,
-        }}
+      {/* Description */}
+      {description && <p style={styles.description}>{description}</p>}
+
+      {/* Clickable image */}
+      <Link
+        to={link}
+        style={styles.imageLink}
+        aria-label={`View ${name} inventory`}
       >
-        {description}
-      </p>
-
-      {/* Clickable image (React Router navigation) */}
-      <Link to={link} style={{ display: "inline-block" }}>
         <img
           src={image}
           alt={name}
-          style={{
-            width: "100%",
-            maxWidth: "180px",
-            height: "auto",
-            objectFit: "contain",
-            margin: "0 auto",
-            display: "block",
-          }}
+          style={styles.image}
         />
       </Link>
 
-      {/* Divider */}
-      <hr
-        style={{
-          marginTop: 14,
-          borderColor: "rgba(255,255,255,0.2)",
-        }}
-      />
+      {/* Optional Divider */}
+      {showDivider && <hr style={styles.divider} />}
     </div>
   );
 }
+
+const styles = {
+  card: {
+    marginBottom: 20,
+    textAlign: "center",
+    transition: "transform 200ms ease",
+  },
+
+  title: {
+    color: "white",
+    marginBottom: 6,
+    fontWeight: 900,
+  },
+
+  description: {
+    color: "rgba(255,255,255,0.9)",
+    fontSize: "14px",
+    marginBottom: 10,
+  },
+
+  imageLink: {
+    display: "inline-block",
+  },
+
+  image: {
+    width: "100%",
+    maxWidth: "180px",
+    height: "auto",
+    objectFit: "contain",
+    margin: "0 auto",
+    display: "block",
+    transition: "transform 200ms ease",
+  },
+
+  divider: {
+    marginTop: 14,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
+};

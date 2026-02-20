@@ -1,35 +1,55 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./headNav.css";
 
+/**
+ * HeaderNav
+ *
+ * Global top navigation used across the site.
+ * - Desktop nav links + "Shop by Make" dropdown
+ * - Mobile hamburger menu
+ *
+ * Props:
+ * - makes: [{ name: "Toyota", link: "/toyota" }, ...]
+ */
 export default function HeaderNav({ makes = [] }) {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [open, setOpen] = useState(false);
 
+  // Clean list of make options (removes null/undefined)
   const makeOptions = useMemo(() => makes.filter(Boolean), [makes]);
+
+  // Close the mobile menu whenever the route changes (professional UX)
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   const onMakeSelect = (e) => {
     const value = e.target.value;
     if (!value) return;
-    setOpen(false);
+
+    // Navigate to the selected make page
     navigate(value);
+
+    // Reset dropdown back to default option on mobile/desktop
+    e.target.value = "";
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <header style={styles.header}>
-      {/* Main nav */}
       <div style={styles.navRow}>
         {/* Logo */}
-        <Link to="/" style={styles.logoWrap} onClick={() => setOpen(false)}>
+        <Link to="/" style={styles.logoWrap} aria-label="Go to homepage">
           <span style={styles.logoA}>Campus</span>
           <span style={styles.logoB}>Cars</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="navLinksDesktop" style={styles.navLinks}>
+        <nav className="navLinksDesktop" style={styles.navLinks} aria-label="Primary navigation">
           <NavLink to="/inventory" active={isActive("/inventory")}>
             Inventory
           </NavLink>
@@ -42,11 +62,19 @@ export default function HeaderNav({ makes = [] }) {
             About Us
           </NavLink>
 
-          {/* Make dropdown */}
+          {/* Shop by Make */}
           <div style={styles.makeWrap}>
-            <span style={styles.navLink}>Shop by Make</span>
+            <label htmlFor="makeSelectDesktop" style={styles.navLink}>
+              Shop by Make
+            </label>
 
-            <select defaultValue="" onChange={onMakeSelect} style={styles.makeSelect}>
+            <select
+              id="makeSelectDesktop"
+              defaultValue=""
+              onChange={onMakeSelect}
+              style={styles.makeSelect}
+              aria-label="Shop by Make"
+            >
               <option value="">Select</option>
               {makeOptions.map((m) => (
                 <option key={m.name} value={m.link}>
@@ -67,7 +95,8 @@ export default function HeaderNav({ makes = [] }) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           style={styles.mobileBtn}
-          aria-label="Toggle menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
         >
           ☰
         </button>
@@ -75,23 +104,23 @@ export default function HeaderNav({ makes = [] }) {
 
       {/* Mobile dropdown */}
       {open && (
-        <div className="mobilePanel" style={styles.mobilePanel}>
-          <MobileLink to="/inventory" setOpen={setOpen}>
-            Inventory
-          </MobileLink>
-
-          <MobileLink to="/consultation" setOpen={setOpen}>
-            Consultation
-          </MobileLink>
-
-          <MobileLink to="/about" setOpen={setOpen}>
-            About Us
-          </MobileLink>
+        <div className="mobilePanel" style={styles.mobilePanel} aria-label="Mobile navigation">
+          <MobileLink to="/inventory">Inventory</MobileLink>
+          <MobileLink to="/consultation">Consultation</MobileLink>
+          <MobileLink to="/about">About Us</MobileLink>
 
           <div style={styles.mobileMakeRow}>
-            <span style={styles.mobileLabel}>Shop by Make:</span>
+            <label htmlFor="makeSelectMobile" style={styles.mobileLabel}>
+              Shop by Make:
+            </label>
 
-            <select defaultValue="" onChange={onMakeSelect} style={styles.mobileSelect}>
+            <select
+              id="makeSelectMobile"
+              defaultValue=""
+              onChange={onMakeSelect}
+              style={styles.mobileSelect}
+              aria-label="Shop by Make (mobile)"
+            >
               <option value="">Select</option>
               {makeOptions.map((m) => (
                 <option key={m.name} value={m.link}>
@@ -101,7 +130,7 @@ export default function HeaderNav({ makes = [] }) {
             </select>
           </div>
 
-          <Link to="/login" style={styles.mobileCta} onClick={() => setOpen(false)}>
+          <Link to="/login" style={styles.mobileCta}>
             Employee Login
           </Link>
         </div>
@@ -126,9 +155,9 @@ function NavLink({ to, active, children }) {
   );
 }
 
-function MobileLink({ to, setOpen, children }) {
+function MobileLink({ to, children }) {
   return (
-    <Link to={to} style={styles.mobileLink} onClick={() => setOpen(false)}>
+    <Link to={to} style={styles.mobileLink}>
       {children}
     </Link>
   );
@@ -145,20 +174,17 @@ const styles = {
     backdropFilter: "blur(8px)",
     borderBottom: "1px solid rgba(0,0,0,0.08)",
   },
-
   navRow: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     padding: "12px 16px",
   },
-
   logoWrap: {
     textDecoration: "none",
     display: "flex",
     gap: 2,
   },
-
   logoA: { fontWeight: 900, fontSize: 28, color: "#0ea5e9" },
   logoB: { fontWeight: 900, fontSize: 28, color: "#f43f5e" },
 
@@ -167,24 +193,21 @@ const styles = {
     gap: 16,
     alignItems: "center",
   },
-
   navLink: {
     textDecoration: "none",
     color: "rgba(0,0,0,0.8)",
     fontWeight: 800,
     fontSize: 14,
   },
+  active: { textDecoration: "underline" },
 
-  active: {
-    textDecoration: "underline",
-  },
-
-  makeWrap: { display: "flex", gap: 8 },
-
+  makeWrap: { display: "flex", gap: 8, alignItems: "center" },
   makeSelect: {
     borderRadius: 999,
     padding: "6px 10px",
     border: "1px solid rgba(0,0,0,0.15)",
+    background: "#fff",
+    fontWeight: 800,
   },
 
   navCta: {
@@ -227,13 +250,14 @@ const styles = {
     padding: "10px 0",
     alignItems: "center",
   },
-
   mobileLabel: { fontWeight: 900 },
-
   mobileSelect: {
     flex: 1,
     padding: "8px",
     borderRadius: 8,
+    border: "1px solid rgba(0,0,0,0.15)",
+    background: "#fff",
+    fontWeight: 800,
   },
 
   mobileCta: {

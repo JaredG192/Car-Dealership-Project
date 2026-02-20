@@ -1,3 +1,8 @@
+/**
+ * Entry point for the CampusCars React app.
+ * Renders the root <App /> component.
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

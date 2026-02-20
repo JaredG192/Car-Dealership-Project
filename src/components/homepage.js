@@ -1,13 +1,20 @@
 // Homepage.js
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import HeroSlider from "./heroSlider"; // change to "./HeroSlider" if file is HeroSlider.js
+import HeroSlider from "./heroSlider"; // change to "./HeroSlider" if your filename is HeroSlider.js
 
+/**
+ * Homepage
+ *
+ * Landing page for CampusCars.
+ * NOTE: Footer is NOT rendered here on purpose.
+ * The footer is shown only on Inventory + selected pages via InventoryLayout.
+ */
 export default function Homepage() {
   const base = process.env.PUBLIC_URL;
   const [isMobile, setIsMobile] = useState(false);
 
+  // Detect mobile layout (supports older Safari too)
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const onChange = (e) => setIsMobile(e.matches);
@@ -24,64 +31,64 @@ export default function Homepage() {
     return () => mq.removeListener(onChange);
   }, []);
 
-  const brandIndex = [
-    "Nissan",
-    "Toyota",
-    "Honda",
-    "Subaru",
-    "Mazda",
-    "Kia",
-    "Ford",
-    "Chevrolet",
-  ].sort((a, b) => a.localeCompare(b));
+  // Hero slides (memoized so the array isn't recreated every render)
+  const slides = useMemo(
+    () => [
+      {
+        image: `${base}/index/cars.jpg`,
+        title: "Affordable Cars for College Students",
+        subtitle: "Browse reliable used vehicles + get personalized buying advice.",
+        ctas: [
+          { label: "Browse Inventory", href: "/inventory", variant: "primary" },
+          { label: "Get Consultation", href: "/consultation", variant: "secondary" },
+        ],
+      },
+      {
+        image: `${base}/index/rightcar.jpg`,
+        title: "Find the Right Car Fast",
+        subtitle: "Filter by budget, mileage, and your needs.",
+        ctas: [{ label: "View Cars", href: "/inventory", variant: "primary" }],
+      },
+      {
+        image: `${base}/index/guide.jpg`,
+        title: "Student Friendly Guidance",
+        subtitle: "We help you choose a car that fits your life and your budget.",
+        ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
+      },
+    ],
+    [base]
+  );
+
+  // Vehicle types shown below the hero
+  const vehicleTypes = useMemo(
+    () => [
+      { title: "Sedans", img: `${base}/index/sedan.png`, to: "/inventory?type=sedan" },
+      { title: "Coupes", img: `${base}/index/coupe.png`, to: "/inventory?type=coupe" },
+      { title: "SUVs", img: `${base}/index/suv.png`, to: "/inventory?type=suv" },
+      { title: "Trucks", img: `${base}/index/truck.png`, to: "/inventory?type=truck" },
+      { title: "Hatchbacks", img: `${base}/index/hatchback.png`, to: "/inventory?type=hatchback" },
+      { title: "Minivans", img: `${base}/index/minivan.png`, to: "/inventory?type=minivan" },
+    ],
+    [base]
+  );
+
+  // Action cards (quick links)
+  const actions = useMemo(
+    () => [
+      { title: "Browse Inventory", btn: "View Cars", img: `${base}/index/browse.jpg`, link: "/inventory" },
+      { title: "Book Consultation", btn: "Schedule Now", img: `${base}/index/book.jpg`, link: "/consultation" },
+      { title: "About Us", btn: "Learn More", img: `${base}/index/us.jpg`, link: "/about" },
+      { title: "Contact Us", btn: "Get in Touch", img: `${base}/index/contact.jpg`, link: "/contact" },
+    ],
+    [base]
+  );
 
   return (
     <div style={styles.page}>
-      {/* FULL-WIDTH HERO SLIDER (top of page) */}
+      {/* FULL-WIDTH HERO SLIDER */}
       <section style={styles.heroBanner}>
         <div style={styles.heroSliderFullWidth}>
-          <HeroSlider
-            slides={[
-              {
-                image: `${base}/index/cars.jpg`,
-                title: "Affordable Cars for College Students",
-                subtitle:
-                  "Browse reliable used vehicles + get personalized buying advice.",
-                ctas: [
-                  {
-                    label: "Browse Inventory",
-                    href: "/inventory",
-                    variant: "primary",
-                  },
-                  {
-                    label: "Get Consultation",
-                    href: "/consultation",
-                    variant: "secondary",
-                  },
-                ],
-              },
-              {
-                image: `${base}/index/rightcar.jpg`,
-                title: "Find the Right Car Fast",
-                subtitle: "Filter by budget, mileage, and your needs.",
-                ctas: [{ label: "View Cars", href: "/inventory", variant: "primary" }],
-              },
-              {
-                image: `${base}/index/guide.jpg`,
-                title: "Student Friendly Guidance",
-                subtitle:
-                  "We help you choose a car that fits your life and your budget.",
-                ctas: [
-                  {
-                    label: "Book Consultation",
-                    href: "/consultation",
-                    variant: "primary",
-                  },
-                ],
-              },
-            ]}
-            height={isMobile ? "420px" : "620px"}
-          />
+          <HeroSlider slides={slides} height={isMobile ? "420px" : "620px"} />
         </div>
       </section>
 
@@ -116,7 +123,7 @@ export default function Homepage() {
         </section>
       </div>
 
-      {/* FULL-WIDTH VEHICLE TYPES (edge-to-edge) */}
+      {/* FULL-WIDTH VEHICLE TYPES */}
       <section style={styles.fullWidthSection}>
         <div style={styles.fullWidthInner}>
           <h2 style={styles.sectionTitleSmall}>Browse by Vehicle Type</h2>
@@ -137,40 +144,10 @@ export default function Homepage() {
                 : styles.grid2Full
             }
           >
-            {[
-              {
-                title: "Sedans",
-                img: `${base}/index/sedan.png`,
-                to: "/inventory?type=sedan",
-              },
-              {
-                title: "Coupes",
-                img: `${base}/index/coupe.png`,
-                to: "/inventory?type=coupe",
-              },
-              { title: "SUVs", img: `${base}/index/suv.png`, to: "/inventory?type=suv" },
-              {
-                title: "Trucks",
-                img: `${base}/index/truck.png`,
-                to: "/inventory?type=truck",
-              },
-              {
-                title: "Hatchbacks",
-                img: `${base}/index/hatchback.png`,
-                to: "/inventory?type=hatchback",
-              },
-              {
-                title: "Minivans",
-                img: `${base}/index/minivan.png`,
-                to: "/inventory?type=minivan",
-              },
-            ].map((t) => (
+            {vehicleTypes.map((t) => (
               <div key={t.title} style={styles.typeCard}>
                 <h3 style={styles.cardTitle}>{t.title}</h3>
-
-                {/* IMAGE replaces description */}
                 <img src={t.img} alt={t.title} style={styles.typeImage} />
-
                 <Link to={t.to} style={styles.cardLink}>
                   View {t.title} →
                 </Link>
@@ -180,39 +157,13 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* FULL-WIDTH DEALERSHIP ACTION GRID */}
+      {/* FULL-WIDTH ACTION GRID */}
       <section style={styles.fullWidthSection}>
         <div style={styles.fullWidthInner}>
           <div style={styles.actionGrid}>
-            {[
-              {
-                title: "Browse Inventory",
-                btn: "View Cars",
-                img: `${base}/index/browse.jpg`,
-                link: "/inventory",
-              },
-              {
-                title: "Book Consultation",
-                btn: "Schedule Now",
-                img: `${base}/index/book.jpg`,
-                link: "/consultation",
-              },
-              {
-                title: "About Us",
-                btn: "Learn More",
-                img: `${base}/index/us.jpg`,
-                link: "/about",
-              },
-              {
-                title: "Contact Us",
-                btn: "Get in Touch",
-                img: `${base}/index/contact.jpg`,
-                link: "/contact",
-              },
-            ].map((item) => (
+            {actions.map((item) => (
               <Link key={item.title} to={item.link} style={styles.actionCard}>
                 <img src={item.img} alt={item.title} style={styles.actionImg} />
-
                 <div style={styles.actionOverlay}>
                   <h3 style={styles.actionTitle}>{item.title}</h3>
                   <div style={styles.actionBtn}>{item.btn}</div>
@@ -286,85 +237,7 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer style={styles.siteFooter}>
-          <div
-            style={{
-              ...styles.footerInner,
-              ...(isMobile ? styles.footerInnerMobile : {}),
-            }}
-          >
-
-            {/* BRAND INDEX */}
-            <div style={styles.footerCol}>
-              <div style={styles.footerHeading}>BRAND INDEX</div>
-              <ul
-                style={{
-                  ...styles.footerList,
-                  ...(isMobile ? styles.footerListMobile : {}),
-                }}
-              >
-
-                {brandIndex.map((make) => (
-                  <li key={make} style={styles.footerItem}>
-                    <span style={styles.footerText}>{make}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* LOCATE US */}
-            <div style={styles.footerCol}>
-              <div style={styles.footerHeading}>LOCATE US</div>
-
-              <div style={styles.footerTextBlock}>
-                5500 University Pkwy
-                <br />
-                San Bernardino, CA 92407
-              </div>
-
-              <div style={styles.footerTextBlock}>
-                Sales: <span style={styles.footerAccent}>(909) 555-0123</span>
-              </div>
-            </div>
-
-            {/* HOURS (NOW ITS OWN COLUMN) */}
-            <div style={styles.footerCol}>
-              <div style={styles.footerHeading}>HOURS</div>
-              <div style={styles.footerTextBlock}>Mon–Thu: 9:00 AM – 6:00 PM</div>
-              <div style={styles.footerTextBlock}>Fri: 9:00 AM – 5:00 PM</div>
-              <div style={styles.footerTextBlock}>Sat: 10:00 AM – 3:00 PM</div>
-              <div style={styles.footerTextBlock}>Sun: Closed</div>
-            </div>
-
-            {/* CONTACT US */}
-            <div style={styles.footerCol}>
-              <div style={styles.footerHeading}>CONTACT US</div>
-
-              <div style={styles.footerTextBlock}>
-                Email: <span style={styles.footerAccent}>campuscars@csusb.edu</span>
-              </div>
-
-              <div style={styles.footerTextBlock}>
-                Phone: <span style={styles.footerAccent}>(909) 555-0123</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div style={styles.footerBottom}>
-            <div
-              style={{
-                ...styles.footerBottomInner,
-                ...(isMobile ? styles.footerBottomInnerMobile : {}),
-               }}
-            >
-
-              <span>© {new Date().getFullYear()} CampusCars. All Rights Reserved.</span>
-              <span style={styles.footerBottomRight}>Powered by CampusCars</span>
-            </div>
-          </div>
-        </footer>
+        {/* NOTE: Footer intentionally omitted on Homepage */}
       </div>
     </div>
   );
@@ -373,17 +246,9 @@ export default function Homepage() {
 /* ================== STYLES ================== */
 
 const styles = {
-  page: {
-    background: "#ffffff",
-    color: "#0f172a",
-  },
+  page: { background: "#ffffff", color: "#0f172a" },
 
-  /* Full-width hero banner */
-  heroBanner: {
-    width: "100%",
-    marginTop: 0,
-  },
-
+  heroBanner: { width: "100%", marginTop: 0 },
   heroSliderFullWidth: {
     width: "100%",
     maxWidth: "100%",
@@ -391,7 +256,6 @@ const styles = {
     borderRadius: 0,
   },
 
-  /* Centered content wrapper */
   content: {
     width: "min(1100px, calc(100% - 32px))",
     margin: "0 auto",
@@ -417,7 +281,6 @@ const styles = {
     textAlign: "center",
   },
 
-  /* Big centered title (Welcome) */
   sectionTitle: {
     margin: "0 0 14px 0",
     fontSize: 32,
@@ -425,12 +288,7 @@ const styles = {
     letterSpacing: "-0.3px",
   },
 
-  /* Smaller section titles (other blocks) */
-  sectionTitleSmall: {
-    margin: "0 0 12px 0",
-    fontSize: 22,
-    fontWeight: 900,
-  },
+  sectionTitleSmall: { margin: "0 0 12px 0", fontSize: 22, fontWeight: 900 },
 
   introText: {
     color: "rgba(15, 23, 42, 0.78)",
@@ -441,7 +299,6 @@ const styles = {
     maxWidth: 850,
   },
 
-  /* FULL-WIDTH SECTION */
   fullWidthSection: {
     width: "100vw",
     marginLeft: "calc(-50vw + 50%)",
@@ -458,12 +315,7 @@ const styles = {
     padding: "0 24px",
   },
 
-  /* Vehicle types grid */
-  grid2Full: {
-    display: "grid",
-    gridTemplateColumns: "repeat(6, 1fr)",
-    gap: 24,
-  },
+  grid2Full: { display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 24 },
 
   typeCard: {
     borderRadius: 16,
@@ -473,12 +325,7 @@ const styles = {
     scrollSnapAlign: "start",
   },
 
-  cardTitle: {
-    marginTop: 0,
-    marginBottom: 8,
-    fontWeight: 900,
-    fontSize: 18,
-  },
+  cardTitle: { marginTop: 0, marginBottom: 8, fontWeight: 900, fontSize: 18 },
 
   cardText: {
     color: "rgba(15, 23, 42, 0.75)",
@@ -487,11 +334,7 @@ const styles = {
     lineHeight: 1.5,
   },
 
-  cardLink: {
-    color: "#0ea5e9",
-    fontWeight: 900,
-    textDecoration: "none",
-  },
+  cardLink: { color: "#0ea5e9", fontWeight: 900, textDecoration: "none" },
 
   typeImage: {
     width: "100%",
@@ -504,12 +347,7 @@ const styles = {
     background: "#fff",
   },
 
-  /* ACTION GRID */
-  actionGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: 20,
-  },
+  actionGrid: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 },
 
   actionCard: {
     position: "relative",
@@ -522,12 +360,7 @@ const styles = {
     boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
   },
 
-  actionImg: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    display: "block",
-  },
+  actionImg: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
 
   actionOverlay: {
     position: "absolute",
@@ -542,11 +375,7 @@ const styles = {
     padding: 20,
   },
 
-  actionTitle: {
-    fontSize: 24,
-    fontWeight: 900,
-    margin: "0 0 10px 0",
-  },
+  actionTitle: { fontSize: 24, fontWeight: 900, margin: "0 0 10px 0" },
 
   actionBtn: {
     background: "#ffffff",
@@ -556,32 +385,12 @@ const styles = {
     fontWeight: 800,
   },
 
-  /* VISIT US */
-  visitTitle: {
-    margin: "0 0 6px 0",
-    fontSize: 30,
-    fontWeight: 900,
-    textAlign: "center",
-  },
+  visitTitle: { margin: "0 0 6px 0", fontSize: 30, fontWeight: 900, textAlign: "center" },
 
-  visitGrid: {
-    display: "flex",
-    gap: 18,
-    alignItems: "stretch",
-    flexWrap: "wrap",
-  },
+  visitGrid: { display: "flex", gap: 18, alignItems: "stretch", flexWrap: "wrap" },
 
-  visitLeft: {
-    flex: "1 1 340px",
-    minWidth: 280,
-    display: "flex",
-  },
-
-  visitRight: {
-    flex: "1 1 420px",
-    minWidth: 280,
-    display: "flex",
-  },
+  visitLeft: { flex: "1 1 340px", minWidth: 280, display: "flex" },
+  visitRight: { flex: "1 1 420px", minWidth: 280, display: "flex" },
 
   visitCard: {
     width: "100%",
@@ -591,20 +400,11 @@ const styles = {
     padding: 18,
   },
 
-  visitPin: {
-    fontSize: 22,
-    marginBottom: 6,
-  },
+  visitPin: { fontSize: 22, marginBottom: 6 },
 
-  visitName: {
-    margin: "0 0 12px 0",
-    fontSize: 18,
-    fontWeight: 900,
-  },
+  visitName: { margin: "0 0 12px 0", fontSize: 18, fontWeight: 900 },
 
-  visitInfo: {
-    marginBottom: 12,
-  },
+  visitInfo: { marginBottom: 12 },
 
   visitLabel: {
     fontSize: 12,
@@ -623,16 +423,9 @@ const styles = {
     wordBreak: "break-word",
   },
 
-  hoursHeader: {
-    marginTop: 8,
-    marginBottom: 8,
-    fontWeight: 900,
-    fontSize: 14,
-  },
+  hoursHeader: { marginTop: 8, marginBottom: 8, fontWeight: 900, fontSize: 14 },
 
-  hoursTable: {
-    borderTop: "1px solid rgba(0,0,0,0.08)",
-  },
+  hoursTable: { borderTop: "1px solid rgba(0,0,0,0.08)" },
 
   hoursRow: {
     display: "flex",
@@ -643,13 +436,8 @@ const styles = {
     fontWeight: 700,
   },
 
-  hoursDay: {
-    color: "rgba(15, 23, 42, 0.85)",
-  },
-
-  hoursTime: {
-    color: "rgba(15, 23, 42, 0.70)",
-  },
+  hoursDay: { color: "rgba(15, 23, 42, 0.85)" },
+  hoursTime: { color: "rgba(15, 23, 42, 0.70)" },
 
   mapWrap: {
     width: "100%",
@@ -659,113 +447,5 @@ const styles = {
     minHeight: 380,
   },
 
-  mapFrame: {
-    width: "100%",
-    height: "100%",
-    border: 0,
-  },
-
-  /* FOOTER */
-  siteFooter: {
-    width: "100vw",
-    marginLeft: "calc(-50vw + 50%)",
-    background: "#0b1220",
-    color: "rgba(255,255,255,0.78)",
-    marginTop: 30,
-  },
-
-  footerInner: {
-    maxWidth: 1200,
-    margin: "0 auto",
-    padding: "34px 24px",
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: 36,
-  },
-
-  footerCol: {
-    minWidth: 0,
-  },
-
-  footerHeading: {
-    color: "#0ea5e9",
-    fontWeight: 900,
-    letterSpacing: "0.6px",
-    fontSize: 13,
-    marginBottom: 12,
-  },
-
-  footerList: {
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "grid",
-    gap: 8,
-  },
-
-  footerItem: {
-    margin: 0,
-    padding: 0,
-  },
-
-  footerText: {
-    color: "rgba(255,255,255,0.78)",
-    fontWeight: 600,
-    fontSize: 14,
-  },
-
-  footerTextBlock: {
-    color: "rgba(255,255,255,0.78)",
-    fontWeight: 600,
-    fontSize: 14,
-    lineHeight: 1.6,
-    marginBottom: 10,
-  },
-
-  footerAccent: {
-  color: "#ffffff",
-  fontWeight: 800,
-  whiteSpace: "nowrap",
-},
-
-
-  footerBottom: {
-    borderTop: "1px solid rgba(255,255,255,0.10)",
-    background: "rgba(0,0,0,0.25)",
-  },
-
-  footerBottomInner: {
-    maxWidth: 1200,
-    margin: "0 auto",
-    padding: "14px 24px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-    flexWrap: "wrap",
-    fontSize: 13,
-    fontWeight: 700,
-    color: "rgba(255,255,255,0.70)",
-  },
-
-  footerBottomRight: {
-    color: "rgba(255,255,255,0.70)",
-  },
-
-  footerInnerMobile: {
-  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-  gap: 22,
-},
-
-footerListMobile: {
-  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-  gap: 10,
-},
-
-footerBottomInnerMobile: {
-  flexDirection: "column",
-  alignItems: "flex-start",
-  gap: 6,
-},
-
+  mapFrame: { width: "100%", height: "100%", border: 0 },
 };
