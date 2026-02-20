@@ -54,14 +54,14 @@ export default function App() {
           <Route path="/contact" element={<ComingSoon title="Contact Us" />} />
 
           {/* Manufacturer routes */}
-          <Route path="/nissan" element={<ComingSoon title="Nissan" />} />
-          <Route path="/toyota" element={<ComingSoon title="Toyota" />} />
-          <Route path="/honda" element={<ComingSoon title="Honda" />} />
-          <Route path="/subaru" element={<ComingSoon title="Subaru" />} />
-          <Route path="/mazda" element={<ComingSoon title="Mazda" />} />
-          <Route path="/kia" element={<ComingSoon title="Kia" />} />
-          <Route path="/ford" element={<ComingSoon title="Ford" />} />
-          <Route path="/chevrolet" element={<ComingSoon title="Chevrolet" />} />
+          <Route path="/nissan" element={<Inventory defaultMake="Nissan" hideMakeFilter />} />
+          <Route path="/toyota" element={<Inventory defaultMake="Toyota" hideMakeFilter />} />
+          <Route path="/honda" element={<Inventory defaultMake="Honda" hideMakeFilter />} />
+          <Route path="/subaru" element={<Inventory defaultMake="Subaru" hideMakeFilter />} />
+          <Route path="/mazda" element={<Inventory defaultMake="Mazda" hideMakeFilter />} />
+          <Route path="/kia" element={<Inventory defaultMake="Kia" hideMakeFilter />} />
+          <Route path="/ford" element={<Inventory defaultMake="Ford" hideMakeFilter />} />
+          <Route path="/chevrolet" element={<Inventory defaultMake="Chevrolet" hideMakeFilter />} />
 
           <Route path="*" element={<ComingSoon title="Page Not Found" />} />
         </Route>
