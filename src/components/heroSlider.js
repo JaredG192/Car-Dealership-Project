@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 /**
  * HeroSlider
  *
- * Reusable hero image slider for the homepage (or any page).
- *
  * Props:
- * - slides: Array of { image, title, subtitle?, ctas?: [{ label, href, variant?: "primary"|"secondary" }] }
+ * - slides: Array of { image, title, subtitle?, ctas?: [{ label, href, variant?: "primary"|"secondary" }], showText?: boolean }
  * - intervalMs: auto-advance interval (disabled if slides <= 1)
  * - height: css height value (string)
  */
@@ -28,6 +26,15 @@ export default function HeroSlider({
   useEffect(() => {
     if (index > count - 1) setIndex(0);
   }, [count, index]);
+
+  // Preload images to reduce white flash while switching slides
+  useEffect(() => {
+    safeSlides.forEach((s) => {
+      if (!s?.image) return;
+      const img = new Image();
+      img.src = s.image;
+    });
+  }, [safeSlides]);
 
   // Auto-advance slides (pause when user hovers/touches)
   useEffect(() => {
@@ -65,6 +72,9 @@ export default function HeroSlider({
   const subtitle = current.subtitle || "";
   const image = current.image || "";
 
+  //  default true, but allow a slide to turn text off with showText: false
+  const showText = current.showText !== false;
+
   return (
     <section
       style={{ ...styles.wrap, height }}
@@ -75,38 +85,40 @@ export default function HeroSlider({
       onTouchEnd={() => setIsPaused(false)}
     >
       {/* Background image */}
-      <div
-        style={{
-          ...styles.bg,
-          backgroundImage: image ? `url(${image})` : "none",
-        }}
-      />
+    <div
+  style={{
+    ...styles.bg,
+    backgroundImage: image ? `url(${image})` : "none",
+    backgroundPosition: current.bgPosition || "center",
+  }}
+/>
 
-      {/* Dark overlay for readability */}
-      <div style={styles.overlay} />
 
-      {/* Text overlay */}
-      <div style={styles.content}>
-        <h1 style={styles.title}>{title}</h1>
-        {subtitle ? <p style={styles.subtitle}>{subtitle}</p> : null}
+      {/* Only show dark overlay + text on slides that want text */}
+      {showText && !current.noOverlay && <div style={styles.overlay} />}
+      {showText ? (
+        <div style={styles.content}>
+          <h1 style={styles.title}>{title}</h1>
+          {subtitle ? <p style={styles.subtitle}>{subtitle}</p> : null}
 
-        {current.ctas?.length ? (
-          <div style={styles.ctaRow}>
-            {current.ctas.map((cta) => (
-              <Link
-                key={cta.label}
-                to={cta.href}
-                style={{
-                  ...styles.cta,
-                  ...(cta.variant === "primary" ? styles.primary : styles.secondary),
-                }}
-              >
-                {cta.label}
-              </Link>
-            ))}
-          </div>
-        ) : null}
-      </div>
+          {current.ctas?.length ? (
+            <div style={styles.ctaRow}>
+              {current.ctas.map((cta) => (
+                <Link
+                  key={cta.label}
+                  to={cta.href}
+                  style={{
+                    ...styles.cta,
+                    ...(cta.variant === "primary" ? styles.primary : styles.secondary),
+                  }}
+                >
+                  {cta.label}
+                </Link>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       {/* Arrows (only show if more than 1 slide) */}
       {count > 1 && (
@@ -167,6 +179,7 @@ const styles = {
     backgroundPosition: "center",
     transform: "scale(1.02)",
     transition: "background-image 400ms ease",
+    backgroundColor: "#000", // helps avoid white flash if image is ever missing
   },
   overlay: {
     position: "absolute",
@@ -252,4 +265,5 @@ const styles = {
     background: "white",
     cursor: "pointer",
   },
+
 };

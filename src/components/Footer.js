@@ -1,4 +1,5 @@
 import "./footer.css";
+import { Link } from "react-router-dom";
 
 const BRAND_INDEX = [
   "Chevrolet",
@@ -20,13 +21,18 @@ export default function Footer() {
           {/* Brand Index */}
           <section aria-label="Brand index">
             <div style={styles.title}>BRAND INDEX</div>
-            <ul style={styles.list}>
-              {BRAND_INDEX.map((brand) => (
-                <li key={brand} style={styles.li}>
-                  {brand}
-                </li>
-              ))}
-            </ul>
+           <ul style={styles.list}>
+  {BRAND_INDEX.map((brand) => (
+    <li key={brand} style={styles.li}>
+      <Link
+        to={`/${brand.toLowerCase()}`}
+        style={styles.footerLink}
+      >
+        {brand}
+      </Link>
+    </li>
+  ))}
+</ul>
           </section>
 
           {/* Location */}
@@ -97,16 +103,19 @@ const styles = {
     marginTop: 40,
     borderTop: "1px solid rgba(255,255,255,0.08)",
   },
+
   inner: {
     maxWidth: 1200,
     margin: "0 auto",
     padding: "28px 18px",
   },
+
   grid: {
     display: "grid",
     gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
     gap: 24,
   },
+
   title: {
     fontSize: 12,
     letterSpacing: 1,
@@ -115,22 +124,48 @@ const styles = {
     marginBottom: 10,
     textTransform: "uppercase",
   },
-  text: { fontSize: 14, lineHeight: 1.7, opacity: 0.95 },
 
-  // Lists
-  list: { listStyle: "none", padding: 0, margin: 0 },
-  li: { fontSize: 14, lineHeight: 1.9, opacity: 0.95 },
+  text: {
+    fontSize: 14,
+    lineHeight: 1.7,
+    opacity: 0.95,
+  },
 
-  // Make address not italic (default browser styling)
-  address: { fontStyle: "normal", margin: 0 },
+  /* Lists */
+  list: {
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+  },
 
-  // Simple link style (works with dark footer)
+  li: {
+    fontSize: 14,
+    lineHeight: 1.9,
+    opacity: 0.95,
+  },
+
+  /* Address */
+  address: {
+    fontStyle: "normal",
+    margin: 0,
+  },
+
+  /* Default footer links */
   link: {
     color: "#e8eef6",
     fontWeight: 700,
     textDecoration: "none",
     borderBottom: "1px solid rgba(255,255,255,0.25)",
     paddingBottom: 1,
+  },
+
+  /* Brand index links (slightly stronger underline) */
+  footerLink: {
+    color: "rgba(255,255,255,0.85)",
+    textDecoration: "underline",
+    textUnderlineOffset: "4px",
+    fontWeight: 600,
+    transition: "color 0.2s ease",
   },
 
   bottom: {
@@ -142,19 +177,23 @@ const styles = {
     flexWrap: "wrap",
     borderTop: "1px solid rgba(255,255,255,0.08)",
   },
-  muted: { fontSize: 13, opacity: 0.8 },
+
+  muted: {
+    fontSize: 13,
+    opacity: 0.8,
+  },
 
   powered: {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  fontSize: 13,
-  opacity: 0.85,
-},
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    fontSize: 13,
+    opacity: 0.85,
+  },
 
-poweredLogo: {
-  height: 40,
-  width: "auto",
-  objectFit: "contain",
-},
+  poweredLogo: {
+    height: 40,
+    width: "auto",
+    objectFit: "contain",
+  },
 };

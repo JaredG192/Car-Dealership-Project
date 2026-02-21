@@ -31,18 +31,19 @@ export default function Homepage() {
     return () => mq.removeListener(onChange);
   }, []);
 
-  // Hero slides (memoized so the array isn't recreated every render)
+  // Hero slides
   const slides = useMemo(
     () => [
       {
         image: `${base}/index/cars.jpg`,
-        title: "Affordable Cars for College Students",
-        subtitle: "Browse reliable used vehicles + get personalized buying advice.",
-        ctas: [
-          { label: "Browse Inventory", href: "/inventory", variant: "primary" },
-          { label: "Get Consultation", href: "/consultation", variant: "secondary" },
-        ],
+        showText: false,
+        noOverlay: true,
+        bgPosition: isMobile ? "10% center" : "center",
+
+
+        // no title/subtitle/ctas since you want image-only
       },
+
       {
         image: `${base}/index/rightcar.jpg`,
         title: "Find the Right Car Fast",
@@ -56,7 +57,7 @@ export default function Homepage() {
         ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
       },
     ],
-    [base]
+    [base, isMobile] 
   );
 
   // Vehicle types shown below the hero
@@ -94,26 +95,25 @@ export default function Homepage() {
 
       {/* CENTERED CONTENT (below hero) */}
       <div style={styles.content}>
-        {/* DEALERSHIP INTRO */}
         <section style={styles.flatSection}>
           <h2 style={styles.sectionTitle}>Welcome to CampusCars</h2>
+          <div style={styles.accentLine} />
 
           <p style={styles.cardText}>
             Your go-to spot for affordable, reliable used cars near San Bernardino.
           </p>
 
           <p style={styles.introText}>
-            We help students find budget-friendly vehicles with flexible financing,
-            easy trade-ins, and personalized guidance every step of the way. Our goal
-            is to make car buying clear and approachable, especially if it is your
-            first time navigating the process.
+            We help students find budget-friendly vehicles with flexible financing, easy trade-ins,
+            and personalized guidance every step of the way. Our goal is to make car buying clear
+            and approachable, especially if it is your first time navigating the process.
           </p>
 
           <p style={styles.introText}>
-            Whether it is your first car or an upgrade, we make the experience simple,
-            stress-free, and built around your lifestyle. From understanding your budget
-            to choosing a reliable model that fits your daily commute, classes, work
-            schedule, or weekend plans, we are here to help you drive away with confidence.
+            Whether it is your first car or an upgrade, we make the experience simple, stress-free,
+            and built around your lifestyle. From understanding your budget to choosing a reliable
+            model that fits your daily commute, classes, work schedule, or weekend plans, we are
+            here to help you drive away with confidence.
           </p>
 
           <p style={styles.introText}>
@@ -126,9 +126,13 @@ export default function Homepage() {
       {/* FULL-WIDTH VEHICLE TYPES */}
       <section style={styles.fullWidthSection}>
         <div style={styles.fullWidthInner}>
-          <h2 style={styles.sectionTitleSmall}>Browse by Vehicle Type</h2>
+          <h2 style={styles.sectionTitle}>Browse by Vehicle Type</h2>
+
+        
 
           <div
+
+
             style={
               isMobile
                 ? {
@@ -157,9 +161,12 @@ export default function Homepage() {
         </div>
       </section>
 
+
+        
       {/* FULL-WIDTH ACTION GRID */}
       <section style={styles.fullWidthSection}>
         <div style={styles.fullWidthInner}>
+          <h2 style={styles.sectionTitle}>Explore CampusCars</h2>
           <div style={styles.actionGrid}>
             {actions.map((item) => (
               <Link key={item.title} to={item.link} style={styles.actionCard}>
@@ -174,70 +181,72 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* BACK TO CENTERED CONTENT */}
-      <div style={styles.content}>
-        {/* VISIT US (Location + Hours) */}
-        <section style={styles.sectionCard}>
-          <h2 style={styles.visitTitle}>Visit Us Today</h2>
+      {/* ONLY THIS BOTTOM AREA HAS THE CSUSB BACKGROUND */}
+      <div style={styles.visitBgSection}>
+        <div style={styles.content}>
+          <section style={styles.sectionCard}>
+            <h2 style={styles.sectionTitle}>Visit Us Today</h2>
+            
 
-          <div style={styles.visitGrid}>
-            {/* LEFT: Info + Hours */}
-            <div style={styles.visitLeft}>
-              <div style={styles.visitCard}>
-                <div style={styles.visitPin}>📍</div>
-                <h3 style={styles.visitName}>CampusCars • CSUSB</h3>
+            <div style={styles.visitGrid}>
+              {/* LEFT: Info + Hours */}
+              <div style={styles.visitLeft}>
+                <div style={styles.visitCard}>
+                  <div style={styles.visitPin}>📍</div>
+                  <h3 style={styles.visitName}>CampusCars • CSUSB</h3>
 
-                <div style={styles.visitInfo}>
-                  <div style={styles.visitLabel}>Address</div>
-                  <div style={styles.visitValue}>
-                    5500 University Pkwy
-                    <br />
-                    San Bernardino, CA 92407
+                  <div style={styles.visitInfo}>
+                    <div style={styles.visitLabel}>Address</div>
+                    <div style={styles.visitValue}>
+                      5500 University Pkwy
+                      <br />
+                      San Bernardino, CA 92407
+                    </div>
+                  </div>
+
+                  <div style={styles.visitInfo}>
+                    <div style={styles.visitLabel}>Phone</div>
+                    <div style={styles.visitValue}>(909) 555-0123</div>
+                  </div>
+
+                  <div style={styles.hoursHeader}>Business Hours</div>
+                  <div style={styles.hoursTable}>
+                    {[
+                      ["Monday", "9:00 AM – 6:00 PM"],
+                      ["Tuesday", "9:00 AM – 6:00 PM"],
+                      ["Wednesday", "9:00 AM – 6:00 PM"],
+                      ["Thursday", "9:00 AM – 6:00 PM"],
+                      ["Friday", "9:00 AM – 5:00 PM"],
+                      ["Saturday", "10:00 AM – 3:00 PM"],
+                      ["Sunday", "Closed"],
+                    ].map(([day, time]) => (
+                      <div key={day} style={styles.hoursRow}>
+                        <div style={styles.hoursDay}>{day}</div>
+                        <div style={styles.hoursTime}>{time}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              </div>
 
-                <div style={styles.visitInfo}>
-                  <div style={styles.visitLabel}>Phone</div>
-                  <div style={styles.visitValue}>(909) 555-0123</div>
-                </div>
-
-                <div style={styles.hoursHeader}>Business Hours</div>
-                <div style={styles.hoursTable}>
-                  {[
-                    ["Monday", "9:00 AM – 6:00 PM"],
-                    ["Tuesday", "9:00 AM – 6:00 PM"],
-                    ["Wednesday", "9:00 AM – 6:00 PM"],
-                    ["Thursday", "9:00 AM – 6:00 PM"],
-                    ["Friday", "9:00 AM – 5:00 PM"],
-                    ["Saturday", "10:00 AM – 3:00 PM"],
-                    ["Sunday", "Closed"],
-                  ].map(([day, time]) => (
-                    <div key={day} style={styles.hoursRow}>
-                      <div style={styles.hoursDay}>{day}</div>
-                      <div style={styles.hoursTime}>{time}</div>
-                    </div>
-                  ))}
+              {/* RIGHT: Map */}
+              <div style={styles.visitRight}>
+                <div style={{ ...styles.mapWrap, minHeight: isMobile ? 280 : 380 }}>
+                  <iframe
+                    title="CSUSB Map"
+                    style={styles.mapFrame}
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=California%20State%20University%20San%20Bernardino%205500%20University%20Pkwy%20San%20Bernardino%20CA%2092407&output=embed"
+                  />
                 </div>
               </div>
             </div>
+          </section>
 
-            {/* RIGHT: Map */}
-            <div style={styles.visitRight}>
-              <div style={{ ...styles.mapWrap, minHeight: isMobile ? 280 : 380 }}>
-                <iframe
-                  title="CSUSB Map"
-                  style={styles.mapFrame}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src="https://www.google.com/maps?q=California%20State%20University%20San%20Bernardino%205500%20University%20Pkwy%20San%20Bernardino%20CA%2092407&output=embed"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* NOTE: Footer intentionally omitted on Homepage */}
+          {/* NOTE: Footer intentionally omitted on Homepage */}
+        </div>
       </div>
     </div>
   );
@@ -246,7 +255,18 @@ export default function Homepage() {
 /* ================== STYLES ================== */
 
 const styles = {
-  page: { background: "#ffffff", color: "#0f172a" },
+  page: {
+    background: "linear-gradient(180deg, #f8fbff 0%, #ffffff 100%)",
+    color: "#0f172a",
+  },
+
+  accentLine: {
+    width: 86,
+    height: 4,
+    background: "linear-gradient(to right, #0ea5e9, #f43f5e)",
+    borderRadius: 999,
+    margin: "10px auto 16px",
+  },
 
   heroBanner: { width: "100%", marginTop: 0 },
   heroSliderFullWidth: {
@@ -286,9 +306,8 @@ const styles = {
     fontSize: 32,
     fontWeight: 900,
     letterSpacing: "-0.3px",
+    textAlign: "leftr",
   },
-
-  sectionTitleSmall: { margin: "0 0 12px 0", fontSize: 22, fontWeight: 900 },
 
   introText: {
     color: "rgba(15, 23, 42, 0.78)",
@@ -302,10 +321,10 @@ const styles = {
   fullWidthSection: {
     width: "100vw",
     marginLeft: "calc(-50vw + 50%)",
-    background: "#ffffff",
-    padding: "36px 0",
+    padding: "38px 0",
     borderTop: "1px solid rgba(0,0,0,0.06)",
     borderBottom: "1px solid rgba(0,0,0,0.06)",
+    background: "linear-gradient(135deg, rgba(14,165,233,0.06), rgba(244,63,94,0.05))",
   },
 
   fullWidthInner: {
@@ -318,10 +337,11 @@ const styles = {
   grid2Full: { display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 24 },
 
   typeCard: {
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 18,
-    background: "rgba(15, 23, 42, 0.03)",
-    border: "1px solid rgba(0,0,0,0.08)",
+    background: "#ffffff",
+    border: "1px solid rgba(0,0,0,0.10)",
+    boxShadow: "0 12px 26px rgba(0,0,0,0.08)",
     scrollSnapAlign: "start",
   },
 
@@ -332,6 +352,7 @@ const styles = {
     fontWeight: 600,
     margin: "8px 0 12px 0",
     lineHeight: 1.5,
+    textAlign: "center",
   },
 
   cardLink: { color: "#0ea5e9", fontWeight: 900, textDecoration: "none" },
@@ -378,14 +399,22 @@ const styles = {
   actionTitle: { fontSize: 24, fontWeight: 900, margin: "0 0 10px 0" },
 
   actionBtn: {
-    background: "#ffffff",
-    color: "#000",
+    background: "#0ea5e9",
+    color: "#fff",
     borderRadius: 999,
-    padding: "8px 20px",
-    fontWeight: 800,
+    padding: "9px 20px",
+    fontWeight: 900,
+    boxShadow: "0 10px 20px rgba(14,165,233,0.25)",
   },
 
-  visitTitle: { margin: "0 0 6px 0", fontSize: 30, fontWeight: 900, textAlign: "center" },
+  //  Background image ONLY behind the Visit section area
+  visitBgSection: {
+    backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${process.env.PUBLIC_URL}/index/csusb.jpg)`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  padding: "60px 0",
+  },
 
   visitGrid: { display: "flex", gap: 18, alignItems: "stretch", flexWrap: "wrap" },
 
@@ -401,7 +430,6 @@ const styles = {
   },
 
   visitPin: { fontSize: 22, marginBottom: 6 },
-
   visitName: { margin: "0 0 12px 0", fontSize: 18, fontWeight: 900 },
 
   visitInfo: { marginBottom: 12 },
@@ -424,7 +452,6 @@ const styles = {
   },
 
   hoursHeader: { marginTop: 8, marginBottom: 8, fontWeight: 900, fontSize: 14 },
-
   hoursTable: { borderTop: "1px solid rgba(0,0,0,0.08)" },
 
   hoursRow: {
@@ -445,6 +472,7 @@ const styles = {
     overflow: "hidden",
     border: "1px solid rgba(0,0,0,0.10)",
     minHeight: 380,
+    background: "#fff",
   },
 
   mapFrame: { width: "100%", height: "100%", border: 0 },

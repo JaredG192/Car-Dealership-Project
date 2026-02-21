@@ -90,9 +90,15 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
   const [sortBy, setSortBy] = useState("recommended");
 
   // Keep make locked when using manufacturer pages
-  useEffect(() => {
-    if (defaultMake) setMakeFilter(defaultMake);
-  }, [defaultMake]);
+  // Sync make with props (clears when defaultMake is "")
+useEffect(() => {
+  setMakeFilter(defaultMake || "");
+}, [defaultMake]);
+
+//  Sync type with URL (?type=suv)
+useEffect(() => {
+  setTypeFilter(urlType || "");
+}, [urlType]);
 
   // Dropdown options
   const makes = useMemo(() => {
@@ -140,10 +146,24 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.container}>
-        {/* Title row (logo + title) */}
-        <div style={styles.titleRow}>
+  <div style={styles.page}>
+  <div style={styles.container}>
+
+    {/* Back navigation */}
+{/* Back navigation */}
+<div style={styles.navRow}>
+  <Link to="/" style={styles.backLink}>
+    ← Home
+  </Link>
+
+  {defaultMake && (
+    <Link to="/inventory" style={styles.backLink}>
+      ← Inventory
+    </Link>
+  )}
+</div>
+    {/* Title row (logo + title) */}
+    <div style={styles.titleRow}>
           {makeLogoSrc && (
             <img
               src={makeLogoSrc}
@@ -430,4 +450,22 @@ const styles = {
     background: "rgba(244,63,94,0.06)",
     fontWeight: 800,
   },
+
+  navRow: {
+  display: "flex",
+  gap: 14,
+  marginBottom: 10,
+  alignItems: "center",
+},
+
+backLink: {
+  fontSize: 14,
+  fontWeight: 800,
+  color: "#0ea5e9",
+  textDecoration: "none",
+  padding: "6px 12px",
+  borderRadius: 999,
+  background: "rgba(14,165,233,0.1)",
+},
+
 };

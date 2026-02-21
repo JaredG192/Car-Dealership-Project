@@ -1,6 +1,6 @@
 import React from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
-
+import ScrollToTop from "./components/ScrollToTop";
 import HeaderNav from "./components/headNav";
 import MainLayout from "./components/MainLayout";
 import Homepage from "./components/homepage";
@@ -41,6 +41,7 @@ function ComingSoon({ title }) {
 export default function App() {
   return (
     <HashRouter>
+       <ScrollToTop />
       <HeaderNav makes={makes} />
 
       <Routes>
