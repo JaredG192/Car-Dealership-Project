@@ -19,14 +19,14 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
   // Manufacturer logos (put these files in: public/brands/)
   const makeLogoMap = useMemo(
     () => ({
-      Toyota: `${base}/brands/toyota.png`,
-      Honda: `${base}/brands/honda.png`,
-      Nissan: `${base}/brands/nissan.png`,
-      Subaru: `${base}/brands/subaru.png`,
-      Mazda: `${base}/brands/mazda.png`,
-      Kia: `${base}/brands/kia.png`,
-      Ford: `${base}/brands/ford.png`,
-      Chevrolet: `${base}/brands/chevrolet.png`,
+      Toyota: `${base}/brands/Toyota.png`,
+      Honda: `${base}/brands/hHonda.png`,
+      Nissan: `${base}/brands/Nissan.png`,
+      Subaru: `${base}/brands/Subaru.png`,
+      Mazda: `${base}/brands/Mazda.png`,
+      Kia: `${base}/brands/Kia.png`,
+      Ford: `${base}/brands/Ford.png`,
+      Chevrolet: `${base}/brands/Chevrolet.png`,
     }),
     [base]
   );
