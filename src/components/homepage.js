@@ -96,7 +96,7 @@ export default function Homepage() {
       <div style={styles.content}>
         {/* DEALERSHIP INTRO */}
         <section style={styles.flatSection}>
-          <h2 style={styles.sectionTitle}>Welcome to CampusCars</h2>
+          <h2 style={styles.sectionTitle}>Tad to CampusCars</h2>
 
           <p style={styles.cardText}>
             Your go-to spot for affordable, reliable used cars near San Bernardino.
