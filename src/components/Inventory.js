@@ -20,7 +20,7 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
   const makeLogoMap = useMemo(
     () => ({
       Toyota: `${base}/brands/Toyota.png`,
-      Honda: `${base}/brands/hHonda.png`,
+      Honda: `${base}/brands/Honda.png`,
       Nissan: `${base}/brands/Nissan.png`,
       Subaru: `${base}/brands/Subaru.png`,
       Mazda: `${base}/brands/Mazda.png`,
