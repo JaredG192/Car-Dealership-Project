@@ -82,14 +82,14 @@ export default function Footer() {
           <div style={styles.muted}>
             © {new Date().getFullYear()} CampusCars. All Rights Reserved.
           </div>
-          <div style={styles.powered}>
-            <img
-              src={`${process.env.PUBLIC_URL}/logos/coyote-labs.png`}
-              alt="Coyote Labs Logo"
-              style={styles.poweredLogo}
-            />
-            <span>Powered by Coyote Labs</span>
-          </div>
+          <div className="footer-powered" style={styles.powered}>
+  <span>Powered by Coyote Labs</span>
+  <img
+    src={`${process.env.PUBLIC_URL}/logos/coyote-labs.png`}
+    alt="Coyote Labs Logo"
+    style={styles.poweredLogo}
+  />
+</div>
         </div>
       </div>
     </footer>
@@ -186,13 +186,13 @@ const styles = {
   powered: {
     display: "flex",
     alignItems: "center",
-    gap: 8,
+    gap: 0,
     fontSize: 13,
     opacity: 0.85,
   },
 
   poweredLogo: {
-    height: 40,
+    height: 60,
     width: "auto",
     objectFit: "contain",
   },
