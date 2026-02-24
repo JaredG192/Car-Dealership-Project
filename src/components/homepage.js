@@ -1,14 +1,13 @@
-// Homepage.js
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import HeroSlider from "./heroSlider"; // change to "./HeroSlider" if your filename is HeroSlider.js
 
 /**
  * Homepage
- *
  * Landing page for CampusCars.
- * NOTE: Footer is NOT rendered here on purpose.
- * The footer is shown only on Inventory + selected pages via InventoryLayout.
+ *
+ * NOTE: Footer is intentionally NOT rendered here.
+ * The footer is shown only on Inventory + selected pages via MainLayout.
  */
 export default function Homepage() {
   const base = process.env.PUBLIC_URL;
@@ -38,12 +37,9 @@ export default function Homepage() {
         image: `${base}/index/cars.jpg`,
         showText: false,
         noOverlay: true,
-        bgPosition: isMobile ? "10% center" : "center",
-
-
-        // no title/subtitle/ctas since you want image-only
+        // Slightly offset on mobile so your image-only hero shows more of the right side.
+        bgPosition: isMobile ? "5% center" : "center 35%",
       },
-
       {
         image: `${base}/index/rightcar.jpg`,
         title: "Find the Right Car Fast",
@@ -53,11 +49,14 @@ export default function Homepage() {
       {
         image: `${base}/index/guide.jpg`,
         title: "Student Friendly Guidance",
-        subtitle: "We help you choose a car that fits your life and your budget.",
-        ctas: [{ label: "Book Consultation", href: "/consultation", variant: "primary" }],
+        subtitle:
+          "We help you choose a car that fits your life and your budget.",
+        ctas: [
+          { label: "Book Consultation", href: "/consultation", variant: "primary" },
+        ],
       },
     ],
-    [base, isMobile] 
+    [base, isMobile]
   );
 
   // Vehicle types shown below the hero
@@ -67,7 +66,11 @@ export default function Homepage() {
       { title: "Coupes", img: `${base}/index/coupe.png`, to: "/inventory?type=coupe" },
       { title: "SUVs", img: `${base}/index/suv.png`, to: "/inventory?type=suv" },
       { title: "Trucks", img: `${base}/index/truck.png`, to: "/inventory?type=truck" },
-      { title: "Hatchbacks", img: `${base}/index/hatchback.png`, to: "/inventory?type=hatchback" },
+      {
+        title: "Hatchbacks",
+        img: `${base}/index/hatchback.png`,
+        to: "/inventory?type=hatchback",
+      },
       { title: "Minivans", img: `${base}/index/minivan.png`, to: "/inventory?type=minivan" },
     ],
     [base]
@@ -96,7 +99,7 @@ export default function Homepage() {
       {/* CENTERED CONTENT (below hero) */}
       <div style={styles.content}>
         <section style={styles.flatSection}>
-          <h2 style={styles.sectionTitle}>Welcome to CampusCars</h2>
+          <h2 style={styles.welcomeTitle}>Welcome to CampusCars</h2>
           <div style={styles.accentLine} />
 
           <p style={styles.cardText}>
@@ -104,21 +107,23 @@ export default function Homepage() {
           </p>
 
           <p style={styles.introText}>
-            We help students find budget-friendly vehicles with flexible financing, easy trade-ins,
-            and personalized guidance every step of the way. Our goal is to make car buying clear
-            and approachable, especially if it is your first time navigating the process.
+            We help students find budget-friendly vehicles with flexible financing, easy
+            trade-ins, and personalized guidance every step of the way. Our goal is to
+            make car buying clear and approachable, especially if it is your first time
+            navigating the process.
           </p>
 
           <p style={styles.introText}>
-            Whether it is your first car or an upgrade, we make the experience simple, stress-free,
-            and built around your lifestyle. From understanding your budget to choosing a reliable
-            model that fits your daily commute, classes, work schedule, or weekend plans, we are
-            here to help you drive away with confidence.
+            Whether it is your first car or an upgrade, we make the experience simple,
+            stress-free, and built around your lifestyle. From understanding your budget
+            to choosing a reliable model that fits your daily commute, classes, work
+            schedule, or weekend plans, we are here to help you drive away with
+            confidence.
           </p>
 
           <p style={styles.introText}>
-            Visit us today to explore our inventory and experience a modern, student-friendly
-            car-buying experience.
+            Visit us today to explore our inventory and experience a modern,
+            student-friendly car-buying experience.
           </p>
         </section>
       </div>
@@ -128,11 +133,8 @@ export default function Homepage() {
         <div style={styles.fullWidthInner}>
           <h2 style={styles.sectionTitle}>Browse by Vehicle Type</h2>
 
-        
-
+          {/* Mobile: horizontal scroll | Desktop: full grid */}
           <div
-
-
             style={
               isMobile
                 ? {
@@ -161,12 +163,11 @@ export default function Homepage() {
         </div>
       </section>
 
-
-        
       {/* FULL-WIDTH ACTION GRID */}
       <section style={styles.fullWidthSection}>
         <div style={styles.fullWidthInner}>
           <h2 style={styles.sectionTitle}>Explore CampusCars</h2>
+
           <div style={styles.actionGrid}>
             {actions.map((item) => (
               <Link key={item.title} to={item.link} style={styles.actionCard}>
@@ -181,12 +182,11 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* ONLY THIS BOTTOM AREA HAS THE CSUSB BACKGROUND */}
+      {/* Background image ONLY behind the Visit section */}
       <div style={styles.visitBgSection}>
         <div style={styles.content}>
           <section style={styles.sectionCard}>
             <h2 style={styles.sectionTitle}>Visit Us Today</h2>
-            
 
             <div style={styles.visitGrid}>
               {/* LEFT: Info + Hours */}
@@ -245,7 +245,7 @@ export default function Homepage() {
             </div>
           </section>
 
-          {/* NOTE: Footer intentionally omitted on Homepage */}
+          {/* Footer intentionally omitted on Homepage */}
         </div>
       </div>
     </div>
@@ -269,6 +269,7 @@ const styles = {
   },
 
   heroBanner: { width: "100%", marginTop: 0 },
+
   heroSliderFullWidth: {
     width: "100%",
     maxWidth: "100%",
@@ -306,7 +307,7 @@ const styles = {
     fontSize: 32,
     fontWeight: 900,
     letterSpacing: "-0.3px",
-    textAlign: "leftr",
+    textAlign: "left", 
   },
 
   introText: {
@@ -324,7 +325,8 @@ const styles = {
     padding: "38px 0",
     borderTop: "1px solid rgba(0,0,0,0.06)",
     borderBottom: "1px solid rgba(0,0,0,0.06)",
-    background: "linear-gradient(135deg, rgba(14,165,233,0.06), rgba(244,63,94,0.05))",
+    background:
+      "linear-gradient(135deg, rgba(14,165,233,0.06), rgba(244,63,94,0.05))",
   },
 
   fullWidthInner: {
@@ -334,7 +336,11 @@ const styles = {
     padding: "0 24px",
   },
 
-  grid2Full: { display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 24 },
+  grid2Full: {
+    display: "grid",
+    gridTemplateColumns: "repeat(6, 1fr)",
+    gap: 24,
+  },
 
   typeCard: {
     borderRadius: 18,
@@ -381,7 +387,12 @@ const styles = {
     boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
   },
 
-  actionImg: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  actionImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+  },
 
   actionOverlay: {
     position: "absolute",
@@ -407,16 +418,21 @@ const styles = {
     boxShadow: "0 10px 20px rgba(14,165,233,0.25)",
   },
 
-  //  Background image ONLY behind the Visit section area
+  // Background image ONLY behind the Visit section area
   visitBgSection: {
     backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${process.env.PUBLIC_URL}/index/csusb.jpg)`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  padding: "60px 0",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    padding: "60px 0",
   },
 
-  visitGrid: { display: "flex", gap: 18, alignItems: "stretch", flexWrap: "wrap" },
+  visitGrid: {
+    display: "flex",
+    gap: 18,
+    alignItems: "stretch",
+    flexWrap: "wrap",
+  },
 
   visitLeft: { flex: "1 1 340px", minWidth: 280, display: "flex" },
   visitRight: { flex: "1 1 420px", minWidth: 280, display: "flex" },
@@ -476,4 +492,11 @@ const styles = {
   },
 
   mapFrame: { width: "100%", height: "100%", border: 0 },
+
+  welcomeTitle: {
+  fontSize: "32px",
+  fontWeight: "800",
+  marginBottom: "12px",
+  textAlign: "center",
+},
 };

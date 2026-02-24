@@ -1,10 +1,12 @@
 import React from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
+
 import ScrollToTop from "./components/ScrollToTop";
 import HeaderNav from "./components/headNav";
 import MainLayout from "./components/MainLayout";
 import Homepage from "./components/homepage";
 import Inventory from "./components/Inventory";
+import CarDetails from "./components/CarDetails";
 
 /**
  * App.js
@@ -13,6 +15,7 @@ import Inventory from "./components/Inventory";
  * - MainLayout wraps pages that should include the Footer
  */
 
+// Header "Shop by Make" links (sorted alphabetically)
 const makes = [
   { name: "Nissan", link: "/nissan" },
   { name: "Toyota", link: "/toyota" },
@@ -24,6 +27,7 @@ const makes = [
   { name: "Chevrolet", link: "/chevrolet" },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
+// Simple placeholder page used for routes not built yet
 function ComingSoon({ title }) {
   return (
     <div style={{ padding: 32, textAlign: "center" }}>
@@ -41,7 +45,10 @@ function ComingSoon({ title }) {
 export default function App() {
   return (
     <HashRouter>
-       <ScrollToTop />
+      {/* Ensures the page scrolls to top on navigation */}
+      <ScrollToTop />
+
+      {/* Global header navigation */}
       <HeaderNav makes={makes} />
 
       <Routes>
@@ -50,19 +57,49 @@ export default function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/inventory" element={<Inventory />} />
 
-          <Route path="/consultation" element={<ComingSoon title="Consultation" />} />
+          {/* Dynamic route for each vehicle */}
+          <Route path="/car/:id" element={<CarDetails />} />
+
+          <Route
+            path="/consultation"
+            element={<ComingSoon title="Consultation" />}
+          />
           <Route path="/about" element={<ComingSoon title="About Us" />} />
           <Route path="/contact" element={<ComingSoon title="Contact Us" />} />
 
-          {/* Manufacturer routes */}
-          <Route path="/nissan" element={<Inventory defaultMake="Nissan" hideMakeFilter />} />
-          <Route path="/toyota" element={<Inventory defaultMake="Toyota" hideMakeFilter />} />
-          <Route path="/honda" element={<Inventory defaultMake="Honda" hideMakeFilter />} />
-          <Route path="/subaru" element={<Inventory defaultMake="Subaru" hideMakeFilter />} />
-          <Route path="/mazda" element={<Inventory defaultMake="Mazda" hideMakeFilter />} />
-          <Route path="/kia" element={<Inventory defaultMake="Kia" hideMakeFilter />} />
-          <Route path="/ford" element={<Inventory defaultMake="Ford" hideMakeFilter />} />
-          <Route path="/chevrolet" element={<Inventory defaultMake="Chevrolet" hideMakeFilter />} />
+          {/* Manufacturer routes (Inventory filtered by make) */}
+          <Route
+            path="/nissan"
+            element={<Inventory defaultMake="Nissan" hideMakeFilter />}
+          />
+          <Route
+            path="/toyota"
+            element={<Inventory defaultMake="Toyota" hideMakeFilter />}
+          />
+          <Route
+            path="/honda"
+            element={<Inventory defaultMake="Honda" hideMakeFilter />}
+          />
+          <Route
+            path="/subaru"
+            element={<Inventory defaultMake="Subaru" hideMakeFilter />}
+          />
+          <Route
+            path="/mazda"
+            element={<Inventory defaultMake="Mazda" hideMakeFilter />}
+          />
+          <Route
+            path="/kia"
+            element={<Inventory defaultMake="Kia" hideMakeFilter />}
+          />
+          <Route
+            path="/ford"
+            element={<Inventory defaultMake="Ford" hideMakeFilter />}
+          />
+          <Route
+            path="/chevrolet"
+            element={<Inventory defaultMake="Chevrolet" hideMakeFilter />}
+          />
 
           <Route path="*" element={<ComingSoon title="Page Not Found" />} />
         </Route>

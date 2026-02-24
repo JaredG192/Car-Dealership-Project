@@ -29,6 +29,6 @@
 
   /* Make mobile links feel like real tap targets */
   .mobilePanel a {
-    padding: 12px 0;
+    padding: 12px 0 !important;
   }
 }

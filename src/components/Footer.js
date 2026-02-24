@@ -16,23 +16,20 @@ export default function Footer() {
   return (
     <footer style={styles.footer} aria-label="Site footer">
       <div style={styles.inner}>
-        {/* Main footer grid (stacks on mobile via footer.css) */}
+        {/* Main footer grid (mobile layout handled in footer.css) */}
         <div className="footer-grid" style={styles.grid}>
           {/* Brand Index */}
           <section aria-label="Brand index">
             <div style={styles.title}>BRAND INDEX</div>
-           <ul style={styles.list}>
-  {BRAND_INDEX.map((brand) => (
-    <li key={brand} style={styles.li}>
-      <Link
-        to={`/${brand.toLowerCase()}`}
-        style={styles.footerLink}
-      >
-        {brand}
-      </Link>
-    </li>
-  ))}
-</ul>
+            <ul style={styles.list}>
+              {BRAND_INDEX.map((brand) => (
+                <li key={brand} style={styles.li}>
+                  <Link to={`/${brand.toLowerCase()}`} style={styles.footerLink}>
+                    {brand}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
 
           {/* Location */}
@@ -82,14 +79,15 @@ export default function Footer() {
           <div style={styles.muted}>
             © {new Date().getFullYear()} CampusCars. All Rights Reserved.
           </div>
+
           <div className="footer-powered" style={styles.powered}>
-  <span>Powered by Coyote Labs</span>
-  <img
-    src={`${process.env.PUBLIC_URL}/logos/coyote-labs.png`}
-    alt="Coyote Labs Logo"
-    style={styles.poweredLogo}
-  />
-</div>
+            <span>Powered by Coyote Labs</span>
+            <img
+              src={`${process.env.PUBLIC_URL}/logos/coyote-labs.png`}
+              alt="Coyote Labs Logo"
+              style={styles.poweredLogo}
+            />
+          </div>
         </div>
       </div>
     </footer>
@@ -159,7 +157,7 @@ const styles = {
     paddingBottom: 1,
   },
 
-  /* Brand index links (slightly stronger underline) */
+  /* Brand index links */
   footerLink: {
     color: "rgba(255,255,255,0.85)",
     textDecoration: "underline",

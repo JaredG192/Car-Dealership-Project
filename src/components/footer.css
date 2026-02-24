@@ -1,4 +1,8 @@
-/* MOBILE: stack the 4 footer sections */
+/* ================================
+   Footer Responsive Styles
+   ================================ */
+
+/* Stack footer sections on tablets & phones */
 @media (max-width: 900px) {
   .footer-grid {
     grid-template-columns: 1fr !important;
@@ -6,7 +10,7 @@
   }
 }
 
-/* MOBILE: put powered logo on its own row */
+/* Adjust "Powered by" section on mobile */
 @media (max-width: 768px) {
   .footer-powered {
     flex-direction: column !important;

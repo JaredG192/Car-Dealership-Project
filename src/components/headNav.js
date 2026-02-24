@@ -1,5 +1,6 @@
+// src/components/headNav.js
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./headNav.css";
 
 /**
@@ -15,13 +16,12 @@ import "./headNav.css";
 export default function HeaderNav({ makes = [] }) {
   const navigate = useNavigate();
   const location = useLocation();
-
   const [open, setOpen] = useState(false);
 
   // Clean list of make options (removes null/undefined)
   const makeOptions = useMemo(() => makes.filter(Boolean), [makes]);
 
-  // Close the mobile menu whenever the route changes (professional UX)
+  // Close the mobile menu whenever the route changes
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
@@ -30,14 +30,17 @@ export default function HeaderNav({ makes = [] }) {
     const value = e.target.value;
     if (!value) return;
 
-    // Navigate to the selected make page
     navigate(value);
 
-    // Reset dropdown back to default option on mobile/desktop
+    // Reset dropdown back to default
     e.target.value = "";
   };
 
+  // Simple active check (HashRouter still gives normal pathname)
   const isActive = (path) => location.pathname === path;
+
+  // Mobile link helper to close menu immediately on click
+  const closeMenu = () => setOpen(false);
 
   return (
     <header style={styles.header}>
@@ -48,8 +51,12 @@ export default function HeaderNav({ makes = [] }) {
           <span style={styles.logoB}>Cars</span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="navLinksDesktop" style={styles.navLinks} aria-label="Primary navigation">
+        {/* Desktop nav (visibility controlled by headNav.css) */}
+        <nav
+          className="navLinksDesktop"
+          style={styles.navLinks}
+          aria-label="Primary navigation"
+        >
           <NavLink to="/inventory" active={isActive("/inventory")}>
             Inventory
           </NavLink>
@@ -89,7 +96,7 @@ export default function HeaderNav({ makes = [] }) {
           </Link>
         </nav>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger (visibility controlled by headNav.css) */}
         <button
           className="mobileBtn"
           type="button"
@@ -102,12 +109,24 @@ export default function HeaderNav({ makes = [] }) {
         </button>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile panel (visibility controlled by headNav.css) */}
       {open && (
-        <div className="mobilePanel" style={styles.mobilePanel} aria-label="Mobile navigation">
-          <MobileLink to="/inventory">Inventory</MobileLink>
-          <MobileLink to="/consultation">Consultation</MobileLink>
-          <MobileLink to="/about">About Us</MobileLink>
+        <div
+          className="mobilePanel"
+          style={styles.mobilePanel}
+          aria-label="Mobile navigation"
+        >
+          <MobileLink to="/inventory" onClick={closeMenu}>
+            Inventory
+          </MobileLink>
+
+          <MobileLink to="/consultation" onClick={closeMenu}>
+            Consultation
+          </MobileLink>
+
+          <MobileLink to="/about" onClick={closeMenu}>
+            About Us
+          </MobileLink>
 
           <div style={styles.mobileMakeRow}>
             <label htmlFor="makeSelectMobile" style={styles.mobileLabel}>
@@ -117,7 +136,10 @@ export default function HeaderNav({ makes = [] }) {
             <select
               id="makeSelectMobile"
               defaultValue=""
-              onChange={onMakeSelect}
+              onChange={(e) => {
+                onMakeSelect(e);
+                closeMenu();
+              }}
               style={styles.mobileSelect}
               aria-label="Shop by Make (mobile)"
             >
@@ -130,7 +152,7 @@ export default function HeaderNav({ makes = [] }) {
             </select>
           </div>
 
-          <Link to="/login" style={styles.mobileCta}>
+          <Link to="/login" style={styles.mobileCta} onClick={closeMenu}>
             Employee Login
           </Link>
         </div>
@@ -155,9 +177,9 @@ function NavLink({ to, active, children }) {
   );
 }
 
-function MobileLink({ to, children }) {
+function MobileLink({ to, children, onClick }) {
   return (
-    <Link to={to} style={styles.mobileLink}>
+    <Link to={to} style={styles.mobileLink} onClick={onClick}>
       {children}
     </Link>
   );
@@ -174,17 +196,20 @@ const styles = {
     backdropFilter: "blur(8px)",
     borderBottom: "1px solid rgba(0,0,0,0.08)",
   },
+
   navRow: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     padding: "12px 16px",
   },
+
   logoWrap: {
     textDecoration: "none",
     display: "flex",
     gap: 2,
   },
+
   logoA: { fontWeight: 900, fontSize: 28, color: "#0ea5e9" },
   logoB: { fontWeight: 900, fontSize: 28, color: "#f43f5e" },
 
@@ -193,15 +218,18 @@ const styles = {
     gap: 16,
     alignItems: "center",
   },
+
   navLink: {
     textDecoration: "none",
     color: "rgba(0,0,0,0.8)",
     fontWeight: 800,
     fontSize: 14,
   },
+
   active: { textDecoration: "underline" },
 
   makeWrap: { display: "flex", gap: 8, alignItems: "center" },
+
   makeSelect: {
     borderRadius: 999,
     padding: "6px 10px",
@@ -250,7 +278,9 @@ const styles = {
     padding: "10px 0",
     alignItems: "center",
   },
+
   mobileLabel: { fontWeight: 900 },
+
   mobileSelect: {
     flex: 1,
     padding: "8px",

@@ -1,11 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+// src/components/heroSlider.js
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 /**
  * HeroSlider
  *
  * Props:
- * - slides: Array of { image, title, subtitle?, ctas?: [{ label, href, variant?: "primary"|"secondary" }], showText?: boolean }
+ * - slides: Array of
+ *   {
+ *     image,
+ *     title,
+ *     subtitle?,
+ *     ctas?: [{ label, href, variant?: "primary" | "secondary" }],
+ *     showText?: boolean,
+ *     noOverlay?: boolean,
+ *     bgPosition?: string
+ *   }
  * - intervalMs: auto-advance interval (disabled if slides <= 1)
  * - height: css height value (string)
  */
@@ -15,12 +25,22 @@ export default function HeroSlider({
   height = "clamp(320px, 55vw, 560px)",
 }) {
   const safeSlides = useMemo(() => slides.filter(Boolean), [slides]);
+  const count = safeSlides.length;
 
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const count = safeSlides.length;
   const timerRef = useRef(null);
+
+  const prev = useCallback(() => {
+    if (count <= 1) return;
+    setIndex((i) => (i - 1 + count) % count);
+  }, [count]);
+
+  const next = useCallback(() => {
+    if (count <= 1) return;
+    setIndex((i) => (i + 1) % count);
+  }, [count]);
 
   // If slides change and the current index is out of range, reset to 0.
   useEffect(() => {
@@ -42,11 +62,14 @@ export default function HeroSlider({
     if (isPaused) return;
 
     timerRef.current = setInterval(() => {
-      setIndex((i) => (i + 1) % count);
+      next();
     }, intervalMs);
 
-    return () => clearInterval(timerRef.current);
-  }, [count, intervalMs, isPaused]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = null;
+    };
+  }, [count, intervalMs, isPaused, next]);
 
   // Keyboard navigation (left/right arrows)
   useEffect(() => {
@@ -59,20 +82,16 @@ export default function HeroSlider({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count]);
+  }, [count, prev, next]);
 
   if (count === 0) return null;
-
-  const prev = () => setIndex((i) => (i - 1 + count) % count);
-  const next = () => setIndex((i) => (i + 1) % count);
 
   const current = safeSlides[index] || {};
   const title = current.title || "";
   const subtitle = current.subtitle || "";
   const image = current.image || "";
 
-  //  default true, but allow a slide to turn text off with showText: false
+  // Default showText is true. A slide can turn it off with showText: false
   const showText = current.showText !== false;
 
   return (
@@ -84,18 +103,18 @@ export default function HeroSlider({
       onTouchStart={() => setIsPaused(true)}
       onTouchEnd={() => setIsPaused(false)}
     >
-      {/* Background image */}
-    <div
-  style={{
-    ...styles.bg,
-    backgroundImage: image ? `url(${image})` : "none",
-    backgroundPosition: current.bgPosition || "center",
-  }}
-/>
+      {/* Background image (supports per-slide bgPosition, e.g. "5% center") */}
+      <div
+        style={{
+          ...styles.bg,
+          backgroundImage: image ? `url(${image})` : "none",
+          backgroundPosition: current.bgPosition || "center",
+        }}
+      />
 
-
-      {/* Only show dark overlay + text on slides that want text */}
+      {/* Only show overlay + text when slide wants text */}
       {showText && !current.noOverlay && <div style={styles.overlay} />}
+
       {showText ? (
         <div style={styles.content}>
           <h1 style={styles.title}>{title}</h1>
@@ -109,7 +128,9 @@ export default function HeroSlider({
                   to={cta.href}
                   style={{
                     ...styles.cta,
-                    ...(cta.variant === "primary" ? styles.primary : styles.secondary),
+                    ...(cta.variant === "primary"
+                      ? styles.primary
+                      : styles.secondary),
                   }}
                 >
                   {cta.label}
@@ -120,7 +141,7 @@ export default function HeroSlider({
         </div>
       ) : null}
 
-      {/* Arrows (only show if more than 1 slide) */}
+      {/* Arrows (only if more than 1 slide) */}
       {count > 1 && (
         <>
           <button
@@ -172,6 +193,7 @@ const styles = {
     border: "1px solid rgba(255,255,255,0.12)",
     marginBottom: "18px",
   },
+
   bg: {
     position: "absolute",
     inset: 0,
@@ -179,14 +201,16 @@ const styles = {
     backgroundPosition: "center",
     transform: "scale(1.02)",
     transition: "background-image 400ms ease",
-    backgroundColor: "#000", // helps avoid white flash if image is ever missing
+    backgroundColor: "#000", // avoids white flash if image is missing
   },
+
   overlay: {
     position: "absolute",
     inset: 0,
     background:
       "linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.15) 100%)",
   },
+
   content: {
     position: "relative",
     zIndex: 2,
@@ -197,6 +221,7 @@ const styles = {
     padding: "clamp(16px, 4vw, 34px)",
     maxWidth: "760px",
   },
+
   title: {
     color: "white",
     margin: 0,
@@ -205,18 +230,21 @@ const styles = {
     lineHeight: 1.05,
     textShadow: "0 10px 30px rgba(0,0,0,0.5)",
   },
+
   subtitle: {
     margin: "10px 0 0 0",
     color: "rgba(255,255,255,0.92)",
     fontSize: "clamp(14px, 2.6vw, 18px)",
     lineHeight: 1.4,
   },
+
   ctaRow: {
     display: "flex",
     gap: "12px",
     flexWrap: "wrap",
     marginTop: "16px",
   },
+
   cta: {
     display: "inline-block",
     padding: "12px 18px",
@@ -224,12 +252,15 @@ const styles = {
     fontWeight: 800,
     textDecoration: "none",
   },
+
   primary: { background: "white", color: "black" },
+
   secondary: {
     background: "rgba(255,255,255,0.14)",
     color: "white",
     border: "1px solid rgba(255,255,255,0.22)",
   },
+
   arrow: {
     position: "absolute",
     top: "50%",
@@ -247,6 +278,7 @@ const styles = {
     placeItems: "center",
     zIndex: 3,
   },
+
   dots: {
     position: "absolute",
     left: 0,
@@ -257,6 +289,7 @@ const styles = {
     gap: "8px",
     zIndex: 3,
   },
+
   dot: {
     width: "10px",
     height: "10px",
@@ -265,5 +298,4 @@ const styles = {
     background: "white",
     cursor: "pointer",
   },
-
 };

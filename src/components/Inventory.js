@@ -1,22 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { cars } from "../data/cars";
 
 /**
  * Inventory
  * - Displays vehicle cards with filtering + sorting
  * - Supports URL filter: /inventory?type=suv
- * - Supports manufacturer pages via props:
- *    <Inventory defaultMake="Toyota" hideMakeFilter />
+ * - Supports manufacturer pages via props
  */
 export default function Inventory({ defaultMake = "", hideMakeFilter = false }) {
   const location = useLocation();
   const base = process.env.PUBLIC_URL;
 
-  // Local placeholder so the app works offline & on GitHub Pages.
-  // Put a file at: public/inventory/placeholder.jpg
+  // Local fallback image (keeps app working if an image is missing)
   const PLACEHOLDER_IMG = `${base}/inventory/placeholder.jpg`;
 
-  // Manufacturer logos (put these files in: public/brands/)
+  // Manufacturer logos (stored in: public/brands/)
   const makeLogoMap = useMemo(
     () => ({
       Toyota: `${base}/brands/Toyota.png`,
@@ -31,57 +30,16 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
     [base]
   );
 
-  /** Mock inventory data (replace with API later) */
-  const cars = useMemo(
-    () => [
-      // Toyota (4)
-      { id: 1, make: "Toyota", model: "Camry", year: 2021, price: 18500, mileage: 45000, type: "sedan", image: `${base}/inventory/camry.jpeg` },
-      { id: 2, make: "Toyota", model: "Corolla", year: 2020, price: 16200, mileage: 52000, type: "sedan", image: `${base}/inventory/corolla.jpg` },
-      { id: 3, make: "Toyota", model: "GR86", year: 2022, price: 28900, mileage: 18000, type: "coupe", image: `${base}/inventory/gr86.jpg` },
-      { id: 4, make: "Toyota", model: "RAV4", year: 2019, price: 21900, mileage: 64000, type: "suv", image: `${base}/inventory/rav4.jpg` },
-
-      // Honda (4)
-      { id: 5, make: "Honda", model: "Civic", year: 2020, price: 16900, mileage: 52000, type: "sedan", image: `${base}/inventory/civic.jpg` },
-      { id: 6, make: "Honda", model: "Accord", year: 2019, price: 19800, mileage: 61000, type: "sedan", image: `${base}/inventory/accord.jpg` },
-      { id: 7, make: "Honda", model: "CR-V", year: 2021, price: 24900, mileage: 36000, type: "suv", image: `${base}/inventory/crv.jpg` },
-      { id: 8, make: "Honda", model: "HR-V", year: 2018, price: 17900, mileage: 72000, type: "suv", image: `${base}/inventory/hrv.jpg` },
-
-      // Nissan (3)
-      { id: 9, make: "Nissan", model: "Altima", year: 2021, price: 18900, mileage: 47000, type: "sedan", image: `${base}/inventory/altima.jpg` },
-      { id: 10, make: "Nissan", model: "Sentra", year: 2020, price: 15900, mileage: 54000, type: "sedan", image: `${base}/inventory/sentra.jpg` },
-      { id: 11, make: "Nissan", model: "Rogue", year: 2019, price: 20900, mileage: 66000, type: "suv", image: `${base}/inventory/rouge.jpg` }, // keep if your file is actually "rouge.jpg"
-
-      // Subaru (3)
-      { id: 12, make: "Subaru", model: "Outback", year: 2019, price: 21900, mileage: 61000, type: "suv", image: `${base}/inventory/outback.jpg` },
-      { id: 13, make: "Subaru", model: "Forester", year: 2020, price: 22900, mileage: 52000, type: "suv", image: `${base}/inventory/forester.jpg` },
-      { id: 14, make: "Subaru", model: "Impreza", year: 2018, price: 14900, mileage: 78000, type: "hatchback", image: `${base}/inventory/impreza.jpg` },
-
-      // Mazda (3)
-      { id: 15, make: "Mazda", model: "CX-5", year: 2022, price: 25900, mileage: 21000, type: "suv", image: `${base}/inventory/cx5.jpg` },
-      { id: 16, make: "Mazda", model: "Mazda3", year: 2021, price: 19900, mileage: 33000, type: "hatchback", image: `${base}/inventory/mazda3.jpg` },
-      { id: 17, make: "Mazda", model: "MX-5 Miata", year: 2020, price: 27900, mileage: 26000, type: "coupe", image: `${base}/inventory/miata.jpg` },
-
-      // Kia (3)
-      { id: 18, make: "Kia", model: "Soul", year: 2021, price: 17900, mileage: 39000, type: "hatchback", image: `${base}/inventory/soul.jpg` },
-      { id: 19, make: "Kia", model: "Sportage", year: 2019, price: 19900, mileage: 62000, type: "suv", image: `${base}/inventory/sportage.jpg` },
-      { id: 20, make: "Kia", model: "Telluride", year: 2020, price: 31900, mileage: 49000, type: "suv", image: `${base}/inventory/telluride.jpg` },
-
-      // Ford (3)
-      { id: 21, make: "Ford", model: "F-150", year: 2018, price: 24900, mileage: 74000, type: "truck", image: `${base}/inventory/f150.jpg` },
-      { id: 22, make: "Ford", model: "Mustang", year: 2019, price: 28900, mileage: 52000, type: "coupe", image: `${base}/inventory/mustang.jpg` },
-      { id: 23, make: "Ford", model: "Escape", year: 2020, price: 20900, mileage: 58000, type: "suv", image: `${base}/inventory/escape.jpg` },
-
-      // Chevrolet (2)
-      { id: 24, make: "Chevrolet", model: "Malibu", year: 2020, price: 17400, mileage: 61000, type: "sedan", image: `${base}/inventory/malibu.jpg` },
-      { id: 25, make: "Chevrolet", model: "Silverado 1500", year: 2019, price: 27900, mileage: 69000, type: "truck", image: `${base}/inventory/silverado.jpg` },
-    ],
-    [base]
-  );
-
-  /** Read initial type from URL: /inventory?type=suv */
+  /**
+   * Read initial vehicle type from URL.
+   * Examples:
+   * - /inventory?type=suv
+   * - /inventory?type=SUV
+   * - /inventory?type=Truck
+   */
   const urlType = useMemo(() => {
     const params = new URLSearchParams(location.search);
-    return params.get("type") || "";
+    return (params.get("type") || "").trim().toLowerCase();
   }, [location.search]);
 
   // Filters / Sort state
@@ -89,29 +47,33 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
   const [typeFilter, setTypeFilter] = useState(urlType);
   const [sortBy, setSortBy] = useState("recommended");
 
-  // Keep make locked when using manufacturer pages
-  // Sync make with props (clears when defaultMake is "")
-useEffect(() => {
-  setMakeFilter(defaultMake || "");
-}, [defaultMake]);
+  // Keep make synced when using manufacturer pages
+  useEffect(() => {
+    setMakeFilter(defaultMake || "");
+  }, [defaultMake]);
 
-//  Sync type with URL (?type=suv)
-useEffect(() => {
-  setTypeFilter(urlType || "");
-}, [urlType]);
+  // Keep type synced with URL (?type=suv)
+  useEffect(() => {
+    setTypeFilter(urlType || "");
+  }, [urlType]);
 
-  // Dropdown options
+  // Dropdown make options (cars is a static import, so deps can be [])
   const makes = useMemo(() => {
     const set = new Set(cars.map((c) => c.make));
     return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [cars]);
+  }, []);
 
-  // Apply filtering + sorting
+  // Apply filters + sorting
   const filtered = useMemo(() => {
     let list = cars;
 
-    if (makeFilter) list = list.filter((c) => c.make === makeFilter);
-    if (typeFilter) list = list.filter((c) => c.type === typeFilter);
+    if (makeFilter) {
+      list = list.filter((c) => c.make === makeFilter);
+    }
+
+    if (typeFilter) {
+      list = list.filter((c) => (c.type || "").toLowerCase() === typeFilter);
+    }
 
     const sorted = [...list];
 
@@ -133,41 +95,40 @@ useEffect(() => {
     }
 
     return sorted;
-  }, [cars, makeFilter, typeFilter, sortBy]);
+  }, [makeFilter, typeFilter, sortBy]);
 
   const pageTitle = defaultMake ? `${defaultMake} Inventory` : "Inventory";
   const makeLogoSrc = defaultMake ? makeLogoMap[defaultMake] : "";
 
   const handleReset = () => {
-    // On manufacturer pages, don't clear the make
+    // On manufacturer pages, keep make locked
     if (!defaultMake) setMakeFilter("");
     setTypeFilter("");
     setSortBy("recommended");
   };
 
   return (
-  <div style={styles.page}>
-  <div style={styles.container}>
+    <div style={styles.page}>
+      <div style={styles.container}>
+        {/* Navigation */}
+        <div style={styles.navRow}>
+          <Link to="/" style={styles.backLink}>
+            ← Home
+          </Link>
 
-    {/* Back navigation */}
-{/* Back navigation */}
-<div style={styles.navRow}>
-  <Link to="/" style={styles.backLink}>
-    ← Home
-  </Link>
+          {defaultMake && (
+            <Link to="/inventory" style={styles.backLink}>
+              ← Inventory
+            </Link>
+          )}
+        </div>
 
-  {defaultMake && (
-    <Link to="/inventory" style={styles.backLink}>
-      ← Inventory
-    </Link>
-  )}
-</div>
-    {/* Title row (logo + title) */}
-    <div style={styles.titleRow}>
+        {/* Title */}
+        <div style={styles.titleRow}>
           {makeLogoSrc && (
             <img
               src={makeLogoSrc}
-              alt={`${defaultMake} logo`}
+              alt={defaultMake}
               style={styles.makeLogo}
               onError={(e) => {
                 e.currentTarget.style.display = "none";
@@ -180,9 +141,7 @@ useEffect(() => {
 
         <div style={styles.accentLine} />
 
-        <p style={styles.sub}>
-          Browse our current selection. Use filters to narrow down your options.
-        </p>
+        <p style={styles.sub}>Browse our current selection. Use filters to narrow down your options</p>
 
         {/* Filters */}
         <div style={styles.filters}>
@@ -241,21 +200,22 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Results count */}
+        {/* Count */}
         <div style={styles.countRow}>
           <span style={styles.count}>{filtered.length} vehicle(s)</span>
         </div>
 
-        {/* Vehicle cards */}
+        {/* Cards */}
         <div style={styles.grid}>
           {filtered.map((car) => (
             <div key={car.id} style={styles.card}>
               <div style={styles.imgWrap}>
                 <img
                   src={car.image}
-                  alt={`${car.year} ${car.make} ${car.model}`}
+                  alt={car.model}
                   style={styles.img}
                   onError={(e) => {
+                    // Prevent infinite onError loops
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = PLACEHOLDER_IMG;
                   }}
@@ -276,7 +236,7 @@ useEffect(() => {
 
                 <div style={styles.price}>${car.price.toLocaleString()}</div>
 
-                <Link to={`/inventory/${car.id}`} style={styles.detailsBtn}>
+                <Link to={`/car/${car.id}`} style={styles.detailsBtn}>
                   View Details
                 </Link>
               </div>
@@ -284,23 +244,23 @@ useEffect(() => {
           ))}
         </div>
 
-        {/* Empty state */}
+        {/* Empty */}
         {filtered.length === 0 && (
-          <div style={styles.empty}>
-            No vehicles match your filters. Try Reset.
-          </div>
+          <div style={styles.empty}>No vehicles found.</div>
         )}
       </div>
     </div>
   );
 }
 
+/* ================== STYLES ================== */
+
 const styles = {
   page: {
-    background:
-      "linear-gradient(180deg, #f8fbff 0%, #ffffff 60%, #fff5f6 100%)",
-    color: "#0f172a",
-  },
+  background:
+    "linear-gradient(180deg, #f8fbff 0%, #ffffff 60%, #fff5f6 100%)",
+  color: "#0f172a",
+},
 
   container: {
     width: "min(1100px, calc(100% - 32px))",
@@ -308,21 +268,47 @@ const styles = {
     padding: "28px 0 60px",
   },
 
+  navRow: {
+    display: "flex",
+    gap: 14,
+    marginBottom: 10,
+  },
+
+  backLink: {
+  fontSize: 14,
+  fontWeight: 800,
+  color: "#0284c7",
+  textDecoration: "none",
+
+  padding: "8px 16px",
+  borderRadius: 999,
+
+  background: "#dbeafe",
+
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+
+  boxShadow: "0 4px 10px rgba(14,165,233,0.15)",
+},
+
   titleRow: {
     display: "flex",
     alignItems: "center",
     gap: 10,
-    flexWrap: "nowrap",      
-    minWidth: 0,              
   },
 
   makeLogo: {
-    height: 28,               
-    width: 60,                
+    height: 28,
+    width: 60,
     objectFit: "contain",
-    flexShrink: 0,           
   },
-  title: { margin: 0, fontSize: 34, fontWeight: 900, letterSpacing: "-0.3px", minWidth: 0, lineHeight: 1.1,},
+
+  title: {
+    margin: 0,
+    fontSize: 34,
+    fontWeight: 900,
+  },
 
   accentLine: {
     width: 86,
@@ -333,55 +319,58 @@ const styles = {
   },
 
   sub: {
-    marginTop: 0,
     marginBottom: 18,
-    color: "rgba(15, 23, 42, 0.75)",
+    opacity: 0.75,
     fontWeight: 600,
-    lineHeight: 1.6,
   },
 
-  filters: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-    gap: 12,
-    alignItems: "end",
-    border: "1px solid rgba(0,0,0,0.08)",
-    borderRadius: 16,
-    padding: 14,
-    background:
-      "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(244,63,94,0.06))",
-  },
+filters: {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+  gap: 12,
+  padding: 16,
+  borderRadius: 18,
 
-  field: { display: "flex", flexDirection: "column", gap: 6 },
+  background: "linear-gradient(90deg, #e7f0fb 0%, #f7eaf1 100%)",
+  boxShadow: "0 4px 14px rgba(15, 23, 42, 0.05)",
+},
+
+  field: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+  },
 
   label: {
     fontSize: 12,
     fontWeight: 900,
     opacity: 0.7,
-    letterSpacing: "0.06em",
-    textTransform: "uppercase",
   },
 
   select: {
-    padding: "10px 12px",
-    borderRadius: 12,
-    border: "1px solid rgba(0,0,0,0.16)",
-    background: "#fff",
-    fontWeight: 800,
-    outline: "none",
-  },
+  padding: "10px 12px",
+  borderRadius: 12,
+  border: "1px solid rgba(0,0,0,0.16)",
+  background: "#fff",
+  fontWeight: 700,
+},
 
   resetBtn: {
     padding: "10px 12px",
     borderRadius: 12,
     border: "1px solid rgba(0,0,0,0.16)",
-    background: "#fff",
+    background: "#fff",  
     fontWeight: 900,
     cursor: "pointer",
   },
 
-  countRow: { marginTop: 14, marginBottom: 10 },
-  count: { fontWeight: 800, color: "rgba(15, 23, 42, 0.75)" },
+  countRow: {
+    margin: "14px 0 10px",
+  },
+
+  count: {
+    fontWeight: 800,
+  },
 
   grid: {
     display: "grid",
@@ -393,21 +382,29 @@ const styles = {
     borderRadius: 18,
     overflow: "hidden",
     border: "1px solid rgba(0,0,0,0.10)",
-    boxShadow: "0 12px 26px rgba(0,0,0,0.08)",
     background: "#fff",
   },
 
   imgWrap: {
-    width: "100%",
     height: 160,
-    overflow: "hidden",
     background: "#e5e7eb",
   },
 
-  img: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  img: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+  },
 
-  cardBody: { padding: 14 },
-  carTitle: { fontWeight: 900, fontSize: 16, marginBottom: 8 },
+  cardBody: {
+    padding: 14,
+  },
+
+  carTitle: {
+    fontWeight: 900,
+    marginBottom: 8,
+  },
 
   metaRow: {
     display: "flex",
@@ -417,22 +414,27 @@ const styles = {
   },
 
   badge: {
-    display: "inline-block",
     padding: "4px 10px",
     borderRadius: 999,
-    border: "1px solid rgba(0,0,0,0.12)",
-    background: "rgba(15,23,42,0.04)",
     fontWeight: 900,
     fontSize: 12,
   },
 
-  miles: { fontWeight: 800, fontSize: 12, opacity: 0.7 },
-  price: { marginTop: 10, fontWeight: 900, fontSize: 20 },
+  miles: {
+    fontSize: 12,
+    opacity: 0.7,
+    fontWeight: 800,
+  },
+
+  price: {
+    marginTop: 10,
+    fontWeight: 900,
+    fontSize: 20,
+  },
 
   detailsBtn: {
     marginTop: 12,
-    display: "inline-block",
-    width: "100%",
+    display: "block",
     textAlign: "center",
     padding: "10px 12px",
     borderRadius: 12,
@@ -446,26 +448,6 @@ const styles = {
     marginTop: 16,
     padding: 14,
     borderRadius: 14,
-    border: "1px solid rgba(0,0,0,0.10)",
-    background: "rgba(244,63,94,0.06)",
     fontWeight: 800,
   },
-
-  navRow: {
-  display: "flex",
-  gap: 14,
-  marginBottom: 10,
-  alignItems: "center",
-},
-
-backLink: {
-  fontSize: 14,
-  fontWeight: 800,
-  color: "#0ea5e9",
-  textDecoration: "none",
-  padding: "6px 12px",
-  borderRadius: 999,
-  background: "rgba(14,165,233,0.1)",
-},
-
 };
