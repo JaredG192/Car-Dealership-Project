@@ -38,7 +38,7 @@ export default function Homepage() {
         showText: false,
         noOverlay: true,
         // Slightly offset on mobile so your image-only hero shows more of the right side.
-        bgPosition: isMobile ? "5% center" : "center 35%",
+        bgPosition: isMobile ? "7% center" : "center 35%",
       },
       {
         image: `${base}/index/rightcar.jpg`,
