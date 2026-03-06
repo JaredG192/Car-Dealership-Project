@@ -7,6 +7,8 @@ import MainLayout from "./components/MainLayout";
 import Homepage from "./components/homepage";
 import Inventory from "./components/Inventory";
 import CarDetails from "./components/CarDetails";
+import EmployeeLogin from "./components/EmployeeLogin";
+import ContactUs from "./components/ContactUs";
 
 /**
  * App.js
@@ -65,7 +67,7 @@ export default function App() {
             element={<ComingSoon title="Consultation" />}
           />
           <Route path="/about" element={<ComingSoon title="About Us" />} />
-          <Route path="/contact" element={<ComingSoon title="Contact Us" />} />
+          <Route path="/contact" element={<ContactUs />} />
 
           {/* Manufacturer routes (Inventory filtered by make) */}
           <Route
@@ -105,7 +107,7 @@ export default function App() {
         </Route>
 
         {/* PAGES WITHOUT FOOTER (admin / internal) */}
-        <Route path="/login" element={<ComingSoon title="Employee Login" />} />
+        <Route path="/login" element={<EmployeeLogin />} />
         <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
       </Routes>
     </HashRouter>
