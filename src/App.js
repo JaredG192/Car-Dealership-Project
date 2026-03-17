@@ -9,6 +9,8 @@ import Inventory from "./components/Inventory";
 import CarDetails from "./components/CarDetails";
 import EmployeeLogin from "./components/EmployeeLogin";
 import ContactUs from "./components/ContactUs";
+import Consultation from "./components/Consultation";
+
 
 /**
  * App.js
@@ -62,10 +64,9 @@ export default function App() {
           {/* Dynamic route for each vehicle */}
           <Route path="/car/:id" element={<CarDetails />} />
 
-          <Route
-            path="/consultation"
-            element={<ComingSoon title="Consultation" />}
-          />
+          
+          <Route path="/consultation" element={<Consultation />} />
+          
           <Route path="/about" element={<ComingSoon title="About Us" />} />
           <Route path="/contact" element={<ContactUs />} />
 

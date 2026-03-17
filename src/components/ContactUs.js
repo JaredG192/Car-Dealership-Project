@@ -24,7 +24,7 @@ export default function ContactUs() {
             <div className="contact-info-list">
               <div className="contact-info-item">
                 <span className="contact-label">Phone</span>
-                <span>(555) 123-4567</span>
+                <span>(909) 555-0123</span>
               </div>
               <div className="contact-info-item">
                 <span className="contact-label">Email</span>
@@ -32,11 +32,17 @@ export default function ContactUs() {
               </div>
               <div className="contact-info-item">
                 <span className="contact-label">Address</span>
-                <span>123 College Ave, San Marcos, CA</span>
+                <span>5500 University Pkwy
+                    San Bernardino, CA 92407</span>
               </div>
               <div className="contact-info-item">
                 <span className="contact-label">Hours</span>
-                <span>Mon - Sat: 9:00 AM - 7:00 PM</span>
+                <span>
+                  Mon - Thurs: 9:00 AM - 6:00 PM<br />
+                  Fri: 9:00 AM - 5:00 PM<br />
+                  Sat: 10:00 AM - 3:00 PM<br />
+                  Sun: Closed
+                </span>
               </div>
             </div>
           </div>
