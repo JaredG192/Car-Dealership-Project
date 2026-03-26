@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 /**
  * Inventory
@@ -47,17 +48,25 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
   }, [urlType]);
 
   useEffect(() => {
-  fetch("http://localhost:5000/api/vehicles")
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("Vehicles API response:", data);
-      setCars(data.vehicles || []);
-      setLoading(false);
-    })
-    .catch((err) => {
-      console.error("Error fetching vehicles:", err);
-      setLoading(false);
-    });
+  const fetchVehicles = async () => {
+    console.log("Fetching vehicles from Supabase...");
+
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("*");
+
+    if (error) {
+      console.error("Supabase error:", error);
+      setCars([]);
+    } else {
+      console.log("Vehicles:", data);
+      setCars(data || []);
+    }
+
+    setLoading(false);
+  };
+
+  fetchVehicles();
 }, []);
 
   const makes = useMemo(() => {
