@@ -25,7 +25,6 @@ exports.getAllVehicles = async (req, res) => {
     if (make) {
       query = query.eq('make', make);  // Filter by make
     }
-
     if (type) {
       query = query.ilike('type', type);  // Case insensitive type filter
     }
