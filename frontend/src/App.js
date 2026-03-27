@@ -10,6 +10,7 @@ import CarDetails from "./components/CarDetails";
 import EmployeeLogin from "./components/EmployeeLogin";
 import ContactUs from "./components/ContactUs";
 import Consultation from "./components/Consultation";
+import AboutUs from "./components/AboutUs";
 
 
 /**
@@ -67,7 +68,7 @@ export default function App() {
           
           <Route path="/consultation" element={<Consultation />} />
           
-          <Route path="/about" element={<ComingSoon title="About Us" />} />
+          <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
 
           {/* Manufacturer routes (Inventory filtered by make) */}
