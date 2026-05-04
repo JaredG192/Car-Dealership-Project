@@ -11,7 +11,7 @@ import EmployeeLogin from "./components/EmployeeLogin";
 import ContactUs from "./components/ContactUs";
 import Consultation from "./components/Consultation";
 import AboutUs from "./components/AboutUs";
-
+import EmployeeDashboard from "./components/EmployeeDashboard";
 
 /**
  * App.js
@@ -20,7 +20,7 @@ import AboutUs from "./components/AboutUs";
  * - MainLayout wraps pages that should include the Footer
  */
 
-// Header "Shop by Make" links (sorted alphabetically)
+// Header "Shop by Make" links
 const makes = [
   { name: "Nissan", link: "/nissan" },
   { name: "Toyota", link: "/toyota" },
@@ -32,7 +32,7 @@ const makes = [
   { name: "Chevrolet", link: "/chevrolet" },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
-// Simple placeholder page used for routes not built yet
+// Placeholder page
 function ComingSoon({ title }) {
   return (
     <div style={{ padding: 32, textAlign: "center" }}>
@@ -50,10 +50,7 @@ function ComingSoon({ title }) {
 export default function App() {
   return (
     <HashRouter>
-      {/* Ensures the page scrolls to top on navigation */}
       <ScrollToTop />
-
-      {/* Global header navigation */}
       <HeaderNav makes={makes} />
 
       <Routes>
@@ -61,17 +58,12 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Homepage />} />
           <Route path="/inventory" element={<Inventory />} />
-
-          {/* Dynamic route for each vehicle */}
           <Route path="/car/:id" element={<CarDetails />} />
-
-          
           <Route path="/consultation" element={<Consultation />} />
-          
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
 
-          {/* Manufacturer routes (Inventory filtered by make) */}
+          {/* Manufacturer routes */}
           <Route
             path="/nissan"
             element={<Inventory defaultMake="Nissan" hideMakeFilter />}
@@ -108,9 +100,18 @@ export default function App() {
           <Route path="*" element={<ComingSoon title="Page Not Found" />} />
         </Route>
 
-        {/* PAGES WITHOUT FOOTER (admin / internal) */}
+        {/* PAGES WITHOUT FOOTER (internal / employee) */}
         <Route path="/login" element={<EmployeeLogin />} />
-        <Route path="/dashboard" element={<ComingSoon title="Dashboard" />} />
+
+        {/*Protected Dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            JSON.parse(localStorage.getItem("user"))
+              ? <EmployeeDashboard />
+              : <ComingSoon title="Unauthorized" />
+          }
+        />
       </Routes>
     </HashRouter>
   );

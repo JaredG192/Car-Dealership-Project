@@ -13,3 +13,5 @@ frontend/build/
 
 # mac files
 .DS_Store
+# build (general)
+build/
