@@ -16,4 +16,14 @@ router.get('/makes', vehicleController.getMakes);
 // GET /api/vehicles/:id To get single vehicle by ID
 // Example: /api/vehicles/1
 router.get('/:id', vehicleController.getVehicleById);
+
+// ADD vehicle
+router.post('/', vehicleController.addVehicle);
+
+// MARK vehicle as sold
+router.put('/:id/sell', vehicleController.markAsSold);
+
+// DELETE vehicle
+router.delete('/:id', vehicleController.deleteVehicle);
+
 module.exports = router;

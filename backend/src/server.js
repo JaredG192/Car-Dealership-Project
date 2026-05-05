@@ -1,6 +1,6 @@
 // Main Server File
 
-require('dotenv').config();  // Load environment variables from .env
+require('dotenv').config({ path: '../.env' });  // Load environment variables from .env
 const express = require('express');
 const cors = require('cors');
 
@@ -44,3 +44,4 @@ app.listen(PORT, () => {
   console.log(` Vehicles API: http://localhost:${PORT}/api/vehicles`);
   console.log(' ========================================');
 });
+

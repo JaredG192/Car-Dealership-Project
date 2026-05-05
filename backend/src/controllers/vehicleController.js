@@ -13,33 +13,38 @@ const supabase = require('../config/supabase');
  */
 exports.getAllVehicles = async (req, res) => {
   try {
-    const { make, type, sortBy = 'id', order = 'asc' } = req.query;
+    const { make, type, sortBy = 'id', order = 'asc', status } = req.query;
 
-    // Start building query
     let query = supabase
       .from('vehicles')
-      .select('*')
-      .eq('status', 'available');  // Only show available vehicles
+      .select('*');
 
-    // Apply filters if provided
+    //  FIXED STATUS LOGIC
+    if (status) {
+      query = query.eq('status', status);
+    } else {
+      query = query.eq('status', 'available');
+    }
+
+    // Filters
     if (make) {
-      query = query.eq('make', make);  // Filter by make
-    }
-    if (type) {
-      query = query.ilike('type', type);  // Case insensitive type filter
+      query = query.eq('make', make);
     }
 
-    // Apply sorting
+    if (type) {
+      query = query.ilike('type', type);
+    }
+
+    // Sorting
     const validSortFields = ['price', 'year', 'mileage', 'id'];
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'id';
+
     query = query.order(sortField, { ascending: order === 'asc' });
 
-    // Execute query
     const { data, error } = await query;
 
     if (error) throw error;
 
-    // Send response
     res.json({
       success: true,
       count: data.length,
@@ -117,5 +122,70 @@ exports.getMakes = async (req, res) => {
       message: 'Error fetching makes',
       error: error.message
     });
+  }
+};
+
+
+exports.addVehicle = async (req, res) => {
+  try {
+    const { make, model, year, price, mileage, image } = req.body;
+
+    const { data, error } = await supabase
+      .from('vehicles')
+      .insert([{
+        make,
+        model,
+        year,
+        price,
+        mileage,
+        image,
+        status: 'available'
+      }])
+      .select();
+
+    if (error) throw error;
+
+    res.json(data[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.markAsSold = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // SAFE: handle missing body
+    const newStatus = req.body?.status || "sold";
+
+    const { error } = await supabase
+      .from('vehicles')
+      .update({ status: newStatus })
+      .eq('id', Number(id)); //  fix ID type
+
+    if (error) throw error;
+
+    res.json({ message: "Vehicle updated" });
+  } catch (error) {
+    console.error("SELL ERROR:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteVehicle = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { error } = await supabase
+      .from('vehicles')
+      .update({ status: 'removed' })  //  SOFT DELETE
+      .eq('id', Number(id));
+
+    if (error) throw error;
+
+    res.json({ message: "Vehicle removed (soft delete)" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
