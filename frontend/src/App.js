@@ -100,10 +100,10 @@ export default function App() {
           <Route path="*" element={<ComingSoon title="Page Not Found" />} />
         </Route>
 
-        {/* PAGES WITHOUT FOOTER (internal / employee) */}
+        {/* PAGES WITHOUT FOOTER */}
         <Route path="/login" element={<EmployeeLogin />} />
 
-        {/*Protected Dashboard */}
+        {/* Protected Dashboard */}
         <Route
           path="/dashboard"
           element={

@@ -1,17 +1,11 @@
-# env
+# env files
 .env
-backend/.env
-frontend/.env
 
-# node modules
+# dependencies
 node_modules/
-backend/node_modules/
-frontend/node_modules/
 
-# build folder (IMPORTANT)
-frontend/build/
+# build output
+build/
 
 # mac files
 .DS_Store
-# build (general)
-build/

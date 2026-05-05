@@ -52,8 +52,9 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
     console.log("Fetching vehicles from Supabase...");
 
     const { data, error } = await supabase
-      .from("vehicles")
-      .select("*");
+  .from("vehicles")
+  .select("*")
+  .eq("status", "available");
 
     if (error) {
       console.error("Supabase error:", error);

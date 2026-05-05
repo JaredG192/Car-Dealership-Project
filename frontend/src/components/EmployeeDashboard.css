@@ -1,90 +1,237 @@
+/* PAGE */
 .inventory-page {
-  min-height: calc(100vh - 90px);
-  background: linear-gradient(90deg, #eef7ff 0%, #fff6f9 100%);
-  padding: 60px 20px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  background: linear-gradient(180deg, #f8fbff, #ffffff);
+  min-height: 100vh;
+  padding: 20px;
 }
 
-.inventory-container {
-  max-width: 1100px;
-  margin: 0 auto;
+/* CONTAINER */
+.dashboard-container {
+  max-width: 1200px;
+  margin: auto;
 }
 
+/* HEADER */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.logout-btn {
-  padding: 8px 12px;
-  background: #111;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.inventory-role {
-  margin: 10px 0 20px;
-  color: gray;
-}
-
-.add-car-btn {
   margin-bottom: 20px;
-  padding: 10px 16px;
-  background: black;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
 }
 
-.inventory-container {
-  width: 100%;
-  max-width: 1200px;
-}
-
-.inventory-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.inventory-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 15px;
-  background: white;
-}
-
-.sold-badge {
-  color: red;
+.dashboard-role {
+  margin-bottom: 30px;
   font-weight: bold;
 }
 
-.sold-btn {
-  margin-top: 10px;
-  padding: 8px;
+/* LOGOUT */
+.logout-btn {
+  padding: 8px 14px;
+  border: none;
+  background: #f43f5e;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* SECTIONS */
+.section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* ADD BUTTON */
+.add-car-btn {
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  border: none;
+  background: #10b981;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* FILTER BUTTONS */
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0 25px;
+}
+
+.filter-buttons button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #e5e7eb;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-buttons button:hover {
+  background: #d1d5db;
+}
+
+.filter-buttons .active {
   background: #0ea5e9;
   color: white;
-  border-radius: 6px;
+}
+
+/* GRID (FIXED) */
+.inventory-grid,
+.requests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+/* CARDS */
+.inventory-card,
+.request-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  position: relative;
+  transition: 0.2s ease;
+}
+
+.inventory-card:hover,
+.request-card:hover {
+  transform: translateY(-3px);
+}
+
+/* IMAGE */
+.car-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* BADGES */
+.sold-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f43f5e;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.removed-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #6b7280;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* REQUEST TEXT */
+.request-card h3 {
+  margin: 0 0 6px;
+}
+
+.request-card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+/* REQUEST TYPE BADGE */
+.request-type {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.request-type.consultation {
+  background: #0ea5e9;
+  color: white;
+}
+
+.request-type.question {
+  background: #f59e0b;
+  color: white;
+}
+
+/* BUTTONS (GENERAL) */
+.inventory-card button,
+.complete-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* SPECIFIC BUTTONS */
+.sold-btn {
+  background: #0ea5e9;
+  color: white;
+}
+
+.undo-btn {
+  background: #0ea5e9;
+  color: white;
+}
+
+.restore-btn {
+  background: #10b981;
+  color: white;
 }
 
 .remove-btn {
-  margin-top: 10px;
-  margin-left: 10px;
-  padding: 8px;
-  background: red;
+  background: #f43f5e;
   color: white;
-  border-radius: 6px;
 }
 
-.inventory-card {
-  background: #ffffff;
-  border: 1px solid #e8edf5;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+.complete-btn {
+  background: #10b981;
+  color: white;
+}
+
+.complete-btn:hover {
+  background: #059669;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
   padding: 20px;
+  border-radius: 16px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

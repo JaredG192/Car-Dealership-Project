@@ -1,239 +1,294 @@
 import React, { useState, useEffect } from "react";
 import "./EmployeeDashboard.css";
+import { getRequests, deleteRequest } from "../services/serviceRequests";
 
 export default function EmployeeDashboard() {
   const [user, setUser] = useState(null);
   const [cars, setCars] = useState([]);
-  const [showSold, setShowSold] = useState(false);
-  const [showRemoved, setShowRemoved] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("available");
+  const [showForm, setShowForm] = useState(false);
 
-  const API_BASE = "http://localhost:5000";
+  // REQUESTS
+  const [requests, setRequests] = useState([]);
+  const [requestFilter, setRequestFilter] = useState("all");
 
-  // Fetch cars
+  const [newCar, setNewCar] = useState({
+    make: "",
+    model: "",
+    year: "",
+    price: "",
+    mileage: "",
+    type: ""
+  });
+
+  const API_BASE = "http://localhost:5001";
+
+  // LOGOUT
+  const logout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "#/login";
+  };
+
+  // FETCH CARS
   const fetchCars = () => {
     let url = `${API_BASE}/api/vehicles`;
 
     if (user?.role === "manager") {
-      if (showRemoved) {
-        url += "?status=removed";
-      } else if (showSold) {
-        url += "?status=sold";
-      }
+      url += `?status=${statusFilter}`;
     }
 
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        console.log("API response:", data);
-
         const vehicles = data.vehicles || data;
         setCars(Array.isArray(vehicles) ? vehicles : []);
       })
       .catch((err) => console.error(err));
   };
 
-  // Load user
+  // DELETE REQUEST
+  const handleDelete = (id) => {
+    if (!window.confirm("Mark this request as complete?")) return;
+    deleteRequest(id);
+    setRequests(getRequests());
+  };
+
+  // LOAD USER
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "null");
     setUser(storedUser);
   }, []);
 
-  // Fetch cars when filters change
+  // LOAD CARS
   useEffect(() => {
-    if (user) {
-      fetchCars();
-    }
-  }, [user, showSold, showRemoved]);
+    if (user) fetchCars();
+  }, [user, statusFilter]);
+
+  // LOAD REQUESTS
+  useEffect(() => {
+    setRequests(getRequests());
+  }, []);
 
   if (!user) return <h2>Unauthorized</h2>;
 
-  // Always use Supabase id
   const getId = (car) => car.id;
 
-  // Mark as sold
+  // FILTER REQUESTS
+  const filteredRequests = requests.filter((r) => {
+    if (requestFilter === "all") return true;
+    return r.type === requestFilter;
+  });
+
+  // CAR ACTIONS
   const markAsSold = (id) => {
     fetch(`${API_BASE}/api/vehicles/${id}/sell`, {
-      method: "PUT"
-    })
-      .then(() => fetchCars())
-      .catch((err) => console.error(err));
+      method: "PUT",
+    }).then(fetchCars);
   };
 
-  // Undo sold
   const undoSold = (id) => {
     fetch(`${API_BASE}/api/vehicles/${id}/sell`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "available" })
-    })
-      .then(() => fetchCars())
-      .catch((err) => console.error(err));
+      body: JSON.stringify({ status: "available" }),
+    }).then(fetchCars);
   };
 
-  // Remove (soft delete)
   const removeCar = (id) => {
     fetch(`${API_BASE}/api/vehicles/${id}`, {
-      method: "DELETE"
-    })
-      .then(() => fetchCars())
-      .catch((err) => console.error(err));
+      method: "DELETE",
+    }).then(fetchCars);
   };
 
-  // Restore removed car
   const restoreCar = (id) => {
     fetch(`${API_BASE}/api/vehicles/${id}/sell`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "available" })
-    })
-      .then(() => fetchCars())
-      .catch((err) => console.error(err));
-  };
-
-  // Add car (placeholder)
-  const addCar = () => {
-    fetch(`${API_BASE}/api/vehicles`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        make: "Toyota",
-        model: "New Car",
-        year: 2024,
-        price: 10000,
-        mileage: 0,
-        image: "/inventory/placeholder.jpg",
-        status: "available"
-      })
-    })
-      .then(() => fetchCars())
-      .catch((err) => console.error(err));
-  };
-
-  const logout = () => {
-    localStorage.removeItem("user");
-    window.location.href = "#/login";
+      body: JSON.stringify({ status: "available" }),
+    }).then(fetchCars);
   };
 
   return (
-    <section className="inventory-page">
-      <div className="inventory-container">
+    <section className="dashboard-page">
+      <div className="dashboard-container">
 
+        {/* HEADER */}
         <div className="dashboard-header">
-          <h1>Inventory Dashboard</h1>
+          <h1>
+            {user.role === "manager"
+              ? "Manager Dashboard"
+              : "Employee Dashboard"}
+          </h1>
+
           <button className="logout-btn" onClick={logout}>
             Logout
           </button>
         </div>
 
-        <p className="inventory-role">Role: {user.role}</p>
+        <p className="dashboard-role">Role: {user.role}</p>
 
-        {user.role === "manager" && (
-          <>
-            <button className="add-car-btn" onClick={addCar}>
-              + Add Car
-            </button>
+        {/* ===================== */}
+        {/* CUSTOMER REQUESTS */}
+        {/* ===================== */}
+        <div className="section">
+          <h2 className="section-title">Customer Requests</h2>
 
-            {/* SOLD TOGGLE */}
+          <div className="filter-buttons">
             <button
-              className="toggle-btn"
-              onClick={() => {
-                setShowSold(!showSold);
-                setShowRemoved(false);
-              }}
+              className={requestFilter === "all" ? "active" : ""}
+              onClick={() => setRequestFilter("all")}
             >
-              {showSold ? "Show Available Cars" : "Show Sold Cars"}
+              All
             </button>
 
-            {/* REMOVED TOGGLE */}
             <button
-              className="toggle-btn"
-              onClick={() => {
-                setShowRemoved(!showRemoved);
-                setShowSold(false);
-              }}
+              className={requestFilter === "consultation" ? "active" : ""}
+              onClick={() => setRequestFilter("consultation")}
             >
-              {showRemoved ? "Show Available Cars" : "Show Removed Cars"}
+              Consultations
             </button>
-          </>
-        )}
 
-        <div className="inventory-grid">
-          {cars.map((car) => {
-            const id = getId(car);
+            <button
+              className={requestFilter === "question" ? "active" : ""}
+              onClick={() => setRequestFilter("question")}
+            >
+              Questions
+            </button>
+          </div>
 
-            return (
-              <div key={id} className="inventory-card">
+          <div className="requests-grid">
+            {filteredRequests.length === 0 ? (
+              <p>No requests yet.</p>
+            ) : (
+              filteredRequests.map((r) => (
+                <div key={r.id} className="request-card">
+                  <h3>{r.name}</h3>
+                  <p>{r.email}</p>
+                  <p>{r.message}</p>
 
-                {/* IMAGE */}
-                {car.image && (
-                  <img
-                    src={`${process.env.PUBLIC_URL}${car.image}`}
-                    alt={car.model}
-                    className="car-img"
-                  />
-                )}
+                  <span className={`request-type ${r.type}`}>
+                    {r.type === "consultation" ? "Consultation" : "Question"}
+                  </span>
 
-                {/* TITLE */}
-                <h3>{car.year} {car.make} {car.model}</h3>
-
-                {/* PRICE */}
-                <p>${(car.price || 0).toLocaleString()}</p>
-
-                {/* STATUS BADGES */}
-                {car.status === "sold" && (
-                  <span className="sold-badge">SOLD</span>
-                )}
-                {car.status === "removed" && (
-                  <span className="removed-badge">REMOVED</span>
-                )}
-
-                {/* ACTIONS */}
-
-                {/* Available → can sell */}
-                {car.status === "available" && (
                   <button
-                    className="sold-btn"
-                    onClick={() => markAsSold(id)}
+                    className="complete-btn"
+                    onClick={() => handleDelete(r.id)}
                   >
-                    Mark as Sold
+                    Complete
                   </button>
-                )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
 
-                {/* Sold → can undo */}
-                {user.role === "manager" && car.status === "sold" && (
-                  <button
-                    className="undo-btn"
-                    onClick={() => undoSold(id)}
-                  >
-                    Undo Sold
-                  </button>
-                )}
+        {/* ===================== */}
+        {/* INVENTORY */}
+        {/* ===================== */}
+        <div className="section">
+          <h2 className="section-title">Inventory</h2>
 
-                {/* Removed → can restore */}
-                {user.role === "manager" && car.status === "removed" && (
-                  <button
-                    className="restore-btn"
-                    onClick={() => restoreCar(id)}
-                  >
-                    Restore
-                  </button>
-                )}
+          {user.role === "manager" && (
+            <>
+              <button
+                className="add-car-btn"
+                onClick={() => setShowForm(true)}
+              >
+                + Add Car
+              </button>
 
-                {/* Remove button (not shown for already removed) */}
-                {user.role === "manager" && car.status !== "removed" && (
-                  <button
-                    className="remove-btn"
-                    onClick={() => removeCar(id)}
-                  >
-                    Remove
-                  </button>
-                )}
+              <div className="filter-buttons">
+                <button
+                  className={statusFilter === "available" ? "active" : ""}
+                  onClick={() => setStatusFilter("available")}
+                >
+                  Available
+                </button>
 
+                <button
+                  className={statusFilter === "sold" ? "active" : ""}
+                  onClick={() => setStatusFilter("sold")}
+                >
+                  Sold
+                </button>
+
+                <button
+                  className={statusFilter === "removed" ? "active" : ""}
+                  onClick={() => setStatusFilter("removed")}
+                >
+                  Removed
+                </button>
               </div>
-            );
-          })}
+            </>
+          )}
+
+          <div className="inventory-grid">
+            {cars.map((car) => {
+              const id = getId(car);
+
+              return (
+                <div key={id} className="inventory-card">
+                  {car.image && (
+                    <img
+                      src={`${process.env.PUBLIC_URL}${car.image}`}
+                      alt={car.model}
+                      className="car-img"
+                    />
+                  )}
+
+                  <h3>
+                    {car.year} {car.make} {car.model}
+                  </h3>
+
+                  <p>${(car.price || 0).toLocaleString()}</p>
+
+                  {car.status === "sold" && (
+                    <span className="sold-badge">SOLD</span>
+                  )}
+
+                  {car.status === "removed" && (
+                    <span className="removed-badge">REMOVED</span>
+                  )}
+
+                  {car.status === "available" && (
+                    <button
+                      className="sold-btn"
+                      onClick={() => markAsSold(id)}
+                    >
+                      Mark as Sold
+                    </button>
+                  )}
+
+                  {user.role === "manager" && car.status === "sold" && (
+                    <button
+                      className="undo-btn"
+                      onClick={() => undoSold(id)}
+                    >
+                      Undo Sold
+                    </button>
+                  )}
+
+                  {user.role === "manager" && car.status === "removed" && (
+                    <button
+                      className="restore-btn"
+                      onClick={() => restoreCar(id)}
+                    >
+                      Restore
+                    </button>
+                  )}
+
+                  {user.role === "manager" && car.status !== "removed" && (
+                    <button
+                      className="remove-btn"
+                      onClick={() => removeCar(id)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
       </div>

@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware runs before every request
 app.use(cors());  // Allow frontend to call backend from different port

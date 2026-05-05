@@ -128,18 +128,26 @@ exports.getMakes = async (req, res) => {
 
 exports.addVehicle = async (req, res) => {
   try {
-    const { make, model, year, price, mileage, image } = req.body;
+    const { make, model, year, price, mileage, type, image } = req.body;
+
+    console.log("BODY:", req.body);
+
+    // Basic validation
+    if (!make || !model || !year || !price) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
 
     const { data, error } = await supabase
       .from('vehicles')
       .insert([{
         make,
         model,
-        year,
-        price,
-        mileage,
-        image,
-        status: 'available'
+        year: Number(year),
+        price: Number(price),
+        mileage: Number(mileage),
+        type: type || "sedan", // 🔥 prevents null crash
+        image: image || "/inventory/placeholder.jpg",
+        status: "available"
       }])
       .select();
 
@@ -147,6 +155,7 @@ exports.addVehicle = async (req, res) => {
 
     res.json(data[0]);
   } catch (error) {
+    console.error("ADD VEHICLE ERROR:", error);
     res.status(500).json({ error: error.message });
   }
 };

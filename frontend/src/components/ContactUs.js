@@ -1,8 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./ContactUs.css";
+import { addRequest } from "../services/serviceRequests";
 
 export default function ContactUs() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    topic: "General Question",
+    message: ""
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    setForm({
+      ...form,
+      [id]: value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const requestData = {
+      name: form.name,
+      email: form.email,
+      message: `
+Phone: ${form.phone}
+Topic: ${form.topic}
+
+${form.message}
+      `,
+      type: "question"
+    };
+
+    addRequest(requestData);
+
+    console.log("Saved:", requestData);
+    alert("Message sent!");
+
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      topic: "General Question",
+      message: ""
+    });
+  };
+
   return (
     <section className="contact-page">
       <div className="contact-container">
@@ -32,8 +79,11 @@ export default function ContactUs() {
               </div>
               <div className="contact-info-item">
                 <span className="contact-label">Address</span>
-                <span>5500 University Pkwy
-                    San Bernardino, CA 92407</span>
+                <span>
+                  5500 University Pkwy
+                  <br />
+                  San Bernardino, CA 92407
+                </span>
               </div>
               <div className="contact-info-item">
                 <span className="contact-label">Hours</span>
@@ -49,26 +99,48 @@ export default function ContactUs() {
 
           <div className="contact-card contact-form-card">
             <h2>Send a Message</h2>
-            <form className="contact-form">
+
+            <form className="contact-form" onSubmit={handleSubmit}>
               <div className="contact-form-row">
                 <div className="contact-form-group">
-                  <label htmlFor="name">Full Name</label>
-                  <input id="name" type="text" placeholder="Enter your name" />
+                  <label>Full Name</label>
+                  <input
+                    id="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Enter your name"
+                  />
                 </div>
+
                 <div className="contact-form-group">
-                  <label htmlFor="email">Email</label>
-                  <input id="email" type="email" placeholder="Enter your email" />
+                  <label>Email</label>
+                  <input
+                    id="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="Enter your email"
+                  />
                 </div>
               </div>
 
               <div className="contact-form-row">
                 <div className="contact-form-group">
-                  <label htmlFor="phone">Phone</label>
-                  <input id="phone" type="text" placeholder="Enter your phone number" />
+                  <label>Phone</label>
+                  <input
+                    id="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    placeholder="Enter your phone number"
+                  />
                 </div>
+
                 <div className="contact-form-group">
-                  <label htmlFor="topic">Topic</label>
-                  <select id="topic">
+                  <label>Topic</label>
+                  <select
+                    id="topic"
+                    value={form.topic}
+                    onChange={handleChange}
+                  >
                     <option>General Question</option>
                     <option>Vehicle Inquiry</option>
                     <option>Financing</option>
@@ -79,10 +151,12 @@ export default function ContactUs() {
               </div>
 
               <div className="contact-form-group">
-                <label htmlFor="message">Message</label>
+                <label>Message</label>
                 <textarea
                   id="message"
                   rows="6"
+                  value={form.message}
+                  onChange={handleChange}
                   placeholder="Tell us how we can help"
                 ></textarea>
               </div>
@@ -91,6 +165,7 @@ export default function ContactUs() {
                 Send Message
               </button>
             </form>
+
           </div>
         </div>
       </div>
