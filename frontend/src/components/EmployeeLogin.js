@@ -2,28 +2,46 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./EmployeeLogin.css";
 
+const accounts = [
+  {
+    email: "manager@test.com",
+    password: "manager123",
+    role: "manager",
+  },
+  {
+    email: "employee@test.com",
+    password: "employee123",
+    role: "employee",
+  },
+];
+
 export default function EmployeeLogin() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+ const handleLogin = (e) => {
+  e.preventDefault();
 
-    let role = "employee";
+  const foundUser = accounts.find(
+    (acc) =>
+      acc.email === email &&
+      acc.password === password
+  );
 
-    if (email === "manager@test.com") {
-      role = "manager";
-    }
+  if (!foundUser) {
+    alert("Invalid email or password");
+    return;
+  }
 
-    const user = { email, role };
+  localStorage.setItem(
+    "user",
+    JSON.stringify(foundUser)
+  );
 
-    localStorage.setItem("user", JSON.stringify(user));
-
-    navigate("/dashboard");
-  };
-
+  navigate("/dashboard");
+};
   return (
     <section className="employee-login-page">
       <div className="employee-login-container">

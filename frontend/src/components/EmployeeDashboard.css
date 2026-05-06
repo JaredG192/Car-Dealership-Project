@@ -254,3 +254,194 @@
 .inventory-grid {
   margin-top: 8px;
 }
+
+.add-car-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #000;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.add-car-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.add-car-form button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: crimson;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.add-car-modal {
+  width: 90%;
+  max-width: 720px;
+
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(
+      135deg,
+      #0ea5e9,
+      #f43f5e
+    ) border-box;
+
+  border: 1px solid transparent;
+
+  border-radius: 24px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.18);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  color: #0f172a;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.close-modal-btn {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: #f1f5f9;
+
+  color: #0f172a;
+
+  font-size: 22px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.close-modal-btn:hover {
+  background: #e2e8f0;
+  transform: scale(1.05);
+}
+
+.add-car-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 18px;
+
+  border-radius: 20px;
+
+  border: 1px solid transparent;
+
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(
+      135deg,
+      #0ea5e9,
+      #f43f5e
+    ) border-box;
+}
+
+.add-car-form input {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+
+  border: 1px solid #dbe3ea;
+
+  background: #f8fafc;
+
+  font-size: 15px;
+
+  transition: 0.2s;
+}
+
+.add-car-form input:focus {
+  outline: none;
+
+  border-color: #0ea5e9;
+
+  box-shadow:
+    0 0 0 3px rgba(14, 165, 233, 0.15);
+
+  background: white;
+}
+
+.add-car-form button {
+  margin-top: 10px;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    #0ea5e9,
+    #2563eb
+  );
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.add-car-form button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(37, 99, 235, 0.25);
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.empty-message {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #666;
+  font-weight: 500;
+}

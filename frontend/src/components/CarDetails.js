@@ -1,48 +1,87 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { cars } from "../data/cars";
+import { supabase } from "../supabaseClient";
 
 /**
  * CarDetails
  * - Route: /car/:id
- * - Reads the car from shared data (src/data/cars.js)
- * - Responsive layout (stacks on mobile)
+ * - Reads car directly from Supabase
+ * - Responsive layout
  */
+
 export default function CarDetails() {
   const { id } = useParams();
-  const carId = Number(id);
 
   const base = process.env.PUBLIC_URL;
   const PLACEHOLDER_IMG = `${base}/inventory/placeholder.jpg`;
 
-  // Find selected car by id
-  const car = cars.find((c) => c.id === carId);
+  // CAR DATA
+  const [car, setCar] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mobile detection
+  // MOBILE DETECTION
   const [isMobile, setIsMobile] = useState(false);
 
+  // FETCH CAR
+  useEffect(() => {
+    const fetchCar = async () => {
+      const { data, error } = await supabase
+        .from("vehicles")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error(error);
+      } else {
+        setCar(data);
+      }
+
+      setLoading(false);
+    };
+
+    fetchCar();
+  }, [id]);
+
+  // MOBILE LISTENER
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
+
     const onChange = (e) => setIsMobile(e.matches);
 
     setIsMobile(mq.matches);
 
     if (mq.addEventListener) {
       mq.addEventListener("change", onChange);
-      return () => mq.removeEventListener("change", onChange);
+
+      return () =>
+        mq.removeEventListener("change", onChange);
     }
 
     // Safari fallback
     mq.addListener(onChange);
+
     return () => mq.removeListener(onChange);
   }, []);
 
-  // Not found state
+  // LOADING
+  if (loading) {
+    return (
+      <div style={{ padding: 28 }}>
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
+
+  // NOT FOUND
   if (!car) {
     return (
       <div style={{ padding: 28 }}>
         <h2>Car Not Found</h2>
-        <Link to="/inventory">← Back to Inventory</Link>
+
+        <Link to="/inventory">
+          ← Back to Inventory
+        </Link>
       </div>
     );
   }
@@ -50,70 +89,165 @@ export default function CarDetails() {
   return (
     <div style={styles.page}>
       <div style={styles.container}>
-        <Link to="/inventory" style={styles.backLink}>
+
+        <Link
+          to="/inventory"
+          style={styles.backLink}
+        >
           ← Back to Inventory
         </Link>
 
-        <div style={{ ...styles.grid, ...(isMobile ? styles.gridMobile : {}) }}>
-          {/* Image */}
+        <div
+          style={{
+            ...styles.grid,
+            ...(isMobile ? styles.gridMobile : {}),
+          }}
+        >
+
+          {/* IMAGE */}
           <div style={styles.imageWrap}>
-            <img
-              src={car.image}
-              alt={`${car.year} ${car.make} ${car.model}`}
-              style={{
-                ...styles.image,
-                ...(isMobile ? styles.imageMobile : {}),
+
+           <img
+            src={
+              car.image
+              ? `${process.env.PUBLIC_URL}${car.image}`
+              : PLACEHOLDER_IMG
+            }
+            alt={`${car.year} ${car.make} ${car.model}`}
+            style={{
+              ...styles.image,
+              ...(isMobile
+                ? styles.imageMobile
+                : {}),
               }}
               onError={(e) => {
-                // Prevent infinite onError loops
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = PLACEHOLDER_IMG;
+                e.currentTarget.src =
+                  PLACEHOLDER_IMG;
               }}
-            />
+              />
+
           </div>
 
-          {/* Details card */}
+          {/* DETAILS CARD */}
           <div style={styles.card}>
-            <h1 style={{ ...styles.title, ...(isMobile ? styles.titleMobile : {}) }}>
+
+            <h1
+              style={{
+                ...styles.title,
+                ...(isMobile
+                  ? styles.titleMobile
+                  : {}),
+              }}
+            >
               {car.year} {car.make} {car.model}
             </h1>
 
-            <div style={styles.price}>${car.price.toLocaleString()}</div>
+            <div style={styles.price}>
+              ${(car.price || 0).toLocaleString()}
+            </div>
 
             <div style={styles.meta}>
-              <span style={styles.badge}>{car.type.toUpperCase()}</span>
-              <span style={styles.miles}>{car.mileage.toLocaleString()} miles</span>
+
+              <span style={styles.badge}>
+                {car.type?.toUpperCase() || "CAR"}
+              </span>
+
+              <span style={styles.miles}>
+                {(car.mileage || 0).toLocaleString()} miles
+              </span>
+
             </div>
 
-            {/* Highlights */}
+            {/* HIGHLIGHTS */}
             <div style={styles.highlights}>
-              <Highlight label="Engine" value={car.engine} />
-              <Highlight label="Drivetrain" value={car.drivetrain} />
-              <Highlight label="Horsepower" value={car.hp != null ? `${car.hp} hp` : null} />
+
+              <Highlight
+                label="Engine"
+                value={car.engine}
+              />
+
+              <Highlight
+                label="Drivetrain"
+                value={car.drivetrain}
+              />
+
+              <Highlight
+                label="Horsepower"
+                value={
+                  car.hp != null
+                    ? `${car.hp} hp`
+                    : null
+                }
+              />
+
               <Highlight
                 label="Torque"
-                value={car.torque != null ? `${car.torque} lb-ft` : null}
+                value={
+                  car.torque != null
+                    ? `${car.torque} lb-ft`
+                    : null
+                }
               />
-              <Highlight label="Transmission" value={car.transmission} />
+
+              <Highlight
+                label="Transmission"
+                value={car.transmission}
+              />
+
             </div>
 
-            {/* Basic Specs */}
+            {/* BASIC SPECS */}
             <div style={styles.specs}>
-              <Spec label="Make" value={car.make} />
-              <Spec label="Model" value={car.model} />
-              <Spec label="Year" value={car.year} />
-              <Spec label="Type" value={car.type} />
+
+              <Spec
+                label="Make"
+                value={car.make}
+              />
+
+              <Spec
+                label="Model"
+                value={car.model}
+              />
+
+              <Spec
+                label="Year"
+                value={car.year}
+              />
+
+              <Spec
+                label="Type"
+                value={car.type}
+              />
+
             </div>
 
-            {/* Actions */}
-            <div style={{ ...styles.actions, ...(isMobile ? styles.actionsMobile : {}) }}>
-              <Link to="/consultation" style={styles.primaryBtn}>
+            {/* ACTIONS */}
+            <div
+              style={{
+                ...styles.actions,
+                ...(isMobile
+                  ? styles.actionsMobile
+                  : {}),
+              }}
+            >
+
+              <Link
+                to="/consultation"
+                style={styles.primaryBtn}
+              >
                 Schedule Consultation
               </Link>
-              <Link to="/inventory" style={styles.secondaryBtn}>
+
+              <Link
+                to="/inventory"
+                style={styles.secondaryBtn}
+              >
                 Back to Browse
               </Link>
+
             </div>
+
           </div>
         </div>
       </div>
@@ -124,8 +258,15 @@ export default function CarDetails() {
 function Highlight({ label, value }) {
   return (
     <div style={styles.hlItem}>
-      <div style={styles.hlTop}>{label}</div>
-      <div style={styles.hlVal}>{value ?? "—"}</div>
+
+      <div style={styles.hlTop}>
+        {label}
+      </div>
+
+      <div style={styles.hlVal}>
+        {value ?? "—"}
+      </div>
+
     </div>
   );
 }
@@ -133,15 +274,23 @@ function Highlight({ label, value }) {
 function Spec({ label, value }) {
   return (
     <div style={styles.spec}>
-      <div style={styles.specLabel}>{label}</div>
-      <div style={styles.specValue}>{value ?? "—"}</div>
+
+      <div style={styles.specLabel}>
+        {label}
+      </div>
+
+      <div style={styles.specValue}>
+        {value ?? "—"}
+      </div>
+
     </div>
   );
 }
 
 const styles = {
   page: {
-    background: "linear-gradient(180deg, #f8fbff 0%, #ffffff 60%, #fff5f6 100%)",
+    background:
+      "linear-gradient(180deg, #f8fbff 0%, #ffffff 60%, #fff5f6 100%)",
     color: "#0f172a",
     paddingBottom: 60,
   },
@@ -171,7 +320,6 @@ const styles = {
     alignItems: "start",
   },
 
-  // Mobile: stack image above the card
   gridMobile: {
     gridTemplateColumns: "1fr",
   },
@@ -191,7 +339,6 @@ const styles = {
     display: "block",
   },
 
-  // Mobile: shorter image so it fits better
   imageMobile: {
     height: 260,
   },
@@ -215,9 +362,18 @@ const styles = {
     fontSize: 22,
   },
 
-  price: { marginTop: 10, fontWeight: 900, fontSize: 24 },
+  price: {
+    marginTop: 10,
+    fontWeight: 900,
+    fontSize: 24,
+  },
 
-  meta: { marginTop: 10, display: "flex", gap: 10, alignItems: "center" },
+  meta: {
+    marginTop: 10,
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+  },
 
   badge: {
     padding: "4px 10px",
@@ -228,19 +384,25 @@ const styles = {
     fontSize: 12,
   },
 
-  miles: { fontWeight: 800, fontSize: 12, opacity: 0.7 },
+  miles: {
+    fontWeight: 800,
+    fontSize: 12,
+    opacity: 0.7,
+  },
 
   highlights: {
     marginTop: 14,
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(140px, 1fr))",
     gap: 10,
   },
 
   hlItem: {
     padding: 12,
     borderRadius: 14,
-    background: "linear-gradient(135deg, rgba(14,165,233,0.10), rgba(244,63,94,0.08))",
+    background:
+      "linear-gradient(135deg, rgba(14,165,233,0.10), rgba(244,63,94,0.08))",
     border: "1px solid rgba(0,0,0,0.08)",
   },
 
@@ -252,7 +414,11 @@ const styles = {
     letterSpacing: "0.06em",
   },
 
-  hlVal: { marginTop: 6, fontSize: 14, fontWeight: 900 },
+  hlVal: {
+    marginTop: 6,
+    fontSize: 14,
+    fontWeight: 900,
+  },
 
   specs: {
     marginTop: 14,
@@ -261,15 +427,30 @@ const styles = {
     gap: 10,
   },
 
-  spec: { padding: 10, borderRadius: 14, background: "#f9fafb" },
+  spec: {
+    padding: 10,
+    borderRadius: 14,
+    background: "#f9fafb",
+  },
 
-  specLabel: { fontSize: 12, fontWeight: 900, opacity: 0.6 },
+  specLabel: {
+    fontSize: 12,
+    fontWeight: 900,
+    opacity: 0.6,
+  },
 
-  specValue: { marginTop: 4, fontWeight: 900 },
+  specValue: {
+    marginTop: 4,
+    fontWeight: 900,
+  },
 
-  actions: { marginTop: 16, display: "flex", gap: 10, flexWrap: "wrap" },
+  actions: {
+    marginTop: 16,
+    display: "flex",
+    gap: 10,
+    flexWrap: "wrap",
+  },
 
-  // Mobile: buttons go full width (looks cleaner)
   actionsMobile: {
     flexDirection: "column",
   },

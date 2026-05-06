@@ -12,6 +12,25 @@ export default function EmployeeDashboard() {
   const [requests, setRequests] = useState([]);
   const [requestFilter, setRequestFilter] = useState("all");
 
+  // MODAL
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // NEW CAR FORM
+  const [newCar, setNewCar] = useState({
+    make: "",
+    model: "",
+    year: "",
+    price: "",
+    mileage: "",
+    type: "",
+    engine: "",
+    drivetrain: "",
+    hp: "",
+    torque: "",
+    transmission: "",
+    status: "available",
+  });
+
   // LOGOUT
   const logout = () => {
     localStorage.removeItem("user");
@@ -45,10 +64,18 @@ export default function EmployeeDashboard() {
   };
 
   // LOAD USER
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-    setUser(storedUser);
-  }, []);
+ useEffect(() => {
+  const storedUser = JSON.parse(
+    localStorage.getItem("user") || "null"
+  );
+
+  if (!storedUser) {
+    window.location.href = "#/login";
+    return;
+  }
+
+  setUser(storedUser);
+}, []);
 
   // LOAD CARS
   useEffect(() => {
@@ -62,15 +89,49 @@ export default function EmployeeDashboard() {
     setRequests(getRequests());
   }, []);
 
-  if (!user) return <h2>Unauthorized</h2>;
+  // ADD CAR
+  const addCar = async (e) => {
+    e.preventDefault();
 
-  const getId = (car) => car.id;
+    const carToAdd = {
+      id: Math.floor(Math.random() * 1000000),
+      ...newCar,
+    };
 
-  // FILTER REQUESTS
-  const filteredRequests = requests.filter((r) => {
-    if (requestFilter === "all") return true;
-    return r.type === requestFilter;
-  });
+    const { data, error } = await supabase
+      .from("vehicles")
+      .insert([carToAdd]);
+
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Car added successfully!");
+
+    setNewCar({
+      make: "",
+      model: "",
+      year: "",
+      price: "",
+      mileage: "",
+      type: "",
+      engine: "",
+      drivetrain: "",
+      hp: "",
+      torque: "",
+      transmission: "",
+      status: "available",
+    });
+
+    document.body.classList.remove("modal-open");
+    setShowAddModal(false);
+
+    fetchCars();
+  };
 
   // CAR ACTIONS
   const markAsSold = async (id) => {
@@ -109,6 +170,18 @@ export default function EmployeeDashboard() {
     fetchCars();
   };
 
+  if (user === null) {
+  return <h2>Loading...</h2>;
+}
+
+  const getId = (car) => car.id;
+
+  // FILTER REQUESTS
+  const filteredRequests = requests.filter((r) => {
+    if (requestFilter === "all") return true;
+    return r.type === requestFilter;
+  });
+
   return (
     <section className="dashboard-page">
       <div className="dashboard-container">
@@ -126,13 +199,19 @@ export default function EmployeeDashboard() {
           </button>
         </div>
 
-        <p className="dashboard-role">Role: {user.role}</p>
+        <p className="dashboard-role">
+          Role: {user.role}
+        </p>
 
         {/* CUSTOMER REQUESTS */}
         <div className="section">
-          <h2 className="section-title">Customer Requests</h2>
+
+          <h2 className="section-title">
+            Customer Requests
+          </h2>
 
           <div className="filter-buttons">
+
             <button
               className={requestFilter === "all" ? "active" : ""}
               onClick={() => setRequestFilter("all")}
@@ -153,14 +232,17 @@ export default function EmployeeDashboard() {
             >
               Questions
             </button>
+
           </div>
 
           <div className="requests-grid">
+
             {filteredRequests.length === 0 ? (
               <p>No requests yet.</p>
             ) : (
               filteredRequests.map((r) => (
                 <div key={r.id} className="request-card">
+
                   <h3>{r.name}</h3>
 
                   <p>{r.email}</p>
@@ -170,6 +252,7 @@ export default function EmployeeDashboard() {
                       ?.split("\n")
                       .filter((line) => line.trim() !== "")
                       .map((line, index) => {
+
                         if (!line.includes(":")) {
                           return (
                             <p key={index}>
@@ -202,18 +285,24 @@ export default function EmployeeDashboard() {
                   >
                     Complete
                   </button>
+
                 </div>
               ))
             )}
+
           </div>
         </div>
 
         {/* INVENTORY */}
         <div className="section">
-          <h2 className="section-title">Inventory</h2>
+
+          <h2 className="section-title">
+            Inventory
+          </h2>
 
           {user.role === "manager" && (
             <div className="filter-buttons">
+
               <button
                 className={statusFilter === "available" ? "active" : ""}
                 onClick={() => setStatusFilter("available")}
@@ -234,76 +323,283 @@ export default function EmployeeDashboard() {
               >
                 Removed
               </button>
+
+              <button
+                className="new-car-btn"
+                onClick={() => {
+                  document.body.classList.add("modal-open");
+                  setShowAddModal(true);
+                }}
+              >
+                New Car
+              </button>
+
+            </div>
+          )}
+
+          {/* MODAL */}
+          {showAddModal && (
+            <div className="modal-overlay">
+
+              <div className="add-car-modal">
+
+                <div className="modal-header">
+
+                  <h2>Add New Car</h2>
+
+                  <button
+                    className="close-modal-btn"
+                    onClick={() => {
+                      document.body.classList.remove("modal-open");
+                      setShowAddModal(false);
+                    }}
+                  >
+                    ✕
+                  </button>
+
+                </div>
+
+                <form
+                  className="add-car-form"
+                  onSubmit={addCar}
+                >
+
+                  <input
+                    type="text"
+                    placeholder="Make"
+                    value={newCar.make}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        make: e.target.value,
+                      })
+                    }
+                    required
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Model"
+                    value={newCar.model}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        model: e.target.value,
+                      })
+                    }
+                    required
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Year"
+                    value={newCar.year}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        year: e.target.value,
+                      })
+                    }
+                    required
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    value={newCar.price}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        price: e.target.value,
+                      })
+                    }
+                    required
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Mileage"
+                    value={newCar.mileage}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        mileage: e.target.value,
+                      })
+                    }
+                    required
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Type (SUV, Sedan, Truck...)"
+                    value={newCar.type}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        type: e.target.value,
+                      })
+                    }
+                    required
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Engine"
+                    value={newCar.engine}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        engine: e.target.value,
+                      })
+                    }
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Drivetrain"
+                    value={newCar.drivetrain}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        drivetrain: e.target.value,
+                      })
+                    }
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Horsepower"
+                    value={newCar.hp}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        hp: e.target.value,
+                      })
+                    }
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Torque"
+                    value={newCar.torque}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        torque: e.target.value,
+                      })
+                    }
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Transmission"
+                    value={newCar.transmission}
+                    onChange={(e) =>
+                      setNewCar({
+                        ...newCar,
+                        transmission: e.target.value,
+                      })
+                    }
+                  />
+
+                  <button type="submit">
+                    Add Car
+                  </button>
+
+                </form>
+
+              </div>
+
             </div>
           )}
 
           <div className="inventory-grid">
-            {cars.map((car) => {
-              const id = getId(car);
 
-              return (
-                <div key={id} className="inventory-card">
-                  {car.image && (
-                    <img
-                      src={`${process.env.PUBLIC_URL}${car.image}`}
-                      alt={car.model}
-                      className="car-img"
-                    />
-                  )}
+  {cars.length === 0 ? (
+    <p className="empty-message">
+      Nothing available.
+    </p>
+  ) : (
+    cars.map((car) => {
+      const id = getId(car);
 
-                  <h3>
-                    {car.year} {car.make} {car.model}
-                  </h3>
+      return (
+        <div
+          key={id}
+          className="inventory-card"
+        >
 
-                  <p>${(car.price || 0).toLocaleString()}</p>
+          {car.image && (
+            <img
+              src={`${process.env.PUBLIC_URL}${car.image}`}
+              alt={car.model}
+              className="car-img"
+            />
+          )}
 
-                  {car.status === "sold" && (
-                    <span className="sold-badge">SOLD</span>
-                  )}
+          <h3>
+            {car.year} {car.make} {car.model}
+          </h3>
 
-                  {car.status === "removed" && (
-                    <span className="removed-badge">REMOVED</span>
-                  )}
+          <p>
+            ${(car.price || 0).toLocaleString()}
+          </p>
 
-                  {car.status === "available" && (
-                    <button
-                      className="sold-btn"
-                      onClick={() => markAsSold(id)}
-                    >
-                      Mark as Sold
-                    </button>
-                  )}
+          {car.status === "sold" && (
+            <span className="sold-badge">
+              SOLD
+            </span>
+          )}
 
-                  {user.role === "manager" && car.status === "sold" && (
-                    <button
-                      className="undo-btn"
-                      onClick={() => undoSold(id)}
-                    >
-                      Undo Sold
-                    </button>
-                  )}
+          {car.status === "removed" && (
+            <span className="removed-badge">
+              REMOVED
+            </span>
+          )}
 
-                  {user.role === "manager" && car.status === "removed" && (
-                    <button
-                      className="restore-btn"
-                      onClick={() => restoreCar(id)}
-                    >
-                      Restore
-                    </button>
-                  )}
+          {car.status === "available" && (
+            <button
+              className="sold-btn"
+              onClick={() => markAsSold(id)}
+            >
+              Mark as Sold
+            </button>
+          )}
 
-                  {user.role === "manager" &&
-                    car.status !== "removed" && (
-                      <button
-                        className="remove-btn"
-                        onClick={() => removeCar(id)}
-                      >
-                        Remove
-                      </button>
-                    )}
-                </div>
-              );
-            })}
+          {user.role === "manager" &&
+            car.status === "sold" && (
+              <button
+                className="undo-btn"
+                onClick={() => undoSold(id)}
+              >
+                Undo Sold
+              </button>
+            )}
+
+          {user.role === "manager" &&
+            car.status === "removed" && (
+              <button
+                className="restore-btn"
+                onClick={() => restoreCar(id)}
+              >
+                Restore
+              </button>
+            )}
+
+          {user.role === "manager" &&
+            car.status !== "removed" && (
+              <button
+                className="remove-btn"
+                onClick={() => removeCar(id)}
+              >
+                Remove
+              </button>
+            )}
+
+        </div>
+      );
+    })
+  )}
           </div>
         </div>
 
