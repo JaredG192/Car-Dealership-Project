@@ -21,34 +21,44 @@ export default function ContactUs() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const requestData = {
-      name: form.name,
-      email: form.email,
-      message: `
+  if (
+    !form.name.trim() ||
+    !form.email.trim() ||
+    !form.phone.trim() ||
+    !form.message.trim()
+  ) {
+    alert("Please fill out all fields.");
+    return;
+  }
+
+  const requestData = {
+    name: form.name,
+    email: form.email,
+    message: `
 Phone: ${form.phone}
 Topic: ${form.topic}
 
 ${form.message}
       `,
-      type: "question"
-    };
-
-    addRequest(requestData);
-
-    console.log("Saved:", requestData);
-    alert("Message sent!");
-
-    setForm({
-      name: "",
-      email: "",
-      phone: "",
-      topic: "General Question",
-      message: ""
-    });
+    type: "question"
   };
+
+  addRequest(requestData);
+
+  console.log("Saved:", requestData);
+  alert("Message sent!");
+
+  setForm({
+    name: "",
+    email: "",
+    phone: "",
+    topic: "General Question",
+    message: ""
+  });
+};
 
   return (
     <section className="contact-page">
@@ -109,6 +119,7 @@ ${form.message}
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Enter your name"
+                    required
                   />
                 </div>
 
@@ -119,6 +130,7 @@ ${form.message}
                     value={form.email}
                     onChange={handleChange}
                     placeholder="Enter your email"
+                    required
                   />
                 </div>
               </div>
@@ -131,6 +143,7 @@ ${form.message}
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="Enter your phone number"
+                    required
                   />
                 </div>
 
@@ -158,6 +171,7 @@ ${form.message}
                   value={form.message}
                   onChange={handleChange}
                   placeholder="Tell us how we can help"
+                  required
                 ></textarea>
               </div>
 

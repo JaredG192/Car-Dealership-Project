@@ -26,12 +26,26 @@ export default function Consultation() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const formData = {
-      name: `${form.firstName} ${form.lastName}`,
-      email: form.email,
-      message: `
+  if (
+    !form.firstName.trim() ||
+    !form.lastName.trim() ||
+    !form.email.trim() ||
+    !form.phone.trim() ||
+    !form.vehicleType.trim() ||
+    !form.budget.trim() ||
+    !form.make.trim() ||
+    !form.message.trim()
+  ) {
+    alert("Please fill out all fields.");
+    return;
+  }
+
+  const formData = {
+    name: `${form.firstName} ${form.lastName}`,
+    email: form.email,
+    message: `
 Phone: ${form.phone}
 Vehicle: ${form.vehicleType}
 Budget: ${form.budget}
@@ -39,26 +53,26 @@ Make: ${form.make}
 
 ${form.message}
       `,
-      type: "consultation"
-    };
-
-    addRequest(formData);
-
-    console.log("Saved:", formData);
-    alert("Consultation submitted!");
-
-    setForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      vehicleType: "",
-      budget: "",
-      make: "",
-      message: "",
-      consent: false
-    });
+    type: "consultation"
   };
+
+  addRequest(formData);
+
+  console.log("Saved:", formData);
+  alert("Consultation submitted!");
+
+  setForm({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    vehicleType: "",
+    budget: "",
+    make: "",
+    message: "",
+    consent: false
+  });
+};
 
   return (
     <div className="consultation-page">
@@ -83,44 +97,44 @@ ${form.message}
               
               <div className="form-row">
                 <div className="form-group">
-                  <label>First Name</label>
                   <input
                     name="firstName"
                     value={form.firstName}
                     onChange={handleChange}
                     placeholder="John"
+                    required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Last Name</label>
                   <input
                     name="lastName"
                     value={form.lastName}
                     onChange={handleChange}
                     placeholder="Doe"
+                    required
                   />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label>Email</label>
                   <input
                     name="email"
                     value={form.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
+                    required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Phone</label>
                   <input
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="(555) 123-4567"
+                    required
                   />
                 </div>
               </div>
@@ -132,6 +146,7 @@ ${form.message}
                     name="vehicleType"
                     value={form.vehicleType}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Select a type</option>
                     <option>Sedan</option>
@@ -144,11 +159,11 @@ ${form.message}
                 </div>
 
                 <div className="form-group">
-                  <label>Budget Range</label>
-                  <select
-                    name="budget"
-                    value={form.budget}
-                    onChange={handleChange}
+                 <select
+                  name="budget"
+                  value={form.budget}
+                  onChange={handleChange}
+                  required
                   >
                     <option value="">Select a range</option>
                     <option>Under $10,000</option>
@@ -160,12 +175,12 @@ ${form.message}
               </div>
 
               <div className="form-group">
-                <label>Preferred Make</label>
                 <input
                   name="make"
                   value={form.make}
                   onChange={handleChange}
                   placeholder="Toyota, Honda, Nissan..."
+                  required
                 />
               </div>
 
@@ -177,6 +192,7 @@ ${form.message}
                   onChange={handleChange}
                   rows="5"
                   placeholder="Tell us about the kind of car you want..."
+                  required
                 />
               </div>
 
