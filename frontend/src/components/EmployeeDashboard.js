@@ -1,27 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./EmployeeDashboard.css";
 import { getRequests, deleteRequest } from "../services/serviceRequests";
+import { supabase } from "../supabaseClient";
 
 export default function EmployeeDashboard() {
   const [user, setUser] = useState(null);
   const [cars, setCars] = useState([]);
   const [statusFilter, setStatusFilter] = useState("available");
-  const [showForm, setShowForm] = useState(false);
 
   // REQUESTS
   const [requests, setRequests] = useState([]);
   const [requestFilter, setRequestFilter] = useState("all");
-
-  const [newCar, setNewCar] = useState({
-    make: "",
-    model: "",
-    year: "",
-    price: "",
-    mileage: "",
-    type: ""
-  });
-
-  const API_BASE = "http://localhost:5001";
 
   // LOGOUT
   const logout = () => {
@@ -30,25 +19,27 @@ export default function EmployeeDashboard() {
   };
 
   // FETCH CARS
-  const fetchCars = () => {
-    let url = `${API_BASE}/api/vehicles`;
+  const fetchCars = useCallback(async () => {
+    let query = supabase.from("vehicles").select("*");
 
     if (user?.role === "manager") {
-      url += `?status=${statusFilter}`;
+      query = query.eq("status", statusFilter);
     }
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        const vehicles = data.vehicles || data;
-        setCars(Array.isArray(vehicles) ? vehicles : []);
-      })
-      .catch((err) => console.error(err));
-  };
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Supabase error:", error);
+      setCars([]);
+    } else {
+      setCars(data || []);
+    }
+  }, [user, statusFilter]);
 
   // DELETE REQUEST
   const handleDelete = (id) => {
     if (!window.confirm("Mark this request as complete?")) return;
+
     deleteRequest(id);
     setRequests(getRequests());
   };
@@ -61,8 +52,10 @@ export default function EmployeeDashboard() {
 
   // LOAD CARS
   useEffect(() => {
-    if (user) fetchCars();
-  }, [user, statusFilter]);
+    if (user) {
+      fetchCars();
+    }
+  }, [user, fetchCars]);
 
   // LOAD REQUESTS
   useEffect(() => {
@@ -80,32 +73,40 @@ export default function EmployeeDashboard() {
   });
 
   // CAR ACTIONS
-  const markAsSold = (id) => {
-    fetch(`${API_BASE}/api/vehicles/${id}/sell`, {
-      method: "PUT",
-    }).then(fetchCars);
+  const markAsSold = async (id) => {
+    await supabase
+      .from("vehicles")
+      .update({ status: "sold" })
+      .eq("id", id);
+
+    fetchCars();
   };
 
-  const undoSold = (id) => {
-    fetch(`${API_BASE}/api/vehicles/${id}/sell`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "available" }),
-    }).then(fetchCars);
+  const undoSold = async (id) => {
+    await supabase
+      .from("vehicles")
+      .update({ status: "available" })
+      .eq("id", id);
+
+    fetchCars();
   };
 
-  const removeCar = (id) => {
-    fetch(`${API_BASE}/api/vehicles/${id}`, {
-      method: "DELETE",
-    }).then(fetchCars);
+  const removeCar = async (id) => {
+    await supabase
+      .from("vehicles")
+      .update({ status: "removed" })
+      .eq("id", id);
+
+    fetchCars();
   };
 
-  const restoreCar = (id) => {
-    fetch(`${API_BASE}/api/vehicles/${id}/sell`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "available" }),
-    }).then(fetchCars);
+  const restoreCar = async (id) => {
+    await supabase
+      .from("vehicles")
+      .update({ status: "available" })
+      .eq("id", id);
+
+    fetchCars();
   };
 
   return (
@@ -127,9 +128,7 @@ export default function EmployeeDashboard() {
 
         <p className="dashboard-role">Role: {user.role}</p>
 
-        {/* ===================== */}
         {/* CUSTOMER REQUESTS */}
-        {/* ===================== */}
         <div className="section">
           <h2 className="section-title">Customer Requests</h2>
 
@@ -163,11 +162,38 @@ export default function EmployeeDashboard() {
               filteredRequests.map((r) => (
                 <div key={r.id} className="request-card">
                   <h3>{r.name}</h3>
+
                   <p>{r.email}</p>
-                  <p>{r.message}</p>
+
+                  <div className="request-details">
+                    {r.message
+                      ?.split("\n")
+                      .filter((line) => line.trim() !== "")
+                      .map((line, index) => {
+                        if (!line.includes(":")) {
+                          return (
+                            <p key={index}>
+                              <strong>Message:</strong> {line}
+                            </p>
+                          );
+                        }
+
+                        const parts = line.split(":");
+                        const label = parts[0];
+                        const value = parts.slice(1).join(":");
+
+                        return (
+                          <p key={index}>
+                            <strong>{label}:</strong> {value}
+                          </p>
+                        );
+                      })}
+                  </div>
 
                   <span className={`request-type ${r.type}`}>
-                    {r.type === "consultation" ? "Consultation" : "Question"}
+                    {r.type === "consultation"
+                      ? "Consultation"
+                      : "Question"}
                   </span>
 
                   <button
@@ -182,44 +208,33 @@ export default function EmployeeDashboard() {
           </div>
         </div>
 
-        {/* ===================== */}
         {/* INVENTORY */}
-        {/* ===================== */}
         <div className="section">
           <h2 className="section-title">Inventory</h2>
 
           {user.role === "manager" && (
-            <>
+            <div className="filter-buttons">
               <button
-                className="add-car-btn"
-                onClick={() => setShowForm(true)}
+                className={statusFilter === "available" ? "active" : ""}
+                onClick={() => setStatusFilter("available")}
               >
-                + Add Car
+                Available
               </button>
 
-              <div className="filter-buttons">
-                <button
-                  className={statusFilter === "available" ? "active" : ""}
-                  onClick={() => setStatusFilter("available")}
-                >
-                  Available
-                </button>
+              <button
+                className={statusFilter === "sold" ? "active" : ""}
+                onClick={() => setStatusFilter("sold")}
+              >
+                Sold
+              </button>
 
-                <button
-                  className={statusFilter === "sold" ? "active" : ""}
-                  onClick={() => setStatusFilter("sold")}
-                >
-                  Sold
-                </button>
-
-                <button
-                  className={statusFilter === "removed" ? "active" : ""}
-                  onClick={() => setStatusFilter("removed")}
-                >
-                  Removed
-                </button>
-              </div>
-            </>
+              <button
+                className={statusFilter === "removed" ? "active" : ""}
+                onClick={() => setStatusFilter("removed")}
+              >
+                Removed
+              </button>
+            </div>
           )}
 
           <div className="inventory-grid">
@@ -277,14 +292,15 @@ export default function EmployeeDashboard() {
                     </button>
                   )}
 
-                  {user.role === "manager" && car.status !== "removed" && (
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeCar(id)}
-                    >
-                      Remove
-                    </button>
-                  )}
+                  {user.role === "manager" &&
+                    car.status !== "removed" && (
+                      <button
+                        className="remove-btn"
+                        onClick={() => removeCar(id)}
+                      >
+                        Remove
+                      </button>
+                    )}
                 </div>
               );
             })}

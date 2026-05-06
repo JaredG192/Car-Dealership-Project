@@ -1,14 +1,14 @@
 /* PAGE */
-.inventory-page {
-  background: linear-gradient(180deg, #f8fbff, #ffffff);
-  min-height: 100vh;
+.dashboard-page {
+  min-height: calc(100vh - 90px);
+  background: linear-gradient(90deg, #eef7ff 0%, #fff6f9 100%);
   padding: 20px;
 }
 
-/* CONTAINER */
 .dashboard-container {
   max-width: 1200px;
   margin: auto;
+  padding: 0px 20px 30px;
 }
 
 /* HEADER */
@@ -20,8 +20,14 @@
 }
 
 .dashboard-role {
-  margin-bottom: 30px;
-  font-weight: bold;
+  display: inline-block;
+  background: #0ea5e9;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 12px;
 }
 
 /* LOGOUT */
@@ -35,15 +41,15 @@
   font-weight: bold;
 }
 
-/* SECTIONS */
 .section {
-  margin-bottom: 30px;
+  margin-top: -20px;
+  margin-bottom: 10px;
 }
 
 .section-title {
   font-size: 26px;
   font-weight: 700;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 /* ADD BUTTON */
@@ -234,4 +240,17 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.section {
+  margin-top: 0;
+  margin-bottom: -70px;
+}
+
+.section-title {
+  margin-bottom: 6px;
+}
+
+.inventory-grid {
+  margin-top: 8px;
 }
