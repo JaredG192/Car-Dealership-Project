@@ -55,7 +55,7 @@ ${form.message}
       <div className="contact-container">
         <div className="contact-header">
           <Link to="/" className="contact-back-btn">
-            ← Back to Home
+            ← Home
           </Link>
           <h1>Contact Us</h1>
           <div className="contact-underline"></div>

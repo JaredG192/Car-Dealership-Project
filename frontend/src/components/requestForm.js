@@ -12,11 +12,11 @@ export default function RequestForm() {
  const handleSubmit = (e) => {
   e.preventDefault();
 
-  console.log("Submitting:", form); // 👈 ADD THIS
+  console.log("Submitting:", form); 
 
   addRequest(form);
 
-  console.log("Saved to localStorage:", localStorage.getItem("requests")); // 👈 ADD THIS
+  console.log("Saved to localStorage:", localStorage.getItem("requests")); 
 
   alert("Request submitted!");
 };

@@ -180,18 +180,6 @@ ${form.message}
                 />
               </div>
 
-              <div className="checkbox-row">
-                <input
-                  type="checkbox"
-                  name="consent"
-                  checked={form.consent}
-                  onChange={handleChange}
-                />
-                <label>
-                  I agree to be contacted by CampusCars regarding my vehicle inquiry.
-                </label>
-              </div>
-
               <button type="submit" className="consultation-btn">
                 Schedule Now
               </button>
