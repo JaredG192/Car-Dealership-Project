@@ -56,12 +56,12 @@ export default function EmployeeDashboard() {
   }, [user, statusFilter]);
 
   // DELETE REQUEST
-  const handleDelete = (id) => {
-    if (!window.confirm("Mark this request as complete?")) return;
-
-    deleteRequest(id);
-    setRequests(getRequests());
-  };
+  const handleDelete = async (id, type) => {
+  if (!window.confirm("Mark this request as complete?")) return;
+  await deleteRequest(id, type);
+  const data = await getRequests();
+  setRequests(data);
+};
 
   // LOAD USER
  useEffect(() => {
@@ -86,8 +86,12 @@ export default function EmployeeDashboard() {
 
   // LOAD REQUESTS
   useEffect(() => {
-    setRequests(getRequests());
-  }, []);
+  const loadRequests = async () => {
+    const data = await getRequests();
+    setRequests(data);
+  };
+  loadRequests();
+}, []);
 
   // ADD CAR
   const addCar = async (e) => {
@@ -281,7 +285,7 @@ export default function EmployeeDashboard() {
 
                   <button
                     className="complete-btn"
-                    onClick={() => handleDelete(r.id)}
+                    onClick={() => handleDelete(r.id, r.type)}
                   >
                     Complete
                   </button>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./ContactUs.css";
-import { addRequest } from "../services/serviceRequests";
+import { addContactRequest } from "../services/serviceRequests";
 
 export default function ContactUs() {
   const [form, setForm] = useState({
@@ -21,7 +21,7 @@ export default function ContactUs() {
     });
   };
 
- const handleSubmit = (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (
@@ -34,21 +34,14 @@ export default function ContactUs() {
     return;
   }
 
-  const requestData = {
+  await addContactRequest({
     name: form.name,
     email: form.email,
-    message: `
-Phone: ${form.phone}
-Topic: ${form.topic}
+    phone: form.phone,
+    topic: form.topic,
+    message: form.message
+  });
 
-${form.message}
-      `,
-    type: "question"
-  };
-
-  addRequest(requestData);
-
-  console.log("Saved:", requestData);
   alert("Message sent!");
 
   setForm({
