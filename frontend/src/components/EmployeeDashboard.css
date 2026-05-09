@@ -474,3 +474,35 @@ body.modal-open {
   }
 
 }
+
+.delete-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
+}
+
+.edit-btn {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 10px;
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.edit-btn:hover {
+  background-color: #d97706;
+}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import "./EmployeeDashboard.css";
 import { getRequests, deleteRequest } from "../services/serviceRequests";
@@ -7,16 +8,14 @@ export default function EmployeeDashboard() {
   const [user, setUser] = useState(null);
   const [cars, setCars] = useState([]);
   const [statusFilter, setStatusFilter] = useState("available");
+  const [editingCar, setEditingCar] = useState(null);
 
-  // REQUESTS
   const [requests, setRequests] = useState([]);
   const [requestFilter, setRequestFilter] = useState("all");
 
-  // MODAL
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // NEW CAR FORM
-  const [newCar, setNewCar] = useState({
+  const emptyCar = {
     make: "",
     model: "",
     year: "",
@@ -29,15 +28,15 @@ export default function EmployeeDashboard() {
     torque: "",
     transmission: "",
     status: "available",
-  });
+  };
 
-  // LOGOUT
+  const [newCar, setNewCar] = useState(emptyCar);
+
   const logout = () => {
     localStorage.removeItem("user");
     window.location.href = "#/login";
   };
 
-  // FETCH CARS
   const fetchCars = useCallback(async () => {
     let query = supabase.from("vehicles").select("*");
 
@@ -55,89 +54,112 @@ export default function EmployeeDashboard() {
     }
   }, [user, statusFilter]);
 
-  // DELETE REQUEST
   const handleDelete = async (id, type) => {
-  if (!window.confirm("Mark this request as complete?")) return;
-  await deleteRequest(id, type);
-  const data = await getRequests();
-  setRequests(data);
-};
+    if (!window.confirm("Mark this request as complete?")) return;
 
-  // LOAD USER
- useEffect(() => {
-  const storedUser = JSON.parse(
-    localStorage.getItem("user") || "null"
-  );
+    await deleteRequest(id, type);
+    const data = await getRequests();
+    setRequests(data);
+  };
 
-  if (!storedUser) {
-    window.location.href = "#/login";
-    return;
-  }
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
 
-  setUser(storedUser);
-}, []);
+    if (!storedUser) {
+      window.location.href = "#/login";
+      return;
+    }
 
-  // LOAD CARS
+    setUser(storedUser);
+  }, []);
+
   useEffect(() => {
     if (user) {
       fetchCars();
     }
   }, [user, fetchCars]);
 
-  // LOAD REQUESTS
   useEffect(() => {
-  const loadRequests = async () => {
-    const data = await getRequests();
-    setRequests(data);
-  };
-  loadRequests();
-}, []);
-
-  // ADD CAR
-  const addCar = async (e) => {
-    e.preventDefault();
-
-    const carToAdd = {
-      id: Math.floor(Math.random() * 1000000),
-      ...newCar,
+    const loadRequests = async () => {
+      const data = await getRequests();
+      setRequests(data);
     };
 
-    const { data, error } = await supabase
-      .from("vehicles")
-      .insert([carToAdd]);
+    loadRequests();
+  }, []);
 
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
+  const openNewCarModal = () => {
+    setEditingCar(null);
+    setNewCar(emptyCar);
+    document.body.classList.add("modal-open");
+    setShowAddModal(true);
+  };
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    alert("Car added successfully!");
-
-    setNewCar({
-      make: "",
-      model: "",
-      year: "",
-      price: "",
-      mileage: "",
-      type: "",
-      engine: "",
-      drivetrain: "",
-      hp: "",
-      torque: "",
-      transmission: "",
-      status: "available",
-    });
-
+  const closeModal = () => {
     document.body.classList.remove("modal-open");
     setShowAddModal(false);
+    setEditingCar(null);
+    setNewCar(emptyCar);
+  };
 
+  const saveCar = async (e) => {
+    e.preventDefault();
+
+    if (editingCar) {
+      const { error } = await supabase
+        .from("vehicles")
+        .update(newCar)
+        .eq("id", editingCar.id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert("Vehicle updated successfully!");
+    } else {
+      const carToAdd = {
+        id: Math.floor(Math.random() * 1000000),
+        ...newCar,
+      };
+
+      const { error } = await supabase
+        .from("vehicles")
+        .insert([carToAdd]);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert("Car added successfully!");
+    }
+
+    closeModal();
     fetchCars();
   };
 
-  // CAR ACTIONS
+  const editCar = (car) => {
+    setEditingCar(car);
+    setNewCar({
+      make: car.make || "",
+      model: car.model || "",
+      year: car.year || "",
+      price: car.price || "",
+      mileage: car.mileage || "",
+      type: car.type || "",
+      engine: car.engine || "",
+      drivetrain: car.drivetrain || "",
+      hp: car.hp || "",
+      torque: car.torque || "",
+      transmission: car.transmission || "",
+      status: car.status || "available",
+    });
+
+    document.body.classList.add("modal-open");
+    setShowAddModal(true);
+  };
+
   const markAsSold = async (id) => {
     await supabase
       .from("vehicles")
@@ -174,13 +196,31 @@ export default function EmployeeDashboard() {
     fetchCars();
   };
 
+  const permanentlyDeleteCar = async (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to permanently delete this vehicle? This cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from("vehicles")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      alert("Error deleting vehicle: " + error.message);
+      return;
+    }
+
+    alert("Vehicle permanently deleted.");
+    fetchCars();
+  };
+
   if (user === null) {
-  return <h2>Loading...</h2>;
-}
+    return <h2>Loading...</h2>;
+  }
 
-  const getId = (car) => car.id;
-
-  // FILTER REQUESTS
   const filteredRequests = requests.filter((r) => {
     if (requestFilter === "all") return true;
     return r.type === requestFilter;
@@ -189,8 +229,6 @@ export default function EmployeeDashboard() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-container">
-
-        {/* HEADER */}
         <div className="dashboard-header">
           <h1>
             {user.role === "manager"
@@ -203,19 +241,12 @@ export default function EmployeeDashboard() {
           </button>
         </div>
 
-        <p className="dashboard-role">
-          Role: {user.role}
-        </p>
+        <p className="dashboard-role">Role: {user.role}</p>
 
-        {/* CUSTOMER REQUESTS */}
         <div className="section">
-
-          <h2 className="section-title">
-            Customer Requests
-          </h2>
+          <h2 className="section-title">Customer Requests</h2>
 
           <div className="filter-buttons">
-
             <button
               className={requestFilter === "all" ? "active" : ""}
               onClick={() => setRequestFilter("all")}
@@ -236,19 +267,15 @@ export default function EmployeeDashboard() {
             >
               Questions
             </button>
-
           </div>
 
           <div className="requests-grid">
-
             {filteredRequests.length === 0 ? (
               <p>No requests yet.</p>
             ) : (
               filteredRequests.map((r) => (
                 <div key={`${r.type}-${r.id}`} className="request-card">
-
                   <h3>{r.name}</h3>
-
                   <p>{r.email}</p>
 
                   <div className="request-details">
@@ -256,7 +283,6 @@ export default function EmployeeDashboard() {
                       ?.split("\n")
                       .filter((line) => line.trim() !== "")
                       .map((line, index) => {
-
                         if (!line.includes(":")) {
                           return (
                             <p key={index}>
@@ -278,9 +304,7 @@ export default function EmployeeDashboard() {
                   </div>
 
                   <span className={`request-type ${r.type}`}>
-                    {r.type === "consultation"
-                      ? "Consultation"
-                      : "Question"}
+                    {r.type === "consultation" ? "Consultation" : "Question"}
                   </span>
 
                   <button
@@ -289,24 +313,17 @@ export default function EmployeeDashboard() {
                   >
                     Complete
                   </button>
-
                 </div>
               ))
             )}
-
           </div>
         </div>
 
-        {/* INVENTORY */}
         <div className="section">
-
-          <h2 className="section-title">
-            Inventory
-          </h2>
+          <h2 className="section-title">Inventory</h2>
 
           {user.role === "manager" && (
             <div className="filter-buttons">
-
               <button
                 className={statusFilter === "available" ? "active" : ""}
                 onClick={() => setStatusFilter("available")}
@@ -328,55 +345,30 @@ export default function EmployeeDashboard() {
                 Removed
               </button>
 
-              <button
-                className="new-car-btn"
-                onClick={() => {
-                  document.body.classList.add("modal-open");
-                  setShowAddModal(true);
-                }}
-              >
+              <button className="new-car-btn" onClick={openNewCarModal}>
                 New Car
               </button>
-
             </div>
           )}
 
-          {/* MODAL */}
           {showAddModal && (
             <div className="modal-overlay">
-
               <div className="add-car-modal">
-
                 <div className="modal-header">
+                  <h2>{editingCar ? "Edit Vehicle" : "Add New Car"}</h2>
 
-                  <h2>Add New Car</h2>
-
-                  <button
-                    className="close-modal-btn"
-                    onClick={() => {
-                      document.body.classList.remove("modal-open");
-                      setShowAddModal(false);
-                    }}
-                  >
+                  <button className="close-modal-btn" onClick={closeModal}>
                     ✕
                   </button>
-
                 </div>
 
-                <form
-                  className="add-car-form"
-                  onSubmit={addCar}
-                >
-
+                <form className="add-car-form" onSubmit={saveCar}>
                   <input
                     type="text"
                     placeholder="Make"
                     value={newCar.make}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        make: e.target.value,
-                      })
+                      setNewCar({ ...newCar, make: e.target.value })
                     }
                     required
                   />
@@ -386,10 +378,7 @@ export default function EmployeeDashboard() {
                     placeholder="Model"
                     value={newCar.model}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        model: e.target.value,
-                      })
+                      setNewCar({ ...newCar, model: e.target.value })
                     }
                     required
                   />
@@ -399,10 +388,7 @@ export default function EmployeeDashboard() {
                     placeholder="Year"
                     value={newCar.year}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        year: e.target.value,
-                      })
+                      setNewCar({ ...newCar, year: e.target.value })
                     }
                     required
                   />
@@ -412,10 +398,7 @@ export default function EmployeeDashboard() {
                     placeholder="Price"
                     value={newCar.price}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        price: e.target.value,
-                      })
+                      setNewCar({ ...newCar, price: e.target.value })
                     }
                     required
                   />
@@ -425,23 +408,17 @@ export default function EmployeeDashboard() {
                     placeholder="Mileage"
                     value={newCar.mileage}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        mileage: e.target.value,
-                      })
+                      setNewCar({ ...newCar, mileage: e.target.value })
                     }
                     required
                   />
 
                   <input
                     type="text"
-                    placeholder="Type (SUV, Sedan, Truck...)"
+                    placeholder="Type"
                     value={newCar.type}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        type: e.target.value,
-                      })
+                      setNewCar({ ...newCar, type: e.target.value })
                     }
                     required
                   />
@@ -451,10 +428,7 @@ export default function EmployeeDashboard() {
                     placeholder="Engine"
                     value={newCar.engine}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        engine: e.target.value,
-                      })
+                      setNewCar({ ...newCar, engine: e.target.value })
                     }
                   />
 
@@ -463,10 +437,7 @@ export default function EmployeeDashboard() {
                     placeholder="Drivetrain"
                     value={newCar.drivetrain}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        drivetrain: e.target.value,
-                      })
+                      setNewCar({ ...newCar, drivetrain: e.target.value })
                     }
                   />
 
@@ -475,10 +446,7 @@ export default function EmployeeDashboard() {
                     placeholder="Horsepower"
                     value={newCar.hp}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        hp: e.target.value,
-                      })
+                      setNewCar({ ...newCar, hp: e.target.value })
                     }
                   />
 
@@ -487,10 +455,7 @@ export default function EmployeeDashboard() {
                     placeholder="Torque"
                     value={newCar.torque}
                     onChange={(e) =>
-                      setNewCar({
-                        ...newCar,
-                        torque: e.target.value,
-                      })
+                      setNewCar({ ...newCar, torque: e.target.value })
                     }
                   />
 
@@ -507,107 +472,113 @@ export default function EmployeeDashboard() {
                   />
 
                   <button type="submit">
-                    Add Car
+                    {editingCar ? "Save Changes" : "Add Car"}
                   </button>
-
                 </form>
-
               </div>
-
             </div>
           )}
 
           <div className="inventory-grid">
+            {cars.length === 0 ? (
+              <p className="empty-message">Nothing available.</p>
+            ) : (
+              cars.map((car) => (
+                <div key={car.id} className="inventory-card">
+                  {car.image && (
+                    <img
+                      src={`${process.env.PUBLIC_URL}${car.image}`}
+                      alt={car.model}
+                      className="car-img"
+                    />
+                  )}
 
-  {cars.length === 0 ? (
-    <p className="empty-message">
-      Nothing available.
-    </p>
-  ) : (
-    cars.map((car) => {
-      const id = getId(car);
+                  <h3>
+                    {car.year} {car.make} {car.model}
+                  </h3>
 
-      return (
-        <div
-          key={id}
-          className="inventory-card"
-        >
+                  <p>${(car.price || 0).toLocaleString()}</p>
 
-          {car.image && (
-            <img
-              src={`${process.env.PUBLIC_URL}${car.image}`}
-              alt={car.model}
-              className="car-img"
-            />
-          )}
+                  {car.status === "sold" && (
+                    <span className="sold-badge">SOLD</span>
+                  )}
 
-          <h3>
-            {car.year} {car.make} {car.model}
-          </h3>
+                  {car.status === "removed" && (
+                    <span className="removed-badge">REMOVED</span>
+                  )}
 
-          <p>
-            ${(car.price || 0).toLocaleString()}
-          </p>
+                  {user.role === "manager" && car.status === "available" && (
+                    <button
+                      className="edit-btn"
+                      onClick={() => editCar(car)}
+                    >
+                      Edit
+                    </button>
+                  )}
 
-          {car.status === "sold" && (
-            <span className="sold-badge">
-              SOLD
-            </span>
-          )}
+                  {car.status === "available" && (
+                    <>
+                      <button
+                        className="sold-btn"
+                        onClick={() => markAsSold(car.id)}
+                      >
+                        Mark as Sold
+                      </button>
 
-          {car.status === "removed" && (
-            <span className="removed-badge">
-              REMOVED
-            </span>
-          )}
+                      {user.role === "manager" && (
+                        <button
+                          className="remove-btn"
+                          onClick={() => removeCar(car.id)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </>
+                  )}
 
-          {car.status === "available" && (
-            <button
-              className="sold-btn"
-              onClick={() => markAsSold(id)}
-            >
-              Mark as Sold
-            </button>
-          )}
+                  {user.role === "manager" && car.status === "sold" && (
+                    <>
+                      <button
+                        className="undo-btn"
+                        onClick={() => undoSold(car.id)}
+                      >
+                        Undo Sold
+                      </button>
 
-          {user.role === "manager" &&
-            car.status === "sold" && (
-              <button
-                className="undo-btn"
-                onClick={() => undoSold(id)}
-              >
-                Undo Sold
-              </button>
+                      <button
+                        className="remove-btn"
+                        onClick={() => removeCar(car.id)}
+                      >
+                        Remove
+                      </button>
+                    </>
+                  )}
+
+                  {user.role === "manager" &&
+                    car.status === "removed" && (
+                      <>
+                        <button
+                          className="restore-btn"
+                          onClick={() => restoreCar(car.id)}
+                        >
+                          Restore
+                        </button>
+
+                        <button
+                          className="delete-btn"
+                          onClick={() => permanentlyDeleteCar(car.id)}
+                        >
+                          Delete Permanently
+                        </button>
+                      </>
+                    )}
+                </div>
+              ))
             )}
-
-          {user.role === "manager" &&
-            car.status === "removed" && (
-              <button
-                className="restore-btn"
-                onClick={() => restoreCar(id)}
-              >
-                Restore
-              </button>
-            )}
-
-          {user.role === "manager" &&
-            car.status !== "removed" && (
-              <button
-                className="remove-btn"
-                onClick={() => removeCar(id)}
-              >
-                Remove
-              </button>
-            )}
-
-        </div>
-      );
-    })
-  )}
           </div>
         </div>
-
       </div>
     </section>
   );
 }
+
