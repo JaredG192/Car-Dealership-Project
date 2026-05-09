@@ -1,7 +1,7 @@
 import "./Consultation.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { addRequest } from "../services/serviceRequests";
+import { addConsultationRequest } from "../services/serviceRequests";
 
 export default function Consultation() {
   const [form, setForm] = useState({
@@ -25,7 +25,7 @@ export default function Consultation() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (
@@ -42,7 +42,7 @@ export default function Consultation() {
     return;
   }
 
-  const formData = {
+  await addConsultationRequest({
     name: `${form.firstName} ${form.lastName}`,
     email: form.email,
     message: `
@@ -52,13 +52,9 @@ Budget: ${form.budget}
 Make: ${form.make}
 
 ${form.message}
-      `,
-    type: "consultation"
-  };
+    `
+  });
 
-  addRequest(formData);
-
-  console.log("Saved:", formData);
   alert("Consultation submitted!");
 
   setForm({

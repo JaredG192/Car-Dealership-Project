@@ -104,14 +104,7 @@ export default function App() {
         <Route path="/login" element={<EmployeeLogin />} />
 
         {/* Protected Dashboard */}
-        <Route
-          path="/dashboard"
-          element={
-            JSON.parse(localStorage.getItem("user"))
-              ? <EmployeeDashboard />
-              : <ComingSoon title="Unauthorized" />
-          }
-        />
+        <Route path="/dashboard" element={<EmployeeDashboard />} />
       </Routes>
     </HashRouter>
   );
