@@ -245,7 +245,7 @@ export default function EmployeeDashboard() {
               <p>No requests yet.</p>
             ) : (
               filteredRequests.map((r) => (
-                <div key={r.id} className="request-card">
+                <div key={`${r.type}-${r.id}`} className="request-card">
 
                   <h3>{r.name}</h3>
 
