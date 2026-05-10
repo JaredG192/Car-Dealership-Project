@@ -1,70 +1,73 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./EmployeeLogin.css";
-
-const accounts = [
-  {
-    email: "manager@test.com",
-    password: "manager123",
-    role: "manager",
-  },
-  {
-    email: "employee@test.com",
-    password: "employee123",
-    role: "employee",
-  },
-];
+import { supabase } from "../supabaseClient";
 
 export default function EmployeeLogin() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
- const handleLogin = (e) => {
+ const handleLogin = async (e) => {
   e.preventDefault();
+  setError("");
+  setLoading(true);
+//Sign in with Supabase Auth
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  const foundUser = accounts.find(
-    (acc) =>
-      acc.email === email &&
-      acc.password === password
-  );
+    if (authError) {
+      setError("Invalid email or password");
+      setLoading(false);
+      return;
+    }
 
-  if (!foundUser) {
-    alert("Invalid email or password");
-    return;
-  }
+    //Get the employee's role from employee_profiles
+    const { data: profile } = await supabase
+      .from("employee_profiles")
+      .select("role, full_name")
+      .eq("id", data.user.id)
+      .single();
 
-  localStorage.setItem(
-    "user",
-    JSON.stringify(foundUser)
-  );
+    const role = profile?.role || "employee";
+    const fullName = profile?.full_name || email;
 
-  navigate("/dashboard");
-};
+    //Save user info to localStorage
+    localStorage.setItem("user", JSON.stringify({
+      id: data.user.id,
+      email: data.user.email,
+      role: role,
+      fullName: fullName
+    }));
+
+    setLoading(false);
+    navigate("/dashboard");
+  };
+
   return (
     <section className="employee-login-page">
       <div className="employee-login-container">
         <div className="employee-login-card">
-
           <div className="employee-login-header">
             <div className="employee-login-top">
               <Link to="/" className="back-home-btn">
                 ← Back to Home
               </Link>
-
               <div className="employee-login-pill">
                 Internal Access
               </div>
             </div>
-
             <h1>Employee Login</h1>
             <div className="employee-login-underline"></div>
             <p>Sign in to access the employee dashboard.</p>
           </div>
 
           <form className="employee-login-form" onSubmit={handleLogin}>
-
             <div className="employee-form-group">
               <label>Email</label>
               <input
@@ -87,16 +90,20 @@ export default function EmployeeLogin() {
               />
             </div>
 
-            <button type="submit" className="employee-login-btn">
-              Sign In
-            </button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
 
+            <button
+              type="submit"
+              className="employee-login-btn"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
           </form>
 
           <p className="employee-login-note">
             Employee access only
           </p>
-
         </div>
       </div>
     </section>
