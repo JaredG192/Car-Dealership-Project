@@ -154,12 +154,13 @@ ${form.message}
                   </select>
                 </div>
 
-                <div className="form-group">
-                 <select
-                  name="budget"
-                  value={form.budget}
-                  onChange={handleChange}
-                  required
+               <div className="form-group">
+                <label>Budget</label>
+                  <select
+                    name="budget"
+                    value={form.budget}
+                    onChange={handleChange}
+                    required
                   >
                     <option value="">Select a range</option>
                     <option>Under $10,000</option>

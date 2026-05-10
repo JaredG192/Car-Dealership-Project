@@ -108,24 +108,23 @@ export default function CarDetails() {
           <div style={styles.imageWrap}>
 
            <img
-            src={
+              src={
               car.image
-              ? `${process.env.PUBLIC_URL}${car.image}`
-              : PLACEHOLDER_IMG
-            }
-            alt={`${car.year} ${car.make} ${car.model}`}
-            style={{
-              ...styles.image,
-              ...(isMobile
-                ? styles.imageMobile
-                : {}),
-              }}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src =
-                  PLACEHOLDER_IMG;
-              }}
-              />
+              ? car.image.startsWith("http")
+              ? car.image
+              : `${process.env.PUBLIC_URL}${car.image}`
+            : PLACEHOLDER_IMG
+          }
+          alt={`${car.year} ${car.make} ${car.model}`}
+          style={{
+            ...styles.image,
+            ...(isMobile ? styles.imageMobile : {}),
+          }}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = PLACEHOLDER_IMG;
+          }}
+        />
 
           </div>
 

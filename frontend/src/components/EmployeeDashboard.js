@@ -14,6 +14,7 @@ export default function EmployeeDashboard() {
   const [requestFilter, setRequestFilter] = useState("all");
 
   const [showAddModal, setShowAddModal] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
   const emptyCar = {
     make: "",
@@ -89,56 +90,87 @@ export default function EmployeeDashboard() {
   }, []);
 
   const openNewCarModal = () => {
-    setEditingCar(null);
-    setNewCar(emptyCar);
-    document.body.classList.add("modal-open");
-    setShowAddModal(true);
-  };
+  setEditingCar(null);
+  setNewCar(emptyCar);
+  setImageFile(null);
+  document.body.classList.add("modal-open");
+  setShowAddModal(true);
+};
 
   const closeModal = () => {
-    document.body.classList.remove("modal-open");
-    setShowAddModal(false);
-    setEditingCar(null);
-    setNewCar(emptyCar);
-  };
+  document.body.classList.remove("modal-open");
+  setShowAddModal(false);
+  setEditingCar(null);
+  setNewCar(emptyCar);
+  setImageFile(null);
+};
 
   const saveCar = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (editingCar) {
-      const { error } = await supabase
-        .from("vehicles")
-        .update(newCar)
-        .eq("id", editingCar.id);
+  let imageUrl = editingCar?.image || "";
 
-      if (error) {
-        alert(error.message);
-        return;
-      }
+  // Upload image if a new file was selected
+  if (imageFile) {
+    const fileExt = imageFile.name.split(".").pop();
+    const fileName = `${Date.now()}.${fileExt}`;
 
-      alert("Vehicle updated successfully!");
-    } else {
-      const carToAdd = {
-        id: Math.floor(Math.random() * 1000000),
-        ...newCar,
-      };
+    const { error: uploadError } = await supabase.storage
+      .from("vehicle-images")
+      .upload(fileName, imageFile);
 
-      const { error } = await supabase
-        .from("vehicles")
-        .insert([carToAdd]);
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      alert("Car added successfully!");
+    if (uploadError) {
+      alert("Image upload failed: " + uploadError.message);
+      return;
     }
 
-    closeModal();
-    fetchCars();
+    const { data } = supabase.storage
+      .from("vehicle-images")
+      .getPublicUrl(fileName);
+
+    imageUrl = data.publicUrl;
+  }
+
+  const carData = {
+    ...newCar,
+    image: imageUrl,
   };
 
+  if (editingCar) {
+    const { error } = await supabase
+      .from("vehicles")
+      .update(carData)
+      .eq("id", editingCar.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Vehicle updated successfully!");
+  } else {
+    const carToAdd = {
+      id: Math.floor(Math.random() * 1000000),
+      ...carData,
+    };
+
+    const { error } = await supabase
+      .from("vehicles")
+      .insert([carToAdd]);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Car added successfully!");
+  }
+
+  // Reset state
+  setImageFile(null);
+  closeModal();
+  fetchCars();
+};
   const editCar = (car) => {
     setEditingCar(car);
     setNewCar({
@@ -157,6 +189,7 @@ export default function EmployeeDashboard() {
     });
 
     document.body.classList.add("modal-open");
+    setImageFile(null);
     setShowAddModal(true);
   };
 
@@ -275,37 +308,60 @@ export default function EmployeeDashboard() {
             ) : (
               filteredRequests.map((r) => (
                 <div key={`${r.type}-${r.id}`} className="request-card">
-                  <h3>{r.name}</h3>
+                  <div className="card-header">
+                    <h3 className="card-name">{r.name}</h3>
+
+                    <span className={`request-badge ${r.type}`}>
+                    {r.type === "consultation"
+                      ? "Consultation"
+                      : "Question"}
+                    </span>
+                  </div>
+
                   <p>{r.email}</p>
+
+                  {r.phone && (
+                  <p>
+                    <strong>Phone:</strong> {r.phone}
+                  </p>
+                )}
+
+                {r.topic && (
+                  <p>
+                    <strong>Topic:</strong> {r.topic}
+                  </p>
+                )}
 
                   <div className="request-details">
                     {r.message
                       ?.split("\n")
                       .filter((line) => line.trim() !== "")
                       .map((line, index) => {
-                        if (!line.includes(":")) {
-                          return (
-                            <p key={index}>
-                              <strong>Message:</strong> {line}
-                            </p>
-                          );
-                        }
+                    if (!line.includes(":")) {
+                      return (
+                      <p key={index}>
+                        <strong>Message:</strong> {line}
+                      </p>
+                      );
+                    }
 
-                        const parts = line.split(":");
-                        const label = parts[0];
-                        const value = parts.slice(1).join(":");
+                      const parts = line.split(":");
+                      const label = parts[0].trim();
+                      const value = parts.slice(1).join(":").trim();
 
-                        return (
-                          <p key={index}>
-                            <strong>{label}:</strong> {value}
-                          </p>
-                        );
-                      })}
-                  </div>
+  
+                    if (label.toLowerCase() === "type") {
+                    return null;
+                  }
 
-                  <span className={`request-type ${r.type}`}>
-                    {r.type === "consultation" ? "Consultation" : "Question"}
-                  </span>
+                    return (
+                    <p key={index}>
+                      <strong>{label}:</strong> {value}
+                    </p>
+                  );
+                })}
+            </div>
+                 
 
                   <button
                     className="complete-btn"
@@ -471,6 +527,13 @@ export default function EmployeeDashboard() {
                     }
                   />
 
+                  <input
+                    type="file"
+                    accept="image/*"
+                    required={!editingCar}
+                    onChange={(e) => setImageFile(e.target.files[0])}
+                  />
+
                   <button type="submit">
                     {editingCar ? "Save Changes" : "Add Car"}
                   </button>
@@ -486,12 +549,16 @@ export default function EmployeeDashboard() {
               cars.map((car) => (
                 <div key={car.id} className="inventory-card">
                   {car.image && (
-                    <img
-                      src={`${process.env.PUBLIC_URL}${car.image}`}
-                      alt={car.model}
-                      className="car-img"
-                    />
-                  )}
+  <img
+    src={
+      car.image.startsWith("http")
+        ? car.image
+        : `${process.env.PUBLIC_URL}${car.image}`
+    }
+    alt={car.model}
+    className="car-img"
+  />
+)}
 
                   <h3>
                     {car.year} {car.make} {car.model}

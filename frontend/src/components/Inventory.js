@@ -221,13 +221,19 @@ export default function Inventory({ defaultMake = "", hideMakeFilter = false }) 
               <div key={car.id} style={styles.card}>
                 <div style={styles.imgWrap}>
                   <img
-                    src={`${process.env.PUBLIC_URL}${car.image}`}
+                    src={
+                    car.image
+                    ? car.image.startsWith("http")
+                    ? car.image
+                    : `${process.env.PUBLIC_URL}${car.image}`
+                    : PLACEHOLDER_IMG
+                  }
                     alt={car.model}
                     style={styles.img}
                     onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = PLACEHOLDER_IMG;
-                    }}
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = PLACEHOLDER_IMG;
+                  }}
                   />
                 </div>
 
@@ -379,17 +385,19 @@ const styles = {
   },
 
   grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: 16,
-  },
+  display: "grid",
+  gridTemplateColumns: "repeat(4, 1fr)",
+  gap: 20,
+},
 
-  card: {
-    borderRadius: 18,
-    overflow: "hidden",
-    border: "1px solid rgba(0,0,0,0.10)",
-    background: "#fff",
-  },
+card: {
+  width: "100%",
+  maxWidth: "100%",
+  borderRadius: 18,
+  overflow: "hidden",
+  border: "1px solid rgba(0,0,0,0.10)",
+  background: "#fff",
+},
 
   imgWrap: {
     height: 160,
@@ -430,6 +438,7 @@ const styles = {
     fontSize: 12,
     opacity: 0.7,
     fontWeight: 800,
+  
   },
 
   price: {
